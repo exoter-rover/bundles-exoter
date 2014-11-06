@@ -1,0 +1,55 @@
+--- name:ExoTer
+# the device port
+serial_port: /dev/ttyXR0
+# Baud rate to open the serial com_port.
+serial_baudrate: 38400
+# the expected time (in seconds) to have a whole package in the fd (the device port)
+serial_timeout: 0.2
+
+--- name:EvaluationBoard
+# the device port
+serial_port: /dev/ttyUSB0
+# Baud rate to open the serial com_port.
+serial_baudrate: 38400
+# the expected time (in seconds) to have a whole package in the fd (the device port)
+serial_timeout: 0.1
+
+
+--- name:Netherlands
+# UTM zone for conversion of WGS84 to UTM
+utm_zone: 31
+# UTM north for conversion of WGS84 to UTM
+utm_north: true
+# Geodetic datum typically NAD83 or WGS84 
+geodetic_datum: WGS84
+
+# from frame for the transformer
+gnss_source_frame: "body" #transformer names. No transformation convention
+# to frame for the transformer
+gnss_target_frame: "world_osg" #transformer names. No transformation convention
+
+
+--- name:ESTEC
+# Origin in UTM coordinates, that is used for position readings.
+pose_origin:
+  data:
+  - 597220.14273647161
+  - 5786238.5623347349
+  - 2.9529999999999998
+
+--- name:DECOS
+# Origin in UTM coordinates, that is used for position readings.
+pose_origin:
+  data:
+  - 597472.183
+  - 5785991.8953
+  - 1.95
+
+
+# no documentation available for this property
+#metadata:
+#  metadata: []
+#  properties: []
+#  input_ports: []
+#  output_ports: []
+

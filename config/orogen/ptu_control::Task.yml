@@ -1,0 +1,19 @@
+--- name:default
+# Link distance between mast top point and tilt motor axle. Required to compute the mast2ptu tranformation
+mast2tilt_link: 0.03425
+# PTU joints are selected by names.
+ptu_reading_names: [pan_joint, tilt_joint]
+# PTU joints are selected by names.
+ptu_commanding_names: [MAST_PAN, MAST_TILT]
+# From Frame for the transformer
+ptu_source_frame: "ptu"
+# To Frame for the transformer
+ptu_target_frame: "mast"
+
+# no documentation available for this property
+#metadata:
+#  metadata: []
+#  properties: []
+#  input_ports: []
+#  output_ports: []
+

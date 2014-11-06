@@ -1,0 +1,19 @@
+<package>
+  <description brief="Exoter Bundle">
+  dummy-long-desc
+  </description>
+  <author>Javier Hidalgo Carrio/javier.hidalgo_carrio@dfki.de</author>
+  <license>GPL-v2</license>
+  <url>http://rock-robotics.org</url>
+
+
+  <depend package="bundles/rock" />
+  <depend package="bundles/rock_ugv_nav" />
+  <!--
+   To add any dependencies use the depend tag
+  <depend package="dummy-dependency-0" />
+	...
+  <depend package="dummy-dependency-n-1" />
+  <depend package="dummy-dependency-n" />
+  -->
+</package>

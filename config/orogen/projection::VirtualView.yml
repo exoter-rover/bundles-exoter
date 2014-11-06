@@ -1,0 +1,41 @@
+--- name:camera_bb2
+# width of the virtual view
+width: 2048
+# height of the virtual view
+height: 768
+# focal length
+focal_length: 837.98636
+
+# the global name that should be used for the internal cam1 frame
+cam1_frame: left_camera
+# Time in s between cam1 readings
+cam1_period: 0.5
+# the global name that should be used for the internal cam2 frame
+cam2_frame: right_camera
+# Time in s between cam2 readings
+cam2_period: 0.5
+
+
+cam3_frame: left_camera
+cam3_period: 0.5
+cam4_frame: left_camera
+cam4_period: 0.5
+
+# the global name that should be used for the internal plane frame
+plane_frame: body
+# the global name that should be used for the internal virtual_cam frame
+virtual_cam_frame: left_camera
+# Maximum time in seconds the transformer will wait until it starts dropping samples
+transformer_max_latency: 2.0
+# Minimum system time in seconds between two updates of the status ports
+transformer_status_period: 1.0
+# list of static transformations
+static_transformations: []
+
+# no documentation available for this property
+#metadata:
+#  metadata: []
+#  properties: []
+#  input_ports: []
+#  output_ports: []
+

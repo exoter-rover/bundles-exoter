@@ -1,0 +1,118 @@
+--- name:default
+# path to the rover urdf file
+urdf_file: '../../../../bundles/exoter/data/odometry/exoter_odometry_model.urdf'
+# Effective wheel radius average for odometry
+wheelRadius: 0.072703
+# Model type to use: Analytical or Numerical approach
+modelType: :NUMERICAL
+
+# from frame for the transformer
+odometry_source_frame: "body" #transformer names. No transformation convention
+# to frame for the transformer
+odometry_target_frame: "navigation" #transformer names. No transformation convention
+
+# from frame for the transformer
+delta_odometry_source_frame: "body" #transformer names. No transformation convention
+# to frame for the transformer
+delta_odometry_target_frame: "body_k-1" #transformer names. No transformation convention
+
+# Time in s between joints_samples readings
+joints_samples_period: 0.08
+# Time in s between orientation_samples readings
+orientation_samples_period: 0.08
+# Minimum system time in seconds between two updates of the status ports
+transformer_status_period: 0.08
+# Maximum time in seconds the transformer will wait until it starts dropping samples
+transformer_max_latency: 1.0
+
+# Set to true if desired orientation noise from orientation_samples input port.Otherwise it uses the motion model Leasts-Squares error to fill the uncertainty.
+orientation_samples_noise_on: true #false
+# Set to true if output debug information is desirable.
+output_debug: false
+# Required Joint in that order. Searching by names.
+jointsNames: [left_passive, right_passive, rear_passive, fl_walking, fr_walking, ml_walking, mr_walking, rl_walking, rr_walking,
+                fl_steer, fr_steer, rl_steer, rr_steer, fl_drive, fr_drive, ml_drive, mr_drive, rl_drive, rr_drive]
+
+
+# Configuration values of robot Center of Mass to compute the Center of Gravity. Used for the Weight matrix of the Motion Model.Look in Types for further details.
+robot_CoM:
+  dynamicOn: true #true if active dynamic weight matrix is required
+  coordinates: #Center of Mass position in the 2D plane on the platform with respect to body frame
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+  percentage: #Initial percentage for Asguard Wheels
+    data:
+    - 0.166 #FL
+    - 0.166 #FR
+    - 0.166 #ML
+    - 0.166 #MR
+    - 0.166 #RL
+    - 0.166 #RR
+
+# list of static transformations
+static_transformations: []
+
+# no documentation available for this property
+#metadata:
+#  metadata: []
+#  properties: []
+#  input_ports: []
+#  output_ports: []
+
+--- name:bessel
+#Configuration values to run Infinite Impulse Response (IIR).
+iir_filter:
+  iirOn: true  #True or false
+  feedForwardCoeff:
+    data:
+    - 0.00467048
+    - 0.03736385
+    - 0.13077349
+    - 0.26154698
+    - 0.32693372
+    - 0.26154698
+    - 0.13077349
+    - 0.03736385
+    - 0.00467048
+  feedBackCoeff:
+    data:
+    - 1.00000000e+00
+    - -3.87747570e-01
+    - 7.13520818e-01
+    - -2.49594003e-01
+    - 1.47736180e-01
+    - -3.59003821e-02
+    - 8.56259334e-03
+    - -9.97047726e-04
+    - 6.27404353e-05
+
+--- name:bessel50
+#Configuration values to run Infinite Impulse Response (IIR).
+iir_filter:
+  iirOn: true  #True or false
+  feedForwardCoeff:
+    data:
+    - 0.00796458
+    - 0.06371664
+    - 0.22300822
+    - 0.44601645
+    - 0.55752056
+    - 0.44601645
+    - 0.22300822
+    - 0.06371664
+    - 0.00796458
+  feedBackCoeff:
+    data:
+    - 1.00000000e+00
+    - 2.25372213e-01
+    - 6.59616658e-01
+    - 4.22917994e-02
+    - 1.09027593e-01
+    - -2.00686265e-03
+    - 4.77799850e-03
+    - -1.74151766e-04
+    - 2.70798275e-05
+
+

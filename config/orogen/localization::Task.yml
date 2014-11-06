@@ -1,0 +1,33 @@
+--- name:default
+
+# From Frame for the transformer
+localization_source_frame: 'body'
+# Relative frame in which the pose outputs samples are wanted.The names are relative to the task and uses the transformer names. Use "world" for absolute frameUse "navigation" for relative frame ("navigation" is by default)
+localization_target_frame: 'navigation'
+
+# the global name that should be used for the internal navigation frame
+navigation_frame: navigation
+# the global name that should be used for the internal world frame
+world_frame: world
+
+#Names of the desired exteroceptive inputs.
+exteroceptive_inputs: [vodo_samples, icp_samples]
+
+# Time in s between pose_samples readings
+pose_samples_period: 0.08
+
+# Maximum time in seconds the transformer will wait until it starts dropping samples
+transformer_max_latency: 1.0
+# Minimum system time in seconds between two updates of the status ports
+transformer_status_period: 1.0
+
+# list of static transformations
+static_transformations: []
+
+# no documentation available for this property
+#metadata:
+#  metadata: []
+#  properties: []
+#  input_ports: []
+#  output_ports: []
+#

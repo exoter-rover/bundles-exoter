@@ -1,0 +1,27 @@
+--- name:default
+# the global name that should be used for the internal camera frame
+camera_frame: left_camera
+# Time in s between camera readings
+camera_period: 0.4
+# the global name that should be used for the internal pointcloud frame
+pointcloud_frame: body
+# Time in s between points readings
+points_period: 0.2
+
+# resulting ply file
+output_ply: 'point_cloud_scene.ply'
+
+# list of static transformations
+static_transformations: []
+# Minimum system time in seconds between two updates of the status ports
+transformer_status_period: 0.04
+# Maximum time in seconds the transformer will wait until it starts dropping samples
+transformer_max_latency: 1.0
+
+# no documentation available for this property
+#metadata:
+#  metadata: []
+#  properties: []
+#  input_ports: []
+#  output_ports: []
+

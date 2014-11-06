@@ -1,0 +1,7 @@
+--- name:default
+
+# Required commanding joint names in that order. Joint dispatcher is searching by names.
+joint_commands_names: [WHEEL_DRIVE_FL, WHEEL_DRIVE_FR, WHEEL_DRIVE_CL, WHEEL_DRIVE_CR, WHEEL_DRIVE_BL, WHEEL_DRIVE_BR, WHEEL_STEER_FL, WHEEL_STEER_FR, WHEEL_STEER_BL, WHEEL_STEER_BR, WHEEL_WALK_FL, WHEEL_WALK_FR, WHEEL_WALK_CL, WHEEL_WALK_CR, WHEEL_WALK_BL, WHEEL_WALK_BR, WHEEL_DRIVE_GROUP, WHEEL_STEER_GROUP, WHEEL_WALK_GROUP]
+
+# Required reading joint names in that order. Joint dispatcher is searching by names.
+joint_readings_names: [left_passive, right_passive, rear_passive, fl_walking, fr_walking, ml_walking, mr_walking, rl_walking, rr_walking, fl_steer, fr_steer, rl_steer, rr_steer, fl_drive, fr_drive, ml_drive, mr_drive, rl_drive, rr_drive]

@@ -1,0 +1,32 @@
+#! /bin/sh
+
+killall $1 transformer_broadcaster
+
+#default deployments
+killall $1 orogen_default_platform_driver__Task
+killall $1 orogen_default_joint_dispatcher__Task
+killall $1 orogen_default_locomotion_control__Task
+killall $1 orogen_default_viso2__StereoOdometer
+killall $1 orogen_default_icp__GIcp
+killall $1 orogen_default_camera_bb2__Task
+killall $1 orogen_default_ptu_control__Task
+killall $1 orogen_default_odometry__Skid
+killall $1 orogen_default_transformer__Task
+
+#Exoter deployments
+killall $1 exoter_control
+killall $1 exoter_proprioceptive
+killall $1 exoter_perception
+killall $1 exoter_registration
+killall $1 exoter_slam
+killall $1 exoter_groundtruth
+
+ps_pid=`ps ax | grep 'ruby.*orocos_process_server' | grep -v 'grep' | awk '{print $1}'`
+if test -n "$ps_pid"; then
+    kill $1 $ps_pid
+fi
+ps_pid=`ps ax | grep 'ruby.*roby-display --server' | grep -v 'grep' | awk '{print $1}'`
+if test -n "$ps_pid"; then
+    kill $1 $ps_pid
+fi
+

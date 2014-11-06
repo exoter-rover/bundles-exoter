@@ -1,0 +1,77 @@
+--- name:default
+# no documentation available for this property
+number_motors: 16
+# no documentation available for this property
+number_nodes: 19
+
+# Required CAN Nodes in that order. Searching by names.
+canNodesNames: [WHEEL_DRIVE_FL, WHEEL_DRIVE_FR, WHEEL_DRIVE_CL, WHEEL_DRIVE_CR, WHEEL_DRIVE_BL, WHEEL_DRIVE_BR, WHEEL_STEER_FL, WHEEL_STEER_FR, WHEEL_STEER_BL, WHEEL_STEER_BR, WHEEL_WALK_FL, WHEEL_WALK_FR, WHEEL_WALK_CL, WHEEL_WALK_CR, WHEEL_WALK_BL, WHEEL_WALK_BR, WHEEL_DRIVE_GROUP, WHEEL_STEER_GROUP, WHEEL_WALK_GROUP]
+
+# no documentation available for this property
+rover_parameters: 
+  IsDrivingWheel: 
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  WheelNumber: 6
+  LegLengthV: 
+  - 0.120
+  - 0.120
+  - 0.120
+  - 0.120
+  - 0.120
+  - 0.120
+  IsSteeringWheel: 
+  - 1
+  - 1
+  - 0
+  - 0
+  - 1
+  - 1
+  WalkCoordCart: 
+  - 0.265
+  - 0.305
+  - 0.265
+  - -0.305
+  - 0
+  - 0.305
+  - 0
+  - -0.305
+  - -0.265
+  - 0.305
+  - -0.265
+  - -0.305
+  IsWalkingWheel: 
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  - 1
+  WheelRadius: 
+  - 0.072703
+  - 0.072703
+  - 0.072703
+  - 0.072703
+  - 0.072703
+  - 0.072703
+  WheelCoordCart: 
+  - 0.265
+  - 0.305
+  - 0.265
+  - -0.305
+  - 0
+  - 0.305
+  - 0
+  - -0.305
+  - -0.265
+  - 0.305
+  - -0.265
+  - -0.305
+# no documentation available for this property
+target_window: 0.05
+position_limit: 0.72
+velocity_limit: 1.35

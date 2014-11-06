@@ -1,0 +1,94 @@
+--- name:default
+
+# Minimum system time in seconds between two updates of the status ports
+transformer_status_period: 1.0
+
+# from frame for the transformer frame names
+visual_odometry_source_frame: "body"
+# to frame for the transformer frame names
+visual_odometry_target_frame: "navigation"
+
+# from frame for the transformer
+delta_visual_odometry_source_frame: "body" #transformer names. No transformation convention
+# to frame for the transformer
+delta_visual_odometry_target_frame: "body_k-1" #transformer names. No transformation convention
+
+# Visual Odometry Stereo parameters. Including intrinsic and extrinsic camera calibration parameters among othersfor a full parameter list have a look at viso2Types.hpp and at viso_stereo.h of the viso2 library
+viso2_parameters:
+  ransac_iters: 200 #number of RANSAC iterations
+  inlier_threshold: 1.5 #fundamental matrix inlier threshold
+  reweighting: true #lower border weights (more robust to calibration errors)
+  match:
+    nms_n: 3 #non-max-suppression: min. distance between maxima (in pixels)
+    nms_tau: 50 #non-max-suppression: interest point peakiness threshold
+    match_binsize: 50 #matching bin width/height (affects efficiency only) Step size for matching features (forward/backward and right/left)
+    match_radius: 200 #matching radius (du/dv in pixels)
+    match_disp_tolerance: 1 #dv tolerance for stereo matches (in pixels)
+    outlier_disp_tolerance: 5 #outlier removal: disparity tolerance (in pixels)
+    outlier_flow_tolerance: 5 #outlier removal: flow tolerance (in pixels)
+    multi_stage: 1 #0=disabled,1=multistage matching (denser and faster)
+    half_resolution: 1 #0=disabled,1=match at half resolution, refine at full resolution
+    refinement: 2 #refinement (0=none,1=pixel,2=subpixel)
+  bucket:
+    max_features: 3 #maximal number of features per bucket
+    bucket_width: 10.0 #width of bucket
+    bucket_height: 10.0 #height of bucket
+
+# Set to true if output debug information is desirable.
+output_debug: false #false
+image_ouput_type: :INTER_KEYPOINTS #:INTRA_MATCHES #:INTER_KEYPOINTS
+
+--- name:bumblebee
+# the global name that should be used for the internal left_camera frame
+left_camera_frame: left_camera
+
+# the global name that should be used for the internal body frame
+body_frame: body
+
+# maximum latency, in seconds, of the stream aligner. The aligner will start
+# dropping samples if the difference between the last output and last input is
+# greater than this
+transformer_max_latency: 1.0
+# minimum time, in s, between two sequential samples arrive on left_frame
+left_frame_period: 0.4
+# minimum time, in s, between two sequential samples arrive on right_frame
+right_frame_period: 0.4
+
+# Calibration parameter for the frame_helper
+calib_parameters:
+  camLeft:
+    fx: 837.98636
+    fy: 838.56569
+    cx: 509.74846
+    cy: 376.99711
+    d0: -0.35914
+    d1: 0.16317
+    d2: 0.00039
+    d3: 0.00041
+    ex: 0.06887
+    ey: 0.08192
+    width: 1024
+    height: 768
+  camRight:
+    fx: 837.40801
+    fy: 838.06473
+    cx: 536.53701
+    cy: 377.66591
+    d0: -0.35499
+    d1: 0.15218
+    d2: 0.00019
+    d3: -0.00016
+    ex: 0.07723
+    ey: 0.08236
+    width: 1024
+    height: 768
+
+#Distance between left and right camera
+  extrinsic:
+    tx: 0.12042814 #baseline in x (meters)
+    ty: 0.00063857 #baseline in y (meters)
+    tz: 0.0003051 #baseline in z (meters)
+    rx: 0.00125 #rotation along x (rad)
+    ry: -0.00333 #rotation along y (rad)
+    rz: 0.00542 #rotation along z (rad)
+
