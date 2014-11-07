@@ -73,14 +73,17 @@ Bundles.run 'exoter_control',
     ptu_control = Orocos.name_service.get 'ptu_control'
 
     # Get the task names from perception
-    camera_bb2 = Orocos.name_service.get 'camera_bb2'
     colorize_pointcloud = Orocos.name_service.get 'colorize_pointcloud'
-
-    # Get the task names from slam
     localization_frontend = Orocos.name_service.get 'localization_frontend'
+
+    # Get the task names from odometry
     exoter_odometry = Orocos.name_service.get 'exoter_odometry'
+
+    # Get the task names from exteroceptive
     visual_odometry = Orocos.name_service.get 'visual_odometry'
     icp = Orocos.name_service.get 'generalized_icp'
+
+    # Get the task names from slam
     localization_dispatcher = Orocos.name_service.get 'localization_dispatcher'
     localization_backend = Orocos.name_service.get 'localization_backend'
 
@@ -89,7 +92,6 @@ Bundles.run 'exoter_control',
     Orocos.conf.apply(ptu_control, ['default'], :override => true)
 
     # Set configuration files for perception
-    Orocos.conf.apply(camera_bb2, ['default'], :override => true)
     Orocos.conf.apply(colorize_pointcloud, ['default'], :override => true)
 
     # Set configuration files for slam
@@ -141,7 +143,6 @@ Bundles.run 'exoter_control',
     ptu_control.configure
 
     # Configure tasks from perception
-    camera_bb2.configure
     colorize_pointcloud.configure
 
     # Configure tasks from slam
@@ -177,9 +178,9 @@ Bundles.run 'exoter_control',
     end
 
     log_replay.camera_tof.pointcloud.connect_to(localization_frontend.point_cloud_samples, :type => :buffer, :size => 200)
-    log_replay.camera_firewire.frame.connect_to(camera_bb2.frame_in, :type => :buffer, :size => 200)
-    #log_replay.camera_bb2.left_frame.connect_to(localization_frontend.left_frame, :type => :buffer, :size => 200)
-    #log_replay.camera_bb2.right_frame.connect_to(localization_frontend.right_frame, :type => :buffer, :size => 200)
+    log_replay.camera_bb2.left_frame.connect_to(localization_frontend.left_frame, :type => :buffer, :size => 200)
+    log_replay.camera_bb2.right_frame.connect_to(localization_frontend.right_frame, :type => :buffer, :size => 200)
+    log_replay.camera_bb2.left_frame.connect_to(colorize_pointcloud.camera, :type => :buffer, :size => 200)
 
     #############################
     ## TASKS PORTS CONNECTIONS ##
@@ -188,23 +189,17 @@ Bundles.run 'exoter_control',
     # Localization Front-End
     read_joint_dispatcher.joints_samples.connect_to localization_frontend.joints_samples
     read_joint_dispatcher.ptu_samples.connect_to ptu_control.ptu_samples
-    camera_bb2.left_frame.connect_to localization_frontend.left_frame
-    camera_bb2.right_frame.connect_to localization_frontend.right_frame
 
-    # Wheel Odometry
+    # ExoTeR Wheel Odometry
     localization_frontend.joints_samples_out.connect_to exoter_odometry.joints_samples
     localization_frontend.orientation_samples_out.connect_to exoter_odometry.orientation_samples
 
     # Point Clouds
-    camera_bb2.left_frame.connect_to colorize_pointcloud.camera
     localization_frontend.point_cloud_samples_out.connect_to colorize_pointcloud.points
 
     # Visual odometry
     localization_frontend.left_frame_out.connect_to visual_odometry.left_frame
     localization_frontend.right_frame_out.connect_to visual_odometry.right_frame
-
-    #camera_bb2.left_frame.connect_to visual_odometry.left_frame
-    #camera_bb2.right_frame.connect_to visual_odometry.right_frame
 
     # Iterative Closest Points
     localization_frontend.point_cloud_samples_out.connect_to icp.point_cloud_source
@@ -231,7 +226,6 @@ Bundles.run 'exoter_control',
     ptu_control.start
 
     # Start tasks from perception
-    camera_bb2.start
     #colorize_pointcloud.start
 
     # Start tasks from slam
@@ -246,7 +240,7 @@ Bundles.run 'exoter_control',
     #end
     #puts " => #{localization_frontend.state}"
 
-    #visual_odometry.start
+    visual_odometry.start
     #icp.start
 
     # open the log replay widget

@@ -55,15 +55,8 @@ end
 
 Orocos::Process.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
                     'ptu_control::Task' => 'ptu_control',
-                    'camera_bb2::Task' => 'camera_bb2',
                     'localization_frontend::Task' => 'localization_frontend',
                     'viso2::StereoOdometer' => 'visual_odometry' do
-
-    ## Get the task context ##
-    STDERR.print "setting up camera_bb2..."
-    camera_bb2 = TaskContext.get 'camera_bb2'
-    Orocos.conf.apply(camera_bb2, ['default', 'stitch'], :override => true)
-    STDERR.puts "done"
 
     ## Get the task context ##
     STDERR.print "setting up read_joint_dispatcher..."
@@ -115,7 +108,6 @@ Orocos::Process.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     ###############
     read_joint_dispatcher.configure
     ptu_control.configure
-    camera_bb2.configure
     localization_frontend.configure
     visual_odometry.configure
 
@@ -142,7 +134,8 @@ Orocos::Process.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
         log_replay.gnss_trimble.pose_samples.connect_to(localization_frontend.reference_pose_samples, :type => :buffer, :size => 200)
     end
 
-    log_replay.camera_firewire.frame.connect_to(camera_bb2.frame_in, :type => :buffer, :size => 200)
+    log_replay.camera_bb2.left_frame.connect_to(localization_frontend.left_frame, :type => :buffer, :size => 200)
+    log_replay.camera_bb2.right_frame.connect_to(localization_frontend.right_frame, :type => :buffer, :size => 200)
 
     #############################
     ## TASKS PORTS CONNECTIONS ##
@@ -150,8 +143,6 @@ Orocos::Process.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
 
     read_joint_dispatcher.joints_samples.connect_to localization_frontend.joints_samples
     read_joint_dispatcher.ptu_samples.connect_to ptu_control.ptu_samples
-    camera_bb2.left_frame.connect_to localization_frontend.left_frame
-    camera_bb2.right_frame.connect_to localization_frontend.right_frame
 
     localization_frontend.left_frame_out.connect_to visual_odometry.left_frame
     localization_frontend.right_frame_out.connect_to visual_odometry.right_frame
@@ -161,7 +152,6 @@ Orocos::Process.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     ###########
     read_joint_dispatcher.start
     ptu_control.start
-    camera_bb2.start
     localization_frontend.start
     visual_odometry.start
 

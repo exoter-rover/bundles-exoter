@@ -299,13 +299,12 @@ end
 #    Vizkit.display camera_tof.port('pointcloud'), :widget =>pointCloud
 #end
 
-camera_bb2 = Orocos::Async.proxy 'camera_bb2'
 leftImage = Vizkit.default_loader.ImageView
 rightImage = Vizkit.default_loader.ImageView
 
-camera_bb2.on_reachable do
-    Vizkit.display camera_bb2.port('left_frame'), :widget => leftImage
-    Vizkit.display camera_bb2.port('right_frame'), :widget => rightImage
+localization_frontend.on_reachable do
+    Vizkit.display localization_frontend.port('left_frame'), :widget => leftImage
+    Vizkit.display localization_frontend.port('right_frame'), :widget => rightImage
 end
 
 # Visual Odometry tasks in Asynchronous mode
@@ -359,10 +358,10 @@ end
 
 
 # Enable the GUI when the task is reachable
-read_joint_dispatcher.on_reachable {Vizkit.vizkit3d_widget.setEnabled(true)}
+read_joint_dispatcher.on_reachable {Vizkit.vizkit3d_widget.setEnabled(true)} if logfile.nil?
 
 # Disable the GUI until the task is reachable
-read_joint_dispatcher.on_unreachable {Vizkit.vizkit3d_widget.setEnabled(false)}
+read_joint_dispatcher.on_unreachable {Vizkit.vizkit3d_widget.setEnabled(false)} if logfile.nil?
 
 Vizkit.control log_replay unless logfile.nil?
 Vizkit.exec
