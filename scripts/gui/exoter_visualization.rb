@@ -241,13 +241,18 @@ localization_frontend.on_reachable do
 end
 
 # Point Cloud with color
-colorize_pointcloud = Orocos::Async.proxy 'colorize_pointcloud'
-
-colorize_pointcloud.on_reachable do
-    # Point Cloud
-    Vizkit.display colorize_pointcloud.port('colored_points'), :widget =>pointCloud
-end
-
+#colorize_pointcloud = Orocos::Async.proxy 'colorize_pointcloud'
+#
+#colorize_pointcloud.on_reachable do
+#    # Point Cloud
+#    Vizkit.display colorize_pointcloud.port('colored_points'), :widget =>pointCloud
+#end
+#pituki_pointcloud = Orocos::Async.proxy 'pituki'
+#
+#pituki_pointcloud.on_reachable do
+#    # Point Cloud
+#    Vizkit.display pituki_pointcloud.port('point_cloud_samples_out'), :widget =>pointCloud
+#end
 
 # JointDispatcher
 read_joint_dispatcher = Orocos::Async.proxy 'read_joint_dispatcher'
@@ -337,6 +342,9 @@ icp.on_reachable do
     icp.port('pose_samples_out').on_data do |icp_rbs,_|
         icpTrajectory.updateTrajectory(icp_rbs.position)
     end
+
+    # Point Cloud
+    Vizkit.display icp.port('point_cloud_samples_out'), :widget =>pointCloud
 
 end
 

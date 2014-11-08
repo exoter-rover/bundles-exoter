@@ -28,7 +28,7 @@ transformer_max_latency: 1.0
 # Set to true if desired orientation noise from orientation_samples input port.Otherwise it uses the motion model Leasts-Squares error to fill the uncertainty.
 orientation_samples_noise_on: true #false
 # Set to true if output debug information is desirable.
-output_debug: false
+output_debug: true
 # Required Joint in that order. Searching by names.
 jointsNames: [left_passive, right_passive, rear_passive, fl_walking, fr_walking, ml_walking, mr_walking, rl_walking, rr_walking,
                 fl_steer, fr_steer, rl_steer, rr_steer, fl_drive, fr_drive, ml_drive, mr_drive, rl_drive, rr_drive]
@@ -36,7 +36,7 @@ jointsNames: [left_passive, right_passive, rear_passive, fl_walking, fr_walking,
 
 # Configuration values of robot Center of Mass to compute the Center of Gravity. Used for the Weight matrix of the Motion Model.Look in Types for further details.
 robot_CoM:
-  dynamicOn: true #true if active dynamic weight matrix is required
+  dynamicOn: false #true if active dynamic weight matrix is required
   coordinates: #Center of Mass position in the 2D plane on the platform with respect to body frame
     data:
     - 0.0
@@ -44,12 +44,12 @@ robot_CoM:
     - 0.0
   percentage: #Initial percentage for Asguard Wheels
     data:
-    - 0.166 #FL
-    - 0.166 #FR
-    - 0.166 #ML
-    - 0.166 #MR
-    - 0.166 #RL
-    - 0.166 #RR
+    - 0.16666666667 #FL
+    - 0.16666666667 #FR
+    - 0.16666666667 #ML
+    - 0.16666666667 #MR
+    - 0.16666666667 #RL
+    - 0.16666666667 #RR
 
 # list of static transformations
 static_transformations: []

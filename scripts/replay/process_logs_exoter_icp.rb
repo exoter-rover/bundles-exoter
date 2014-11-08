@@ -42,7 +42,7 @@ end
 
 Orocos::CORBA::max_message_size = 100000000000
 Bundles.initialize
-Bundles.transformer.load_conf(Bundles.find_file('config', 'transforms_scripts.rb'))
+Bundles.transformer.load_conf(Bundles.find_file('config', 'transforms_scripts_icp_pose.rb'))
 
 # Configuration values
 if options[:reference].casecmp("vicon").zero?
@@ -53,10 +53,16 @@ else
     puts "[INFO] No Ground Truth system available"
 end
 
-Orocos::Process.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
-                    'ptu_control::Task' => 'ptu_control',
-                    'localization_frontend::Task' => 'localization_frontend',
-                    'icp::GIcp' => 'generalized_icp', :valgrind => false do
+if options[:imu].casecmp("old").zero?
+    puts "[INFO] Old type of IMU samples in logs"
+else
+    puts "[INFO] New type of IMU samples in logs"
+end
+
+Bundles.run 'exoter_control',
+            'exoter_perception',
+            'exoter_exteroceptive',
+            :valgrind => false do
 
     ## Get the task context ##
     STDERR.print "setting up read_joint_dispatcher..."
@@ -97,6 +103,7 @@ Orocos::Process.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     ## TRANSFORMER ##
     #################
     Bundles.transformer.setup(localization_frontend)
+    Bundles.transformer.setup(icp)
 
     ###################
     ## LOG THE PORTS ##

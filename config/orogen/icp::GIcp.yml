@@ -2,6 +2,11 @@
 point_cloud_height: 144
 point_cloud_width: 176
 
+# from frame for the transformer frame names
+icp_odometry_source_frame: "body"
+# to frame for the transformer frame names
+icp_odometry_target_frame: "navigation"
+
 # Configuration parameters for the ICP.
 gicp_config:
   maximum_iterations: 200 #the maximum number of iterations the internal optimization should run for

@@ -95,6 +95,7 @@ Bundles.run 'exoter_slam',
     log_replay.visual_odometry.delta_pose_samples_out.connect_to(localization_dispatcher.vodo_delta_pose, :type => :buffer, :size => 200)
     log_replay.visual_odometry.point_cloud_samples_out.connect_to(localization_dispatcher.vodo_points, :type => :buffer, :size => 200)
     log_replay.visual_odometry.point_cloud_uncertainty_out.connect_to(localization_dispatcher.vodo_covariance, :type => :buffer, :size => 200)
+    log_replay.visual_odometry.point_cloud_indexes_out.connect_to(localization_dispatcher.vodo_index, :type => :buffer, :size => 200)
     log_replay.visual_odometry.delta_pose_jacobians_k_out.connect_to(localization_dispatcher.vodo_jacobian_k, :type => :buffer, :size => 200)
     log_replay.visual_odometry.delta_pose_jacobians_k_m_out.connect_to(localization_dispatcher.vodo_jacobian_k_m, :type => :buffer, :size => 200)
 

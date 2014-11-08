@@ -4,6 +4,7 @@ outputs:
     - output_name: vodo_samples_out
       pointcloud_name: vodo_points
       covariance_name: vodo_covariance
+      index_name: vodo_index
       delta_pose_name: vodo_delta_pose
       jacobian_k_name: vodo_jacobian_k
       jacobian_k_m_name: vodo_jacobian_k_m
@@ -11,6 +12,7 @@ outputs:
     - output_name: icp_samples_out
       pointcloud_name: icp_points
       covariance_name: icp_covariance
+      index_name: icp_index
       delta_pose_name: icp_delta_pose
       jacobian_k_name: icp_jacobian_k
       jacobian_k_m_name: icp_jacobian_k_m

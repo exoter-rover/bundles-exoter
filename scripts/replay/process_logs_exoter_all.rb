@@ -144,12 +144,16 @@ Bundles.run 'exoter_control',
 
     # Configure tasks from perception
     colorize_pointcloud.configure
-
-    # Configure tasks from slam
     localization_frontend.configure
+
+    # Configure tasks from odometry
     exoter_odometry.configure
+
+    # Configure tasks from exteroceptive
     visual_odometry.configure
     icp.configure
+
+    # Configure tasks from slam
     localization_dispatcher.configure
     localization_backend.configure
 
