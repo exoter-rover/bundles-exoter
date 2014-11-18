@@ -1,0 +1,328 @@
+<?xml version="1.0"?>
+<!-- URDF for ExoTer rover -->
+<!-- Author: Javier Hidalgo-Carrio, javier.hidalgo-carrio@dfki.de DFKI, Robotic Innovation Centre -->
+<!-- Version: 0.1 -->
+<!-- February 2014 -->
+
+<robot name="exoter">
+
+<!-- Link definitions -->
+<!-- Base Link of the Rover, main body of the rover, which looks like a Box -->
+<link name="body_base">
+</link>
+
+
+<!-- Left Link definition -->
+<link name="00_link">
+</link>
+
+<!-- FL Hinge definition -->
+<link name="0_0_link">
+</link>
+
+<!-- Front Left Motor block -->
+<link name="0_1_link">
+</link>
+
+<!-- Front Left Steer -->
+<link name="0_2_link">
+</link>
+
+<!-- Front Left Wheel -->
+<link name="0_3_link">
+</link>
+
+<!-- Right Link definition -->
+<link name="10_link">
+</link>
+
+<!-- FR Hinge definition -->
+<link name="1_0_link">
+</link>
+
+<!-- Front Right Motor block -->
+<link name="1_1_link">
+</link>
+
+<!-- Front Right Steer -->
+<link name="1_2_link">
+</link>
+
+<!-- Front Right Wheel -->
+<link name="1_3_link">
+</link>
+
+<!-- ML Hinge definition -->
+<link name="2_0_link">
+</link>
+
+<!-- Middle Left Motor block -->
+<link name="2_1_link">
+</link>
+
+<!-- Middle Left Wheel -->
+<link name="2_2_link">
+</link>
+
+<!-- MR Hinge definition -->
+<link name="3_0_link">
+</link>
+
+<!-- Middle Right Motor block -->
+<link name="3_1_link">
+</link>
+
+<!-- Middle Right Wheel -->
+<link name="3_2_link">
+</link>
+
+<!-- Rear Link definition -->
+<link name="40_link">
+</link>
+
+<!-- Rear Right Hinge definition -->
+<link name="4_0_link">
+</link>
+
+<!-- Rear Left Motor block -->
+<link name="4_1_link">
+</link>
+
+<!-- Rear Left Steer -->
+<link name="4_2_link">
+</link>
+
+<!-- Rear Left Wheel -->
+<link name="4_3_link">
+</link>
+
+<!-- Rear Left Hinge definition -->
+<link name="5_0_link">
+</link>
+
+<!-- Rear Right Motor block -->
+<link name="5_1_link">
+</link>
+
+<!-- Rear Right Steer -->
+<link name="5_2_link">
+</link>
+
+<!-- Rear Right Wheel -->
+<link name="5_3_link">
+</link>
+
+
+<!-- ====================Joint Descriptions =================================================================================-->
+<!-- left joint that connects base_link and front_link with a revolute joint -->
+<joint name="00_joint" type="continuous">
+    <parent link="body_base"/>
+    <child link="00_link"/>
+    <origin xyz="0.1325 0.223 0" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
+</joint>
+
+
+
+<!-- front left joint that connects 00_link and 0_00_link with a mimic joint -->
+<joint name="0_0_joint" type="continuous">
+    <parent link="00_link"/>
+    <child link="0_0_link"/>
+    <origin xyz="0.1325 0 0" rpy="0 0.0 0"/>
+    <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
+    <mimic joint="00_joint" multiplier="-1" offset="0"/>
+</joint>
+
+<!-- FL Wheel walking joint with a revolute joint -->
+<joint name="0_1_joint" type="continuous">
+    <parent link="0_0_link"/>
+    <child link="0_1_link"/>
+    <origin xyz="0 0.087 -0.005" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+</joint>
+
+<!-- FL Wheel steer joint with a revolute joint -->
+<joint name="0_2_joint" type="continuous">
+    <parent link="0_1_link"/>
+    <child link="0_2_link"/>
+    <origin xyz="0 0.0 -0.03" rpy="0 0.00 0"/> 
+    <axis xyz="0 0 1" /> <!-- revolute rotation about z axis -->
+</joint>
+
+<!-- FL Wheel drive joint with a revolute joint -->
+<joint name="0_3_joint" type="fixed">
+    <parent link="0_2_link"/>
+    <child link="0_3_link"/>
+    <origin xyz="0 0.0 -0.0953" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+</joint>
+
+<!-- right joint that connects base_link and right_link with a revolute joint -->
+<joint name="01_joint" type="continuous">
+    <parent link="body_base"/>
+    <child link="10_link"/>
+    <origin xyz="0.1325 -0.223 0" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
+</joint>
+
+<!-- front right joint that connects 1_link and 1_0_link with a mimic joint -->
+<joint name="1_0_joint" type="continuous">
+    <parent link="10_link"/>
+    <child link="1_0_link"/>
+    <origin xyz="0.1325 0 0" rpy="0 0.0 0"/>
+    <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
+    <mimic joint="01_joint" multiplier="-1" offset="0"/>
+</joint>
+
+<!-- FR Wheel walking joint with a revolute joint -->
+<joint name="1_1_joint" type="continuous">
+    <parent link="1_0_link"/>
+    <child link="1_1_link"/>
+    <origin xyz="0 -0.087 -0.005" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+</joint>
+
+<!-- FR Wheel steer joint with a revolute joint -->
+<joint name="1_2_joint" type="continuous">
+    <parent link="1_1_link"/>
+    <child link="1_2_link"/>
+    <origin xyz="0 0.0 -0.03" rpy="0 0.00 0"/> 
+    <axis xyz="0 0 1" /> <!-- revolute rotation about z axis -->
+</joint>
+
+<!-- FR Wheel drive joint with a revolute joint -->
+<joint name="1_3_joint" type="fixed">
+    <parent link="1_2_link"/>
+    <child link="1_3_link"/>
+    <origin xyz="0 0.0 -0.0953" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+</joint>
+
+<!-- middle left joint that connects 0_link and 2_0_link with a mimic joint -->
+<joint name="2_0_joint" type="continuous">
+    <parent link="00_link"/>
+    <child link="2_0_link"/>
+    <origin xyz="-0.1325 0 0" rpy="0 0.0 0"/>
+    <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
+    <mimic joint="00_joint" multiplier="-1" offset="0"/>
+</joint>
+
+<!-- ML Wheel walking joint with a revolute joint -->
+<joint name="2_1_joint" type="continuous">
+    <parent link="2_0_link"/>
+    <child link="2_1_link"/>
+    <origin xyz="0 0.087 -0.005" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+</joint>
+
+<!-- ML Wheel drive joint with a revolute joint -->
+<joint name="2_2_joint" type="fixed">
+    <parent link="2_1_link"/>
+    <child link="2_2_link"/>
+    <origin xyz="0 0.0 -0.1253" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+</joint>
+
+<!-- middle right joint that connects 1_link and 3_0_link with a mimic joint -->
+<joint name="3_0_joint" type="continuous">
+    <parent link="10_link"/>
+    <child link="3_0_link"/>
+    <origin xyz="-0.1325 0 0" rpy="0 0.0 0"/>
+    <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
+    <mimic joint="01_joint" multiplier="-1" offset="0"/>
+</joint>
+
+<!-- MR Wheel walking joint with a revolute joint -->
+<joint name="3_1_joint" type="continuous">
+    <parent link="3_0_link"/>
+    <child link="3_1_link"/>
+    <origin xyz="0 -0.087 -0.005" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+</joint>
+
+<!-- MR Wheel drive joint with a revolute joint -->
+<joint name="3_2_joint" type="fixed">
+    <parent link="3_1_link"/>
+    <child link="3_2_link"/>
+    <origin xyz="0 0.0 -0.1253" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+</joint>
+
+
+<!-- rear joint that connects base_link and rear_link with a revolute joint -->
+<joint name="02_joint" type="continuous">
+    <parent link="body_base"/>
+    <child link="40_link"/>
+    <origin xyz="-0.265 0 0" rpy="0.0 0.0 0.00"/> 
+    <axis xyz="1 0 0 " /> <!-- revolute rotation about Y axis -->
+</joint>
+
+<!-- rear left joint that connects 40_link and 4_0_link with a mimic joint -->
+<joint name="4_0_joint" type="continuous">
+    <parent link="40_link"/>
+    <child link="4_0_link"/>
+    <origin xyz="0.0 0.239 0" rpy="0 0.0 0"/>
+    <axis xyz="1 0 0" /> <!-- revolute rotation about X axis -->
+    <mimic joint="02_joint" multiplier="-1" offset="0"/>
+</joint>
+
+<!-- RL Wheel walking joint with a revolute joint -->
+<joint name="4_1_joint" type="continuous">
+    <parent link="4_0_link"/>
+    <child link="4_1_link"/>
+    <origin xyz="0 0.071 -0.005" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+</joint>
+
+<!-- RL Wheel steer joint with a revolute joint -->
+<joint name="4_2_joint" type="continuous">
+    <parent link="4_1_link"/>
+    <child link="4_2_link"/>
+    <origin xyz="0 0.0 -0.03" rpy="0 0.00 0"/> 
+    <axis xyz="0 0 1" /> <!-- revolute rotation about z axis -->
+</joint>
+
+<!-- RL Wheel drive joint with a revolute joint -->
+<joint name="4_3_joint" type="fixed">
+    <parent link="4_2_link"/>
+    <child link="4_3_link"/>
+    <origin xyz="0 0.0 -0.0953" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+</joint>
+
+
+<!-- rear right joint that connects 2_link and 5_0_link with a mimic joint -->
+<joint name="5_0_joint" type="continuous">
+    <parent link="40_link"/>
+    <child link="5_0_link"/>
+    <origin xyz="0.0 -0.239 0" rpy="0 0.0 0"/>
+    <axis xyz="1 0 0" /> <!-- revolute rotation about X axis -->
+    <mimic joint="02_joint" multiplier="-1" offset="0"/>
+</joint>
+
+<!-- RR Wheel walking joint with a revolute joint -->
+<joint name="5_1_joint" type="continuous">
+    <parent link="5_0_link"/>
+    <child link="5_1_link"/>
+    <origin xyz="0 -0.071 -0.005" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+</joint>
+
+<!-- RR Wheel steer joint with a revolute joint -->
+<joint name="5_2_joint" type="continuous">
+    <parent link="5_1_link"/>
+    <child link="5_2_link"/>
+    <origin xyz="0 0.0 -0.03" rpy="0 0.00 0"/> 
+    <axis xyz="0 0 1" /> <!-- revolute rotation about z axis -->
+</joint>
+
+<!-- RR Wheel drive joint with a revolute joint -->
+<joint name="5_3_joint" type="fixed">
+    <parent link="5_2_link"/>
+    <child link="5_3_link"/>
+    <origin xyz="0 0.0 -0.0953" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+</joint>
+
+</robot>
+

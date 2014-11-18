@@ -1,0 +1,197 @@
+<?xml version="1.0"?>
+<!-- URDF for Lander platform -->
+<!-- Author: Javier Hidalgo-Carrio, javier.hidalgo-carrio@dfki.de DFKI, Robotic Innovation Centre -->
+<!-- Version: 0.1 -->
+<!-- March 2014 -->
+
+<robot name="lander">
+
+<!-- Link definitions -->
+<!-- Base Link of the Lander, main body of the lander -->
+<link name="lander_base">
+    <visual>
+        <geometry>
+            <mesh filename="./meshes/lander/lander_platform.stl" scale = "1 1 1"/>
+        </geometry>
+        <origin xyz="-0.0 0.0 0.0" rpy="0 0 0"/>
+        <material name="White">
+            <color rgba="1.0 1.0 1.0 1.0"/>
+        </material>
+    </visual>
+</link>
+
+
+<!-- Front Left Beam definition -->
+<link name="fl_beam">
+    <visual>
+        <geometry>
+            <mesh filename="./meshes/lander/beam_long_left.stl" scale = "1 1 1"/>
+        </geometry>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+        <material name="Black" >
+            <color rgba="0.0 0.0 0. 1.0"/>
+        </material>
+    </visual>
+</link>
+
+<!-- Front Right Beam definition -->
+<link name="fr_beam">
+    <visual>
+        <geometry>
+            <mesh filename="./meshes/lander/beam_long_right.stl" scale = "1 1 1"/>
+        </geometry>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+        <material name="Black" >
+            <color rgba="0.0 0.0 0. 1.0"/>
+        </material>
+    </visual>
+</link>
+
+<!-- Rear Left Beam definition -->
+<link name="rl_beam">
+    <visual>
+        <geometry>
+            <mesh filename="./meshes/lander/beam_long_right.stl" scale = "1 1 1"/>
+        </geometry>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 3.14"/>
+        <material name="Black" >
+            <color rgba="0.0 0.0 0. 1.0"/>
+        </material>
+    </visual>
+</link>
+
+<!-- Rear Right Beam definition -->
+<link name="rr_beam">
+    <visual>
+        <geometry>
+            <mesh filename="./meshes/lander/beam_long_left.stl" scale = "1 1 1"/>
+        </geometry>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 3.14"/>
+        <material name="Black" >
+            <color rgba="0.0 0.0 0. 1.0"/>
+        </material>
+    </visual>
+</link>
+
+<!-- Front Left leg definition -->
+<link name="fl_leg">
+    <visual>
+        <geometry>
+            <mesh filename="./meshes/lander/leg.stl" scale = "1 1 1"/>
+        </geometry>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+        <material name="Black" >
+            <color rgba="0.0 0.0 0. 1.0"/>
+        </material>
+    </visual>
+</link>
+
+<!-- Front Right leg definition -->
+<link name="fr_leg">
+    <visual>
+        <geometry>
+            <mesh filename="./meshes/lander/leg.stl" scale = "1 1 1"/>
+        </geometry>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+        <material name="Black" >
+            <color rgba="0.0 0.0 0. 1.0"/>
+        </material>
+    </visual>
+</link>
+
+<!-- Rear Left leg definition -->
+<link name="rl_leg">
+    <visual>
+        <geometry>
+            <mesh filename="./meshes/lander/leg.stl" scale = "1 1 1"/>
+        </geometry>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+        <material name="Black" >
+            <color rgba="0.0 0.0 0. 1.0"/>
+        </material>
+    </visual>
+</link>
+
+<!-- Rear Right leg definition -->
+<link name="rr_leg">
+    <visual>
+        <geometry>
+            <mesh filename="./meshes/lander/leg.stl" scale = "1 1 1"/>
+        </geometry>
+        <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+        <material name="Black" >
+            <color rgba="0.0 0.0 0. 1.0"/>
+        </material>
+    </visual>
+</link>
+
+<!-- ====================Joint Descriptions =================================================================================-->
+
+<!-- Front Left joint that connects base_link and fl_beam with a revolute joint -->
+<joint name="front_left_joint" type="continuous">
+    <parent link="lander_base"/>
+    <child link="fl_beam"/>
+    <origin xyz="0.48 0.29 0" rpy="0.0 0.0 0.00"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
+</joint>
+
+<joint name="front_right_joint" type="continuous">
+    <parent link="lander_base"/>
+    <child link="fr_beam"/>
+    <origin xyz="0.48 -0.29 0" rpy="0.0 0.0 0.00"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
+</joint>
+
+<!-- Rear Left joint that connects base_link and fl_beam with a revolute joint -->
+<joint name="rear_left_joint" type="continuous">
+    <parent link="lander_base"/>
+    <child link="rl_beam"/>
+    <origin xyz="-0.48 0.29 0" rpy="0.0 0.0 0.00"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
+</joint>
+
+<joint name="rear_right_joint" type="continuous">
+    <parent link="lander_base"/>
+    <child link="rr_beam"/>
+    <origin xyz="-0.48 -0.29 0" rpy="0.0 0.0 0.00"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
+</joint>
+
+<!-- Front Left joint that connects base_link and fl_leg with a translational joint -->
+<joint name="leg_fl_joint" type="prismatic">
+    <parent link="lander_base"/>
+    <child link="fl_leg"/>
+    <limit effort="30" velocity="1.0" lower="-1.0" upper="0.0" />
+    <origin xyz="0.31 0.28 -0.083" rpy="0.0 -0.35 0.78"/> 
+    <axis xyz="0 0 1" /> <!-- revolute rotation about Y axis -->
+</joint>
+
+<!-- Front Right joint that connects base_link and fl_leg with a translational joint -->
+<joint name="leg_fr_joint" type="prismatic">
+    <parent link="lander_base"/>
+    <child link="fr_leg"/>
+    <limit effort="30" velocity="1.0" lower="-1.0" upper="0.0" />
+    <origin xyz="0.31 -0.28 -0.083" rpy="0.0 -0.35 -0.78"/> 
+    <axis xyz="0 0 1" /> <!-- revolute rotation about Y axis -->
+</joint>
+
+<!-- Rear Left joint that connects base_link and rl_leg with a translational joint -->
+<joint name="leg_rl_joint" type="prismatic">
+    <parent link="lander_base"/>
+    <child link="rl_leg"/>
+    <limit effort="30" velocity="1.0" lower="-1.0" upper="0.0" />
+    <origin xyz="-0.31 0.28 -0.083" rpy="0.0 -0.35 2.35"/> 
+    <axis xyz="0 0 1" /> <!-- revolute rotation about Y axis -->
+</joint>
+
+<!-- Rear Right joint that connects base_link and rr_leg with a translational joint -->
+<joint name="leg_rr_joint" type="prismatic">
+    <parent link="lander_base"/>
+    <child link="rr_leg"/>
+    <limit effort="30" velocity="1.0" lower="-1.0" upper="0.0" />
+    <origin xyz="-0.31 -0.28 -0.083" rpy="0.0 -0.35 -2.35"/> 
+    <axis xyz="0 0 1" /> <!-- revolute rotation about Y axis -->
+</joint>
+
+</robot>
+

@@ -1,0 +1,15 @@
+--- name:default
+# the global name that should be used for the internal body frame
+body_frame: body
+# the global name that should be used for the internal world frame
+navigation_frame: navigation
+
+# Time in s between point_cloud_samples readings
+point_cloud_samples_period: 0.5
+# list of static transformations
+static_transformations: []
+# Minimum system time in seconds between two updates of the status ports
+transformer_status_period: 0.08
+# Maximum time in seconds the transformer will wait until it starts dropping samples
+transformer_max_latency: 1.0
+
