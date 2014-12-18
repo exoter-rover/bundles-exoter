@@ -35,3 +35,6 @@ calibration_parameters:
 # bit depth per channel
 output_format: :MODE_RGB
 
+--- name:stitch
+# Distance in pixels between left and right image for a rough stitching. Leave empty for not stitching
+stitching_offset: [30, 0]

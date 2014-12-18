@@ -6,7 +6,7 @@ filter_configuration:
   use_samples_as_theoretical_gravity: true
   use_inclinometers: true
   use_magnetometers: false
-  initial_alignment_samples: 75000 #10 minutes initial alignment
+  initial_alignment_samples: 750 #10 minutes initial alignment. IMU rate is 125Hz
   correction_frequency: 1.0
 
 --- name:ExoTer
