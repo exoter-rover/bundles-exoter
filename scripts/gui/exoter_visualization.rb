@@ -193,13 +193,14 @@ c0RR.displayCovariance(true)
 Vizkit.vizkit3d_widget.setPluginDataFrame("body", c0RR)
 
 
-# Localization Front-End
-localization_frontend = Orocos::Async.proxy 'localization_frontend'
 
-localization_frontend.on_reachable do
+# Joints Dispatcher
+read_joint_dispatcher = Orocos::Async.proxy 'read_joint_dispatcher'
+
+read_joint_dispatcher.on_reachable do
 
     #Joints positions
-    localization_frontend.port('joints_samples_out').on_data do |joints,_|
+    read_joint_dispatcher.port('joints_samples').on_data do |joints,_|
 
         joints.names.push("dummy")
         joints.elements.push(Types::Base::JointState.new(:speed=> 0.00, :position => 0.00))
@@ -230,7 +231,12 @@ localization_frontend.on_reachable do
         robotVis.updateData(joints)
         #puts "joints #{joints.names}"
     end
+end
 
+# Localization Front-End
+localization_frontend = Orocos::Async.proxy 'localization_frontend'
+
+localization_frontend.on_reachable do
     #Connect to the ground truth output port (rbs)
     Vizkit.display localization_frontend.port('reference_pose_samples_out'), :widget =>rbsTruth
 
