@@ -6,33 +6,14 @@ require 'readline'
 
 include Orocos
 
-options = {}
-options[:reference] = "none"
-options[:logging] = "nominal"
-
-OptionParser.new do |opt|
-    opt.banner = <<-EOD
-    usage: exoter_start_all.rb [options] 
-    EOD
-
-    opt.on '-r or --reference=none/vicon/gnss', String, 'set the type of reference system available' do |reference|
-        options[:reference] = reference
-    end
-
-    opt.on '-l or --logging=none/minimum/nominal/all', String, 'set the type of log files you want. Nominal as default' do |logging|
-        options[:logging] = logging
-    end
-
-    opt.on '--help', 'this help message' do
-        puts opt
-       exit 0
-    end
-end.parse!(ARGV)
-
 ## Initialize orocos ##
 Bundles.initialize
 
-Orocos::Process.run 'exoter_control', 'exoter_groundtruth' do
+## Transformation for the transformer
+Bundles.transformer.load_conf(Bundles.find_file('config', 'transforms_scripts.rb'))
+
+## Execute the task 'platform_driver::Task' ##
+Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtruth' do
 
     # setup platform_driver
     puts "Setting up platform_driver"
@@ -55,13 +36,6 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth' do
     command_joint_dispatcher.configure
     puts "done"
 
-    # setup exoter locomotion_control
-    puts "Setting up locomotion_control"
-    locomotion_control = Orocos.name_service.get 'locomotion_control'
-    Orocos.conf.apply(locomotion_control, ['default'], :override => true)
-    locomotion_control.configure
-    puts "done"
-
     # setup exoter ptu_control
     puts "Setting up ptu_control"
     ptu_control = Orocos.name_service.get 'ptu_control'
@@ -69,31 +43,43 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth' do
     ptu_control.configure
     puts "done"
 
-    if options[:reference].casecmp("vicon").zero?
-        puts "[INFO] Vicon Ground Truth system available"
-        # setup exoter ptu_control
-        puts "Setting up vicon"
-        vicon = Orocos.name_service.get 'vicon'
-        Orocos.conf.apply(vicon, ['default', 'exoter'], :override => true)
-        vicon.configure
-        puts "done"
-    else
-        puts "[INFO] No Ground Truth system available"
-    end
+    # setup exoter wheel_walking_control
+    puts "Setting up wheel_walking_control"
+    wheel_walking_control = Orocos.name_service.get 'wheel_walking_control'
+    Orocos.conf.apply(wheel_walking_control, ['default'])
+    wheel_walking_control.configure
+    puts "done"
 
+    # setup vicon
+    puts "Setting up vicon"
+    vicon = Orocos.name_service.get 'vicon'
+    Orocos.conf.apply(vicon, ['default', 'exoter'], :override => true)
+    vicon.configure
+    puts "done"
+
+    # setup exoter_odometry
+    puts "Setting up imu_stim300"
+    imu_stim300 = Orocos.name_service.get 'imu_stim300'
+    Orocos.conf.apply(imu_stim300, ['default', 'ExoTer','ESTEC','stim300_5g'], :override => true)
+    imu_stim300.configure
+    puts "done"
+
+    joystick = Orocos.name_service.get 'joystick'
 
     # Log all ports
     Orocos.log_all_ports
 
+    # Connect ports
     puts "Connecting ports"
+
     # Connect ports: platform_driver to read_joint_dispatcher
     platform_driver.joints_readings.connect_to read_joint_dispatcher.joints_readings
 
-    # Connect ports: read_joint_dispatcher to locomotion_control
-    read_joint_dispatcher.motors_samples.connect_to locomotion_control.joints_readings
+    # Connect ports: read_joint_dispatcher to wheel_walking_control
+    read_joint_dispatcher.joints_samples.connect_to wheel_walking_control.joint_readings
 
-    # Connect ports: locomotion_control to command_joint_dispatcher
-    locomotion_control.joints_commands.connect_to command_joint_dispatcher.joints_commands
+    # Connect ports: wheel_walking_control to command_joint_dispatcher
+    wheel_walking_control.joint_commands.connect_to command_joint_dispatcher.joints_commands
 
     # Connect ports: command_joint_dispatcher to platform_driver
     command_joint_dispatcher.motors_commands.connect_to platform_driver.joints_commands
@@ -101,22 +87,24 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth' do
     # Connect ports: read_joint_dispatcher to ptu_control
     read_joint_dispatcher.ptu_samples.connect_to ptu_control.ptu_samples
 
+    # Connect ports: joystick raw commands to wheel_walking_control
+    joystick.raw_command.connect_to wheel_walking_control.joystick_commands
+
     # Connect ports: ptu_control to command_joint_dispatcher
     ptu_control.ptu_commands_out.connect_to command_joint_dispatcher.ptu_commands
     puts "done"
+
 
     # Start the tasks
     platform_driver.start
     read_joint_dispatcher.start
     command_joint_dispatcher.start
-    locomotion_control.start
+    wheel_walking_control.start
     ptu_control.start
-    if options[:reference].casecmp("vicon").zero?
-        vicon.start
-    end
+    vicon.start
+    #imu_stim300.start
+
 
     Readline::readline("Press ENTER to exit\n") do
     end
-
 end
-

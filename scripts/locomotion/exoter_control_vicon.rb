@@ -6,33 +6,10 @@ require 'readline'
 
 include Orocos
 
-options = {}
-options[:reference] = "none"
-options[:logging] = "nominal"
-
-OptionParser.new do |opt|
-    opt.banner = <<-EOD
-    usage: exoter_start_all.rb [options] 
-    EOD
-
-    opt.on '-r or --reference=none/vicon/gnss', String, 'set the type of reference system available' do |reference|
-        options[:reference] = reference
-    end
-
-    opt.on '-l or --logging=none/minimum/nominal/all', String, 'set the type of log files you want. Nominal as default' do |logging|
-        options[:logging] = logging
-    end
-
-    opt.on '--help', 'this help message' do
-        puts opt
-       exit 0
-    end
-end.parse!(ARGV)
-
 ## Initialize orocos ##
 Bundles.initialize
 
-Orocos::Process.run 'exoter_control', 'exoter_groundtruth' do
+Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_proprioceptive' do
 
     # setup platform_driver
     puts "Setting up platform_driver"
@@ -69,17 +46,19 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth' do
     ptu_control.configure
     puts "done"
 
-    if options[:reference].casecmp("vicon").zero?
-        puts "[INFO] Vicon Ground Truth system available"
-        # setup exoter ptu_control
-        puts "Setting up vicon"
-        vicon = Orocos.name_service.get 'vicon'
-        Orocos.conf.apply(vicon, ['default', 'exoter'], :override => true)
-        vicon.configure
-        puts "done"
-    else
-        puts "[INFO] No Ground Truth system available"
-    end
+    # setup vicon
+    puts "Setting up vicon"
+    vicon = Orocos.name_service.get 'vicon'
+    Orocos.conf.apply(vicon, ['default', 'exoter'], :override => true)
+    vicon.configure
+    puts "done"
+    
+    # setup imu_stim300 
+    puts "Setting up imu_stim300"
+    imu_stim300 = Orocos.name_service.get 'imu_stim300'
+    Orocos.conf.apply(imu_stim300, ['default', 'ExoTer','ESTEC','stim300_5g'], :override => true)
+    imu_stim300.configure
+    puts "done"
 
 
     # Log all ports
@@ -111,9 +90,8 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth' do
     command_joint_dispatcher.start
     locomotion_control.start
     ptu_control.start
-    if options[:reference].casecmp("vicon").zero?
-        vicon.start
-    end
+    vicon.start
+    imu_stim300.start
 
     Readline::readline("Press ENTER to exit\n") do
     end

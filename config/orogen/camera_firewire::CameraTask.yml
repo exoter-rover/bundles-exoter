@@ -92,10 +92,10 @@ whitebalance_auto_rate: 100
 # Sets a range of scene color changes in which the automatic whitebalance will not respond.
 whitebalance_auto_threshold: 5
 # Blue gain expressed as a percentage of the camera default setting.
-whitebalance_blue: 100
+whitebalance_blue: 580
 # whitebalance mode (auto, manual, auto_once, none)
 whitebalance_mode: auto
 # Red gain expressed as a percentage of the camera default setting.
-whitebalance_red: 100
+whitebalance_red: 650
 # width of the camera frame
 width: 1024
