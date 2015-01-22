@@ -194,13 +194,16 @@ Vizkit.vizkit3d_widget.setPluginDataFrame("body", c0RR)
 
 
 
-# Joints Dispatcher
-read_joint_dispatcher = Orocos::Async.proxy 'read_joint_dispatcher'
+# Joints Dispatcher or Localization FrontEnd
+#read_joint_dispatcher = Orocos::Async.proxy 'read_joint_dispatcher'
+localization_frontend = Orocos::Async.proxy 'localization_frontend'
 
-read_joint_dispatcher.on_reachable do
+#read_joint_dispatcher.on_reachable do
+localization_frontend.on_reachable do
 
     #Joints positions
-    read_joint_dispatcher.port('joints_samples').on_data do |joints,_|
+    #read_joint_dispatcher.port('joints_samples').on_data do |joints,_|
+    localization_frontend.port('joints_samples_out').on_data do |joints,_|
 
         joints.names.push("dummy")
         joints.elements.push(Types::Base::JointState.new(:speed=> 0.00, :position => 0.00))
