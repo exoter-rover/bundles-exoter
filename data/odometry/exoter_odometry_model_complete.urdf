@@ -1,0 +1,720 @@
+<?xml version="1.0"?>
+<!-- URDF for ExoTer rover -->
+<!-- Author: Javier Hidalgo-Carrio, javier.hidalgo-carrio@dfki.de DFKI, Robotic Innovation Centre -->
+<!-- Version: 0.1 -->
+<!-- February 2014 -->
+
+<robot name="exoter">
+
+<!-- Link definitions -->
+<!-- Base Link of the Rover, main body of the rover, which looks like a Box -->
+<link name="body_base">
+</link>
+
+
+<!-- Rear Link definition -->
+<link name="rear_bogie">
+</link>
+
+<!-- Left Link definition -->
+<link name="left_bogie">
+</link>
+
+<!-- Right Link definition -->
+<link name="right_bogie">
+</link>
+
+
+<!-- FL Hinge definition -->
+<link name="fl_hinge">
+</link>
+
+<!-- FR Hinge definition -->
+<link name="fr_hinge">
+</link>
+
+
+<!-- ML Hinge definition -->
+<link name="ml_hinge">
+</link>
+
+
+<!-- MR Hinge definition -->
+<link name="mr_hinge">
+</link>
+
+<!-- Rear Right Hinge definition -->
+<link name="rl_hinge">
+</link>
+
+<!-- Rear Left Hinge definition -->
+<link name="rr_hinge">
+</link>
+
+<!-- Front Left Motor block -->
+<link name="fl_motor">
+</link>
+
+<!-- Front Right Motor block -->
+<link name="fr_motor">
+</link>
+
+<!-- Rear Left Motor block -->
+<link name="rl_motor">
+</link>
+
+<!-- Rear Right Motor block -->
+<link name="rr_motor">
+</link>
+
+<!-- Middle Left Motor block -->
+<link name="ml_motor">
+</link>
+
+<!-- Middle Right Motor block -->
+<link name="mr_motor">
+</link>
+
+
+<!-- Front Left Steer -->
+<link name="fl_fork">
+</link>
+
+<!-- Front Right Steer -->
+<link name="fr_fork">
+</link>
+
+<!-- Rear Left Steer -->
+<link name="rl_fork">
+</link>
+
+<!-- Rear Right Steer -->
+<link name="rr_fork">
+</link>
+
+<!-- Front Left Wheel -->
+<link name="fl_wheel">
+</link>
+
+<!-- Front Right Wheel -->
+<link name="fr_wheel">
+</link>
+
+<!-- Middle Left Wheel -->
+<link name="ml_wheel">
+</link>
+
+<!-- Middle Right Wheel -->
+<link name="mr_wheel">
+</link>
+
+<!-- Rear Left Wheel -->
+<link name="rl_wheel">
+</link>
+
+<!-- Rear Right Wheel -->
+<link name="rr_wheel">
+</link>
+
+<!-- Front Left Virtual Links -->
+<link name="fl_ground">
+</link>
+
+<link name="fl_displacement">
+</link>
+
+<link name="fl_segment_slipx">
+</link>
+
+<link name="fl_segment_slipy">
+</link>
+
+<link name="fl_segment_slipz">
+</link>
+
+<!-- Front Right Virtual Links -->
+<link name="fr_ground">
+</link>
+
+<link name="fr_displacement">
+</link>
+
+<link name="fr_segment_slipx">
+</link>
+
+<link name="fr_segment_slipy">
+</link>
+
+<link name="fr_segment_slipz">
+</link>
+
+<!-- Middle Left Virtual Links -->
+<link name="ml_ground">
+</link>
+
+<link name="ml_displacement">
+</link>
+
+<link name="ml_segment_slipx">
+</link>
+
+<link name="ml_segment_slipy">
+</link>
+
+<link name="ml_segment_slipz">
+</link>
+
+<!-- Middle Right Virtual Links -->
+<link name="mr_ground">
+</link>
+
+<link name="mr_displacement">
+</link>
+
+<link name="mr_segment_slipx">
+</link>
+
+<link name="mr_segment_slipy">
+</link>
+
+<link name="mr_segment_slipz">
+</link>
+
+<!-- Rear Left Virtual Links -->
+<link name="rl_ground">
+</link>
+
+<link name="rl_displacement">
+</link>
+
+<link name="rl_segment_slipx">
+</link>
+
+<link name="rl_segment_slipy">
+</link>
+
+<link name="rl_segment_slipz">
+</link>
+
+<!-- Rear Right Virtual Links -->
+<link name="rr_ground">
+</link>
+
+<link name="rr_displacement">
+</link>
+
+<link name="rr_segment_slipx">
+</link>
+
+<link name="rr_segment_slipy">
+</link>
+
+<link name="rr_segment_slipz">
+</link>
+
+<!-- ====================Joint Descriptions =================================================================================-->
+
+<!-- rear joint that connects base_link and rear_link with a revolute joint -->
+<joint name="rear_passive" type="continuous">
+    <parent link="body_base"/>
+    <child link="rear_bogie"/>
+    <origin xyz="-0.265 0 0" rpy="0.0 0.0 0.00"/> 
+    <axis xyz="1 0 0 " /> <!-- revolute rotation about Y axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- right joint that connects base_link and right_link with a revolute joint -->
+<joint name="right_passive" type="continuous">
+    <parent link="body_base"/>
+    <child link="right_bogie"/>
+    <origin xyz="0.1325 -0.223 0" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- left joint that connects base_link and front_link with a revolute joint -->
+<joint name="left_passive" type="continuous">
+    <parent link="body_base"/>
+    <child link="left_bogie"/>
+    <origin xyz="0.1325 0.223 0" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- front left joint that connects left_bogie and fl_hinge with a mimic joint -->
+<joint name="fl_mimic" type="continuous">
+    <parent link="left_bogie"/>
+    <child link="fl_hinge"/>
+    <origin xyz="0.1325 0 0" rpy="0 0.0 0"/>
+    <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
+    <mimic joint="left_passive" multiplier="-1" offset="0"/>
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- front right joint that connects right_bogie and fr_hinge with a mimic joint -->
+<joint name="fr_mimic" type="continuous">
+    <parent link="right_bogie"/>
+    <child link="fr_hinge"/>
+    <origin xyz="0.1325 0 0" rpy="0 0.0 0"/>
+    <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
+    <mimic joint="right_passive" multiplier="-1" offset="0"/>
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- middle left joint that connects left_bogie and ml_hinge with a mimic joint -->
+<joint name="ml_mimic" type="continuous">
+    <parent link="left_bogie"/>
+    <child link="ml_hinge"/>
+    <origin xyz="-0.1325 0 0" rpy="0 0.0 0"/>
+    <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
+    <mimic joint="left_passive" multiplier="-1" offset="0"/>
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- middle right joint that connects right_bogie and mr_hinge with a mimic joint -->
+<joint name="mr_mimic" type="continuous">
+    <parent link="right_bogie"/>
+    <child link="mr_hinge"/>
+    <origin xyz="-0.1325 0 0" rpy="0 0.0 0"/>
+    <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
+    <mimic joint="right_passive" multiplier="-1" offset="0"/>
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- rear left joint that connects rear_bogie and rl_hinge with a mimic joint -->
+<joint name="rl_mimic" type="continuous">
+    <parent link="rear_bogie"/>
+    <child link="rl_hinge"/>
+    <origin xyz="0.0 0.239 0" rpy="0 0.0 0"/>
+    <axis xyz="1 0 0" /> <!-- revolute rotation about X axis -->
+    <mimic joint="rear_passive" multiplier="-1" offset="0"/>
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- rear right joint that connects rear_bogie and rr_hinge with a mimic joint -->
+<joint name="rr_mimic" type="continuous">
+    <parent link="rear_bogie"/>
+    <child link="rr_hinge"/>
+    <origin xyz="0.0 -0.239 0" rpy="0 0.0 0"/>
+    <axis xyz="1 0 0" /> <!-- revolute rotation about X axis -->
+    <mimic joint="rear_passive" multiplier="-1" offset="0"/>
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- FL Wheel walking joint with a revolute joint -->
+<joint name="fl_walking" type="continuous">
+    <parent link="fl_hinge"/>
+    <child link="fl_motor"/>
+    <origin xyz="0 0.087 -0.005" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
+</joint>
+
+
+<!-- FR Wheel walking joint with a revolute joint -->
+<joint name="fr_walking" type="continuous">
+    <parent link="fr_hinge"/>
+    <child link="fr_motor"/>
+    <origin xyz="0 -0.087 -0.005" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- RL Wheel walking joint with a revolute joint -->
+<joint name="rl_walking" type="continuous">
+    <parent link="rl_hinge"/>
+    <child link="rl_motor"/>
+    <origin xyz="0 0.071 -0.005" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- RR Wheel walking joint with a revolute joint -->
+<joint name="rr_walking" type="continuous">
+    <parent link="rr_hinge"/>
+    <child link="rr_motor"/>
+    <origin xyz="0 -0.071 -0.005" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- ML Wheel walking joint with a revolute joint -->
+<joint name="ml_walking" type="continuous">
+    <parent link="ml_hinge"/>
+    <child link="ml_motor"/>
+    <origin xyz="0 0.087 -0.005" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- MR Wheel walking joint with a revolute joint -->
+<joint name="mr_walking" type="continuous">
+    <parent link="mr_hinge"/>
+    <child link="mr_motor"/>
+    <origin xyz="0 -0.087 -0.005" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- FL Wheel steer joint with a revolute joint -->
+<joint name="fl_steer" type="continuous">
+    <parent link="fl_motor"/>
+    <child link="fl_fork"/>
+    <origin xyz="0 0.0 -0.03" rpy="0 0.00 0"/> 
+    <axis xyz="0 0 1" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- FR Wheel steer joint with a revolute joint -->
+<joint name="fr_steer" type="continuous">
+    <parent link="fr_motor"/>
+    <child link="fr_fork"/>
+    <origin xyz="0 0.0 -0.03" rpy="0 0.00 0"/> 
+    <axis xyz="0 0 1" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- RL Wheel steer joint with a revolute joint -->
+<joint name="rl_steer" type="continuous">
+    <parent link="rl_motor"/>
+    <child link="rl_fork"/>
+    <origin xyz="0 0.0 -0.03" rpy="0 0.00 0"/> 
+    <axis xyz="0 0 1" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- RR Wheel steer joint with a revolute joint -->
+<joint name="rr_steer" type="continuous">
+    <parent link="rr_motor"/>
+    <child link="rr_fork"/>
+    <origin xyz="0 0.0 -0.03" rpy="0 0.00 0"/> 
+    <axis xyz="0 0 1" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- FL Wheel drive joint with a revolute joint -->
+<joint name="fl_drive" type="continuous">
+    <parent link="fl_fork"/>
+    <child link="fl_wheel"/>
+    <origin xyz="0 0.0 -0.0953" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- FR Wheel drive joint with a revolute joint -->
+<joint name="fr_drive" type="continuous">
+    <parent link="fr_fork"/>
+    <child link="fr_wheel"/>
+    <origin xyz="0 0.0 -0.0953" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- ML Wheel drive joint with a revolute joint -->
+<joint name="ml_drive" type="continuous">
+    <parent link="ml_motor"/>
+    <child link="ml_wheel"/>
+    <origin xyz="0 0.0 -0.1253" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- MR Wheel drive joint with a revolute joint -->
+<joint name="mr_drive" type="continuous">
+    <parent link="mr_motor"/>
+    <child link="mr_wheel"/>
+    <origin xyz="0 0.0 -0.1253" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- RL Wheel drive joint with a revolute joint -->
+<joint name="rl_drive" type="continuous">
+    <parent link="rl_fork"/>
+    <child link="rl_wheel"/>
+    <origin xyz="0 0.0 -0.0953" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- RR Wheel drive joint with a revolute joint -->
+<joint name="rr_drive" type="continuous">
+    <parent link="rr_fork"/>
+    <child link="rr_wheel"/>
+    <origin xyz="0 0.0 -0.0953" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- FL Contact joint with a revolute joint -->
+<joint name="fl_contact" type="continuous">
+    <parent link="fl_wheel"/>
+    <child link="fl_ground"/>
+    <origin xyz="0 0.0 -0.072703" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- FR Contact joint with a revolute joint -->
+<joint name="fr_contact" type="continuous">
+    <parent link="fr_wheel"/>
+    <child link="fr_ground"/>
+    <origin xyz="0 0.0 -0.072703" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- ML Contact joint with a revolute joint -->
+<joint name="ml_contact" type="continuous">
+    <parent link="ml_wheel"/>
+    <child link="ml_ground"/>
+    <origin xyz="0 0.0 -0.072703" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- MR Contact joint with a revolute joint -->
+<joint name="mr_contact" type="continuous">
+    <parent link="mr_wheel"/>
+    <child link="mr_ground"/>
+    <origin xyz="0 0.0 -0.072703" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- RL Contact joint with a revolute joint -->
+<joint name="rl_contact" type="continuous">
+    <parent link="rl_wheel"/>
+    <child link="rl_ground"/>
+    <origin xyz="0 0.0 -0.072703" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- RR Contact joint with a revolute joint -->
+<joint name="rr_contact" type="continuous">
+    <parent link="rr_wheel"/>
+    <child link="rr_ground"/>
+    <origin xyz="0 0.0 -0.072703" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- FL Wheel Translation joint with a prismatic joint -->
+<joint name="fl_translation" type="prismatic">
+    <parent link="fl_ground"/>
+    <child link="fl_displacement"/>
+    <origin xyz="0 0.0 0.0" rpy="0 0.00 0"/> 
+    <axis xyz="1 0 0" /> <!-- prismatic about x axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- FR Wheel Translation joint with a prismatic joint -->
+<joint name="fr_translation" type="prismatic">
+    <parent link="fr_ground"/>
+    <child link="fr_displacement"/>
+    <origin xyz="0 0.0 0.0" rpy="0 0.00 0"/> 
+    <axis xyz="1 0 0" /> <!-- prismatic about x axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- ML Wheel Translation joint with a prismatic joint -->
+<joint name="ml_translation" type="prismatic">
+    <parent link="ml_ground"/>
+    <child link="ml_displacement"/>
+    <origin xyz="0 0.0 0.0" rpy="0 0.00 0"/> 
+    <axis xyz="1 0 0" /> <!-- prismatic about x axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- MR Wheel Translation joint with a prismatic joint -->
+<joint name="mr_translation" type="prismatic">
+    <parent link="mr_ground"/>
+    <child link="mr_displacement"/>
+    <origin xyz="0 0.0 0.0" rpy="0 0.00 0"/> 
+    <axis xyz="1 0 0" /> <!-- prismatic about x axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- RL Wheel Translation joint with a prismatic joint -->
+<joint name="rl_translation" type="prismatic">
+    <parent link="rl_ground"/>
+    <child link="rl_displacement"/>
+    <origin xyz="0 0.0 0.0" rpy="0 0.00 0"/> 
+    <axis xyz="1 0 0" /> <!-- prismatic about x axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- RR Wheel Translation joint with a prismatic joint -->
+<joint name="rr_translation" type="prismatic">
+    <parent link="rr_ground"/>
+    <child link="rr_displacement"/>
+    <origin xyz="0 0.0 0.0" rpy="0 0.00 0"/> 
+    <axis xyz="1 0 0" /> <!-- prismatic about x axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- FL Slip X joint with a prismatic joint -->
+<joint name="fl_slipx" type="prismatic">
+    <parent link="fl_displacement"/>
+    <child link="fl_segment_slipx"/>
+    <origin xyz="0 0.0 0" rpy="0 0.00 0"/> 
+    <axis xyz="1 0 0" /> <!-- prismatic about x axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- FR Slip X joint with a prismatic joint -->
+<joint name="fr_slipx" type="prismatic">
+    <parent link="fr_displacement"/>
+    <child link="fr_segment_slipx"/>
+    <origin xyz="0 0.0 0" rpy="0 0.00 0"/> 
+    <axis xyz="1 0 0" /> <!-- prismatic about x axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- ML Slip X joint with a prismatic joint -->
+<joint name="ml_slipx" type="prismatic">
+    <parent link="ml_displacement"/>
+    <child link="ml_segment_slipx"/>
+    <origin xyz="0 0.0 0" rpy="0 0.00 0"/> 
+    <axis xyz="1 0 0" /> <!-- prismatic about x axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- MR Slip X joint with a prismatic joint -->
+<joint name="mr_slipx" type="prismatic">
+    <parent link="mr_displacement"/>
+    <child link="mr_segment_slipx"/>
+    <origin xyz="0 0.0 0" rpy="0 0.00 0"/> 
+    <axis xyz="1 0 0" /> <!-- prismatic about x axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- RL Slip X joint with a prismatic joint -->
+<joint name="rl_slipx" type="prismatic">
+    <parent link="rl_displacement"/>
+    <child link="rl_segment_slipx"/>
+    <origin xyz="0 0.0 0" rpy="0 0.00 0"/> 
+    <axis xyz="1 0 0" /> <!-- prismatic about x axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- RR Slip X joint with a prismatic joint -->
+<joint name="rr_slipx" type="prismatic">
+    <parent link="rr_displacement"/>
+    <child link="rr_segment_slipx"/>
+    <origin xyz="0 0.0 0" rpy="0 0.00 0"/> 
+    <axis xyz="1 0 0" /> <!-- prismatic about x axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- FL Slip Y joint with a prismatic joint -->
+<joint name="fl_slipy" type="prismatic">
+    <parent link="fl_segment_slipx"/>
+    <child link="fl_segment_slipy"/>
+    <origin xyz="0 0.0 0" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- prismatic about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- FR Slip Y joint with a prismatic joint -->
+<joint name="fr_slipy" type="prismatic">
+    <parent link="fr_segment_slipx"/>
+    <child link="fr_segment_slipy"/>
+    <origin xyz="0 0.0 0" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- prismatic about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- ML Slip Y joint with a prismatic joint -->
+<joint name="ml_slipy" type="prismatic">
+    <parent link="ml_segment_slipx"/>
+    <child link="ml_segment_slipy"/>
+    <origin xyz="0 0.0 0" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- prismatic about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- MR Slip Y joint with a prismatic joint -->
+<joint name="mr_slipy" type="prismatic">
+    <parent link="mr_segment_slipx"/>
+    <child link="mr_segment_slipy"/>
+    <origin xyz="0 0.0 0" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- prismatic about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- RL Slip Y joint with a prismatic joint -->
+<joint name="rl_slipy" type="prismatic">
+    <parent link="rl_segment_slipx"/>
+    <child link="rl_segment_slipy"/>
+    <origin xyz="0 0.0 0" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- prismatic about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- RR Slip Y joint with a prismatic joint -->
+<joint name="rr_slipy" type="prismatic">
+    <parent link="rr_segment_slipx"/>
+    <child link="rr_segment_slipy"/>
+    <origin xyz="0 0.0 0" rpy="0 0.00 0"/> 
+    <axis xyz="0 1 0" /> <!-- prismatic about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- FL Slip Z joint with a prismatic joint -->
+<joint name="fl_slipz" type="continuous">
+    <parent link="fl_segment_slipy"/>
+    <child link="fl_segment_slipz"/>
+    <origin xyz="0 0.0 0" rpy="0 0.00 0"/> 
+    <axis xyz="0 0 1" /> <!-- prismatic about z axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- FR Slip Z joint with a prismatic joint -->
+<joint name="fr_slipz" type="continuous">
+    <parent link="fr_segment_slipy"/>
+    <child link="fr_segment_slipz"/>
+    <origin xyz="0 0.0 0" rpy="0 0.00 0"/> 
+    <axis xyz="0 0 1" /> <!-- prismatic about z axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- ML Slip Z joint with a prismatic joint -->
+<joint name="ml_slipz" type="continuous">
+    <parent link="ml_segment_slipy"/>
+    <child link="ml_segment_slipz"/>
+    <origin xyz="0 0.0 0" rpy="0 0.00 0"/> 
+    <axis xyz="0 0 1" /> <!-- prismatic about z axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- MR Slip Z joint with a prismatic joint -->
+<joint name="mr_slipz" type="continuous">
+    <parent link="mr_segment_slipy"/>
+    <child link="mr_segment_slipz"/>
+    <origin xyz="0 0.0 0" rpy="0 0.00 0"/> 
+    <axis xyz="0 0 1" /> <!-- prismatic about z axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- RL Slip Z joint with a prismatic joint -->
+<joint name="rl_slipz" type="continuous">
+    <parent link="rl_segment_slipy"/>
+    <child link="rl_segment_slipz"/>
+    <origin xyz="0 0.0 0" rpy="0 0.00 0"/> 
+    <axis xyz="0 0 1" /> <!-- prismatic about z axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+<!-- RR Slip Z joint with a prismatic joint -->
+<joint name="rr_slipz" type="continuous">
+    <parent link="rr_segment_slipy"/>
+    <child link="rr_segment_slipz"/>
+    <origin xyz="0 0.0 0" rpy="0 0.00 0"/> 
+    <axis xyz="0 0 1" /> <!-- prismatic about z axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+</joint>
+
+</robot>
+
