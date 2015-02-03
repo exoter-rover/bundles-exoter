@@ -398,7 +398,7 @@
     <child link="fl_wheel"/>
     <origin xyz="0 0.0 -0.0953" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
-    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+    <limit lower="-3.14" upper="3.14" velocity="60.28" effort="100"/>
 </joint>
 
 <!-- FR Wheel drive joint with a revolute joint -->
@@ -407,7 +407,7 @@
     <child link="fr_wheel"/>
     <origin xyz="0 0.0 -0.0953" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
-    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+    <limit lower="-3.14" upper="3.14" velocity="60.28" effort="100"/>
 </joint>
 
 <!-- ML Wheel drive joint with a revolute joint -->
@@ -416,7 +416,7 @@
     <child link="ml_wheel"/>
     <origin xyz="0 0.0 -0.1253" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
-    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+    <limit lower="-3.14" upper="3.14" velocity="60.28" effort="100"/>
 </joint>
 
 <!-- MR Wheel drive joint with a revolute joint -->
@@ -425,7 +425,7 @@
     <child link="mr_wheel"/>
     <origin xyz="0 0.0 -0.1253" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
-    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+    <limit lower="-3.14" upper="3.14" velocity="60.28" effort="100"/>
 </joint>
 
 <!-- RL Wheel drive joint with a revolute joint -->
@@ -434,7 +434,7 @@
     <child link="rl_wheel"/>
     <origin xyz="0 0.0 -0.0953" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
-    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+    <limit lower="-3.14" upper="3.14" velocity="60.28" effort="100"/>
 </joint>
 
 <!-- RR Wheel drive joint with a revolute joint -->
@@ -443,7 +443,7 @@
     <child link="rr_wheel"/>
     <origin xyz="0 0.0 -0.0953" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
-    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+    <limit lower="-3.14" upper="3.14" velocity="60.28" effort="100"/>
 </joint>
 
 <!-- FL Contact joint with a revolute joint -->
@@ -506,7 +506,7 @@
     <child link="fl_displacement"/>
     <origin xyz="0 0.0 0.0" rpy="0 0.00 0"/> 
     <axis xyz="1 0 0" /> <!-- prismatic about x axis -->
-    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+    <limit lower="-3.14" upper="3.14" velocity="10.00" effort="100"/>
 </joint>
 
 <!-- FR Wheel Translation joint with a prismatic joint -->
@@ -515,7 +515,7 @@
     <child link="fr_displacement"/>
     <origin xyz="0 0.0 0.0" rpy="0 0.00 0"/> 
     <axis xyz="1 0 0" /> <!-- prismatic about x axis -->
-    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+    <limit lower="-3.14" upper="3.14" velocity="10.00" effort="100"/>
 </joint>
 
 <!-- ML Wheel Translation joint with a prismatic joint -->
@@ -524,7 +524,7 @@
     <child link="ml_displacement"/>
     <origin xyz="0 0.0 0.0" rpy="0 0.00 0"/> 
     <axis xyz="1 0 0" /> <!-- prismatic about x axis -->
-    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+    <limit lower="-3.14" upper="3.14" velocity="10.00" effort="100"/>
 </joint>
 
 <!-- MR Wheel Translation joint with a prismatic joint -->
@@ -533,7 +533,7 @@
     <child link="mr_displacement"/>
     <origin xyz="0 0.0 0.0" rpy="0 0.00 0"/> 
     <axis xyz="1 0 0" /> <!-- prismatic about x axis -->
-    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+    <limit lower="-3.14" upper="3.14" velocity="10.00" effort="100"/>
 </joint>
 
 <!-- RL Wheel Translation joint with a prismatic joint -->
@@ -542,7 +542,7 @@
     <child link="rl_displacement"/>
     <origin xyz="0 0.0 0.0" rpy="0 0.00 0"/> 
     <axis xyz="1 0 0" /> <!-- prismatic about x axis -->
-    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+    <limit lower="-3.14" upper="3.14" velocity="10.00" effort="100"/>
 </joint>
 
 <!-- RR Wheel Translation joint with a prismatic joint -->
@@ -551,7 +551,7 @@
     <child link="rr_displacement"/>
     <origin xyz="0 0.0 0.0" rpy="0 0.00 0"/> 
     <axis xyz="1 0 0" /> <!-- prismatic about x axis -->
-    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
+    <limit lower="-3.14" upper="3.14" velocity="10.00" effort="100"/>
 </joint>
 
 <!-- FL Slip X joint with a prismatic joint -->
