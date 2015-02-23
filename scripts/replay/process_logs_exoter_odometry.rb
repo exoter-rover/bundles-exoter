@@ -119,11 +119,11 @@ Bundles.run 'exoter_control',
     end
 
     if options[:reference].casecmp("vicon").zero?
-        log_replay.vicon.pose_samples.connect_to(localization_frontend.reference_pose_samples, :type => :buffer, :size => 200)
+        log_replay.vicon.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 200)
     end
 
     if options[:reference].casecmp("gnss").zero?
-        log_replay.gnss_trimble.pose_samples.connect_to(localization_frontend.reference_pose_samples, :type => :buffer, :size => 200)
+        log_replay.gnss_trimble.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 200)
     end
 
 

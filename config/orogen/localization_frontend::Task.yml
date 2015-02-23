@@ -18,6 +18,11 @@ reference_source_frame: "body"
 reference_target_frame: "navigation"
 
 # from frame for the transformer
+delta_reference_source_frame: "body"
+# to frame for the transformer
+delta_reference_target_frame: "body_k-1"
+
+# from frame for the transformer
 world_source_frame: "world"
 # to frame for the transformer
 world_target_frame: "world_osg"
@@ -102,8 +107,8 @@ left_frame_period: 0.4
 right_frame_period: 0.4
 # Time in s between point_cloud_samples readings
 point_cloud_samples_period: 0.5
-# Time in s between reference_pose_samples readings
-reference_pose_samples_period: 0.01 #0.01 for vicon 0.1 for gnss
+# Time in s between pose_reference_samples readings
+pose_reference_samples_period: 0.01 #0.01 for vicon 0.1 for gnss
 # Minimum system time in seconds between two updates of the status ports
 transformer_status_period: 0.08
 # Maximum time in seconds the transformer will wait until it starts dropping samples

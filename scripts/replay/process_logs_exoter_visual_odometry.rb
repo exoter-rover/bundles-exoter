@@ -75,10 +75,10 @@ Orocos::Process.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     localization_frontend = Orocos.name_service.get 'localization_frontend'
     Orocos.conf.apply(localization_frontend, ['default', 'hamming1hzsampling12hz'], :override => true)
     if options[:reference].casecmp("vicon").zero?
-        localization_frontend.reference_pose_samples_period = 0.01 # Vicon is normally at 100Hz
+        localization_frontend.pose_reference_samples_period = 0.01 # Vicon is normally at 100Hz
     end
     if options[:reference].casecmp("gnss").zero?
-        localization_frontend.reference_pose_samples_period = 0.1 # GNSS/GPS is normally at 10Hz
+        localization_frontend.pose_reference_samples_period = 0.1 # GNSS/GPS is normally at 10Hz
     end
 
     STDERR.puts "done"
@@ -127,11 +127,11 @@ Orocos::Process.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     end
 
     if options[:reference].casecmp("vicon").zero?
-        log_replay.vicon.pose_samples.connect_to(localization_frontend.reference_pose_samples, :type => :buffer, :size => 200)
+        log_replay.vicon.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 200)
     end
 
     if options[:reference].casecmp("gnss").zero?
-        log_replay.gnss_trimble.pose_samples.connect_to(localization_frontend.reference_pose_samples, :type => :buffer, :size => 200)
+        log_replay.gnss_trimble.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 200)
     end
 
     log_replay.camera_bb2.left_frame.connect_to(localization_frontend.left_frame, :type => :buffer, :size => 200)

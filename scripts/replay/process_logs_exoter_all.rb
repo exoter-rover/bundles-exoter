@@ -97,10 +97,10 @@ Bundles.run 'exoter_control',
     # Set configuration files for slam
     Orocos.conf.apply(localization_frontend, ['default', 'hamming1hzsampling12hz'], :override => true)
     if options[:reference].casecmp("vicon").zero?
-        localization_frontend.reference_pose_samples_period = 0.01 # Vicon is normally at 100Hz
+        localization_frontend.pose_reference_samples_period = 0.01 # Vicon is normally at 100Hz
     end
     if options[:reference].casecmp("gnss").zero?
-        localization_frontend.reference_pose_samples_period = 0.1 # GNSS/GPS is normally at 10Hz
+        localization_frontend.pose_reference_samples_period = 0.1 # GNSS/GPS is normally at 10Hz
     end
 
     Orocos.conf.apply(exoter_odometry, ['default', 'bessel50'], :override => true)
@@ -174,11 +174,11 @@ Bundles.run 'exoter_control',
 
 
     if options[:reference].casecmp("vicon").zero?
-        log_replay.vicon.pose_samples.connect_to(localization_frontend.reference_pose_samples, :type => :buffer, :size => 200)
+        log_replay.vicon.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 200)
     end
 
     if options[:reference].casecmp("gnss").zero?
-        log_replay.gnss_trimble.pose_samples.connect_to(localization_frontend.reference_pose_samples, :type => :buffer, :size => 200)
+        log_replay.gnss_trimble.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 200)
     end
 
     log_replay.camera_tof.pointcloud.connect_to(localization_frontend.point_cloud_samples, :type => :buffer, :size => 200)

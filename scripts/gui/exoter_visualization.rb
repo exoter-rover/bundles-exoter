@@ -241,10 +241,10 @@ localization_frontend = Orocos::Async.proxy 'localization_frontend'
 
 localization_frontend.on_reachable do
     #Connect to the ground truth output port (rbs)
-    Vizkit.display localization_frontend.port('reference_pose_samples_out'), :widget =>rbsTruth
+    Vizkit.display localization_frontend.port('pose_reference_samples_out'), :widget =>rbsTruth
 
     #Connect to the ground truth output port (trajectory visualizer)
-    localization_frontend.port('reference_pose_samples_out').on_data do |ground_truth,_|
+    localization_frontend.port('pose_reference_samples_out').on_data do |ground_truth,_|
         truthTrajectory.updateTrajectory(ground_truth.position)
     end
 end
