@@ -13,8 +13,9 @@ filter_configuration:
 # IMU port in ExoTer
 port: '/dev/ttyUSB0'
 revision: :REV_D
-timeout: 8 #in milliseconds
+timeout: 0.008 #in seconds
 use_filter: true
+compensate_inertial_samples_out: false
 
 --- name:Bremen
 # Localization properties related to the geographic place (i.e.: latitude, longitude, magnetic declination).
