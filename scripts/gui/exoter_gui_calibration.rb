@@ -124,7 +124,7 @@ localization_frontend.on_reachable do
     end
 
     #Connect to the ground truth output port (rbs)
-    Vizkit.display localization_frontend.port('reference_pose_samples_out'), :widget =>rbsTruth
+    Vizkit.display localization_frontend.port('pose_reference_samples_out'), :widget =>rbsTruth
 
 end
 

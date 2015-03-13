@@ -120,6 +120,7 @@
     <child link="00_link"/>
     <origin xyz="0.1325 0.223 0" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 
@@ -131,6 +132,7 @@
     <origin xyz="0.1325 0 0" rpy="0 0.0 0"/>
     <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
     <mimic joint="00_joint" multiplier="-1" offset="0"/>
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- FL Wheel walking joint with a revolute joint -->
@@ -139,6 +141,7 @@
     <child link="0_1_link"/>
     <origin xyz="0 0.087 -0.005" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- FL Wheel steer joint with a revolute joint -->
@@ -147,6 +150,7 @@
     <child link="0_2_link"/>
     <origin xyz="0 0.0 -0.03" rpy="0 0.00 0"/> 
     <axis xyz="0 0 1" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- FL Wheel drive joint with a revolute joint -->
@@ -155,6 +159,7 @@
     <child link="0_3_link"/>
     <origin xyz="0 0.0 -0.0953" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- right joint that connects base_link and right_link with a revolute joint -->
@@ -163,6 +168,7 @@
     <child link="10_link"/>
     <origin xyz="0.1325 -0.223 0" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- front right joint that connects 1_link and 1_0_link with a mimic joint -->
@@ -172,6 +178,7 @@
     <origin xyz="0.1325 0 0" rpy="0 0.0 0"/>
     <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
     <mimic joint="01_joint" multiplier="-1" offset="0"/>
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- FR Wheel walking joint with a revolute joint -->
@@ -180,6 +187,7 @@
     <child link="1_1_link"/>
     <origin xyz="0 -0.087 -0.005" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- FR Wheel steer joint with a revolute joint -->
@@ -188,6 +196,7 @@
     <child link="1_2_link"/>
     <origin xyz="0 0.0 -0.03" rpy="0 0.00 0"/> 
     <axis xyz="0 0 1" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- FR Wheel drive joint with a revolute joint -->
@@ -196,6 +205,7 @@
     <child link="1_3_link"/>
     <origin xyz="0 0.0 -0.0953" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- middle left joint that connects 0_link and 2_0_link with a mimic joint -->
@@ -205,6 +215,7 @@
     <origin xyz="-0.1325 0 0" rpy="0 0.0 0"/>
     <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
     <mimic joint="00_joint" multiplier="-1" offset="0"/>
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- ML Wheel walking joint with a revolute joint -->
@@ -213,6 +224,7 @@
     <child link="2_1_link"/>
     <origin xyz="0 0.087 -0.005" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- ML Wheel drive joint with a revolute joint -->
@@ -221,6 +233,7 @@
     <child link="2_2_link"/>
     <origin xyz="0 0.0 -0.1253" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- middle right joint that connects 1_link and 3_0_link with a mimic joint -->
@@ -230,6 +243,7 @@
     <origin xyz="-0.1325 0 0" rpy="0 0.0 0"/>
     <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
     <mimic joint="01_joint" multiplier="-1" offset="0"/>
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- MR Wheel walking joint with a revolute joint -->
@@ -238,6 +252,7 @@
     <child link="3_1_link"/>
     <origin xyz="0 -0.087 -0.005" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- MR Wheel drive joint with a revolute joint -->
@@ -246,6 +261,7 @@
     <child link="3_2_link"/>
     <origin xyz="0 0.0 -0.1253" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 
@@ -255,6 +271,7 @@
     <child link="40_link"/>
     <origin xyz="-0.265 0 0" rpy="0.0 0.0 0.00"/> 
     <axis xyz="1 0 0 " /> <!-- revolute rotation about Y axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- rear left joint that connects 40_link and 4_0_link with a mimic joint -->
@@ -264,6 +281,7 @@
     <origin xyz="0.0 0.239 0" rpy="0 0.0 0"/>
     <axis xyz="1 0 0" /> <!-- revolute rotation about X axis -->
     <mimic joint="02_joint" multiplier="-1" offset="0"/>
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- RL Wheel walking joint with a revolute joint -->
@@ -272,6 +290,7 @@
     <child link="4_1_link"/>
     <origin xyz="0 0.071 -0.005" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- RL Wheel steer joint with a revolute joint -->
@@ -280,6 +299,7 @@
     <child link="4_2_link"/>
     <origin xyz="0 0.0 -0.03" rpy="0 0.00 0"/> 
     <axis xyz="0 0 1" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- RL Wheel drive joint with a revolute joint -->
@@ -288,6 +308,7 @@
     <child link="4_3_link"/>
     <origin xyz="0 0.0 -0.0953" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 
@@ -298,6 +319,7 @@
     <origin xyz="0.0 -0.239 0" rpy="0 0.0 0"/>
     <axis xyz="1 0 0" /> <!-- revolute rotation about X axis -->
     <mimic joint="02_joint" multiplier="-1" offset="0"/>
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- RR Wheel walking joint with a revolute joint -->
@@ -306,6 +328,7 @@
     <child link="5_1_link"/>
     <origin xyz="0 -0.071 -0.005" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- RR Wheel steer joint with a revolute joint -->
@@ -314,6 +337,7 @@
     <child link="5_2_link"/>
     <origin xyz="0 0.0 -0.03" rpy="0 0.00 0"/> 
     <axis xyz="0 0 1" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- RR Wheel drive joint with a revolute joint -->
@@ -322,6 +346,7 @@
     <child link="5_3_link"/>
     <origin xyz="0 0.0 -0.0953" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 </robot>

@@ -2,7 +2,7 @@
 # General configuration values to run the task
 filter_configuration:
   source_frame_name: 'imu' # transformer names. No transformation convention
-  target_frame_name: 'world' # transformer names. No transformation convention
+  target_frame_name: 'world_osg' # transformer names. No transformation convention
   use_samples_as_theoretical_gravity: true
   use_inclinometers: true
   use_magnetometers: false
@@ -13,8 +13,9 @@ filter_configuration:
 # IMU port in ExoTer
 port: '/dev/ttyUSB0'
 revision: :REV_D
-timeout: 8 #in milliseconds
+timeout: 0.008 #in seconds
 use_filter: true
+compensate_inertial_samples_out: false
 
 --- name:Bremen
 # Localization properties related to the geographic place (i.e.: latitude, longitude, magnetic declination).

@@ -412,6 +412,7 @@
     <child link="rear_bogie"/>
     <origin xyz="-0.265 0 0" rpy="0.0 0.0 0.00"/> 
     <axis xyz="1 0 0 " /> <!-- revolute rotation about Y axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- right joint that connects base_link and right_link with a revolute joint -->
@@ -420,6 +421,7 @@
     <child link="right_bogie"/>
     <origin xyz="0.1325 -0.223 0" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- left joint that connects base_link and front_link with a revolute joint -->
@@ -428,6 +430,7 @@
     <child link="left_bogie"/>
     <origin xyz="0.1325 0.223 0" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- front left joint that connects left_bogie and fl_hinge with a mimic joint -->
@@ -437,6 +440,7 @@
     <origin xyz="0.1325 0 0" rpy="0 0.0 0"/>
     <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
     <mimic joint="left_passive" multiplier="-1" offset="0"/>
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- front right joint that connects right_bogie and fr_hinge with a mimic joint -->
@@ -446,6 +450,7 @@
     <origin xyz="0.1325 0 0" rpy="0 0.0 0"/>
     <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
     <mimic joint="right_passive" multiplier="-1" offset="0"/>
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- middle left joint that connects left_bogie and ml_hinge with a mimic joint -->
@@ -455,6 +460,7 @@
     <origin xyz="-0.1325 0 0" rpy="0 0.0 0"/>
     <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
     <mimic joint="left_passive" multiplier="-1" offset="0"/>
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- middle right joint that connects right_bogie and mr_hinge with a mimic joint -->
@@ -464,6 +470,7 @@
     <origin xyz="-0.1325 0 0" rpy="0 0.0 0"/>
     <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
     <mimic joint="right_passive" multiplier="-1" offset="0"/>
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- rear left joint that connects rear_bogie and rl_hinge with a mimic joint -->
@@ -473,6 +480,7 @@
     <origin xyz="0.0 0.239 0" rpy="0 0.0 0"/>
     <axis xyz="1 0 0" /> <!-- revolute rotation about X axis -->
     <mimic joint="rear_passive" multiplier="-1" offset="0"/>
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- rear right joint that connects rear_bogie and rr_hinge with a mimic joint -->
@@ -482,6 +490,7 @@
     <origin xyz="0.0 -0.239 0" rpy="0 0.0 0"/>
     <axis xyz="1 0 0" /> <!-- revolute rotation about X axis -->
     <mimic joint="rear_passive" multiplier="-1" offset="0"/>
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- FL Wheel walking joint with a revolute joint -->
@@ -490,6 +499,7 @@
     <child link="fl_motor"/>
     <origin xyz="0 0.087 -0.005" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 
@@ -499,6 +509,7 @@
     <child link="fr_motor"/>
     <origin xyz="0 -0.087 -0.005" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- RL Wheel walking joint with a revolute joint -->
@@ -507,6 +518,7 @@
     <child link="rl_motor"/>
     <origin xyz="0 0.071 -0.005" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- RR Wheel walking joint with a revolute joint -->
@@ -515,6 +527,7 @@
     <child link="rr_motor"/>
     <origin xyz="0 -0.071 -0.005" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- ML Wheel walking joint with a revolute joint -->
@@ -523,6 +536,7 @@
     <child link="ml_motor"/>
     <origin xyz="0 0.087 -0.005" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- MR Wheel walking joint with a revolute joint -->
@@ -531,6 +545,7 @@
     <child link="mr_motor"/>
     <origin xyz="0 -0.087 -0.005" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- FL Wheel steer joint with a revolute joint -->
@@ -539,6 +554,7 @@
     <child link="fl_fork"/>
     <origin xyz="0 0.0 -0.03" rpy="0 0.00 0"/> 
     <axis xyz="0 0 1" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- FR Wheel steer joint with a revolute joint -->
@@ -547,6 +563,7 @@
     <child link="fr_fork"/>
     <origin xyz="0 0.0 -0.03" rpy="0 0.00 0"/> 
     <axis xyz="0 0 1" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- RL Wheel steer joint with a revolute joint -->
@@ -555,6 +572,7 @@
     <child link="rl_fork"/>
     <origin xyz="0 0.0 -0.03" rpy="0 0.00 0"/> 
     <axis xyz="0 0 1" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- RR Wheel steer joint with a revolute joint -->
@@ -563,6 +581,7 @@
     <child link="rr_fork"/>
     <origin xyz="0 0.0 -0.03" rpy="0 0.00 0"/> 
     <axis xyz="0 0 1" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- FL Wheel drive joint with a revolute joint -->
@@ -571,6 +590,7 @@
     <child link="fl_wheel"/>
     <origin xyz="0 0.0 -0.0953" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- FR Wheel drive joint with a revolute joint -->
@@ -579,6 +599,7 @@
     <child link="fr_wheel"/>
     <origin xyz="0 0.0 -0.0953" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- ML Wheel drive joint with a revolute joint -->
@@ -587,6 +608,7 @@
     <child link="ml_wheel"/>
     <origin xyz="0 0.0 -0.1253" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- MR Wheel drive joint with a revolute joint -->
@@ -595,6 +617,7 @@
     <child link="mr_wheel"/>
     <origin xyz="0 0.0 -0.1253" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- RL Wheel drive joint with a revolute joint -->
@@ -603,6 +626,7 @@
     <child link="rl_wheel"/>
     <origin xyz="0 0.0 -0.0953" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- RR Wheel drive joint with a revolute joint -->
@@ -611,6 +635,7 @@
     <child link="rr_wheel"/>
     <origin xyz="0 0.0 -0.0953" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
+    <limit lower="-3.14" upper="3.14" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- Mast assembly with a fixed joint -->
@@ -618,6 +643,7 @@
     <parent link="body_base"/>
     <child link="mast_assembly"/>
     <origin xyz="0.076 0.0 0.0" rpy="0 0.0 0"/> 
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!--Pan assembly with a fixed joint -->
@@ -625,6 +651,7 @@
     <parent link="mast_assembly"/>
     <child link="pan_drive"/>
     <origin xyz="0.0 0.0 0.64" rpy="0 0.0 0"/> 
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- Pan joint with a revolute joint -->
@@ -633,6 +660,7 @@
     <child link="tilt_drive"/>
     <origin xyz="0.0 0.0 0.0" rpy="0 0.0 0"/> 
     <axis xyz="0 0 1" /> <!-- revolute rotation about z axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 <!-- Tilt joint with a revolute joint -->
@@ -641,6 +669,7 @@
     <child link="camera_assembly"/>
     <origin xyz="0.0 0.0 0.03" rpy="0 0.0 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about y axis -->
+    <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
 </joint>
 
 

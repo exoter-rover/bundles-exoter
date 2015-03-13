@@ -107,12 +107,12 @@ class Startup
 
         if @configuration[:reference].casecmp("vicon").zero?
             Orocos.conf.apply( @vicon, ['default', 'exoter'], :override => true)
-            @localization_frontend.reference_pose_samples_period = 0.01 # Vicon is normally at 100Hz
+            @localization_frontend.pose_reference_samples_period = 0.01 # Vicon is normally at 100Hz
         end
 
         if @configuration[:reference].casecmp("gnss").zero?
             Orocos.conf.apply( @gnss_trimble, ['ExoTer', 'Netherlands', 'DECOS'], :override => true)
-            @localization_frontend.reference_pose_samples_period = 0.1 # GNSS/GPS is normally at 10Hz
+            @localization_frontend.pose_reference_samples_period = 0.1 # GNSS/GPS is normally at 10Hz
         end
 
         Bundles.transformer.setup(@localization_frontend)
@@ -171,11 +171,11 @@ class Startup
         @imu_stim300.calibrated_sensors.connect_to @localization_frontend.inertial_samples
 
         if @configuration[:reference].casecmp("vicon").zero?
-            @vicon.pose_samples.connect_to @localization_frontend.reference_pose_samples
+            @vicon.pose_samples.connect_to @localization_frontend.pose_reference_samples
         end
 
         if @configuration[:reference].casecmp("gnss").zero?
-            @gnss_trimble.pose_samples.connect_to @localization_frontend.reference_pose_samples
+            @gnss_trimble.pose_samples.connect_to @localization_frontend.pose_reference_samples
         end
 
 
