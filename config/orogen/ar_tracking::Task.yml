@@ -1,10 +1,25 @@
 --- name:default
+# the network port to use for the vicon tracking system
+server_port: 5000
+# from frame for the transformer
+source_frame: "body" # transformer names. No transformation convention
+# to frame for the transformer
+target_frame: "world_osg" # transformer names. No transformation convention
+# the network port to use for the vicon tracking system
+data_port: 5000
+# the network host of the ART tracking system
+host: '131.176.25.107'
+
+--- name:exoter
+# the number of the body that is being tracked
+numBody: 3
+
 # transformation between segment cs (vicon data)and a choosen body fixed reference cs
 body_reference:
   time:
     microseconds: 0
-  sourceFrame: 'art'
-  targetFrame: 'body'
+  sourceFrame: 'body_art'
+  targetFrame: 'selected_marker'
   position:
     data:
     - 0.0
@@ -70,12 +85,6 @@ body_reference:
     - 0.0
     - 0.0
     - 0.0
-# the network port to use for the vicon tracking system
-data_port: 5000
-# the network host of the ART tracking system
-host: '131.176.25.107'
-# the number of the body that is being tracked
-numBody: 3
 # set the origin of the segment, includes position and orientation.
 origin:
   time:
@@ -147,9 +156,4 @@ origin:
     - 0.0
     - 0.0
     - 0.0
-# the network port to use for the vicon tracking system
-server_port: 5000
-# from frame for the transformer
-source_frame: measurement
-# to frame for the transformer
-target_frame: segment
+

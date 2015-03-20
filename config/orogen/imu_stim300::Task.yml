@@ -9,7 +9,7 @@ filter_configuration:
   initial_alignment_samples: 750 #10 minutes initial alignment. IMU rate is 125Hz
   correction_frequency: 1.0
 
---- name:ExoTer
+--- name:exoter
 # IMU port in ExoTer
 port: '/dev/ttyUSB0'
 revision: :REV_D
