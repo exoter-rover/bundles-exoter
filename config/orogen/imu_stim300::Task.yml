@@ -15,7 +15,6 @@ port: '/dev/ttyUSB0'
 revision: :REV_D
 timeout: 0.008 #in seconds
 use_filter: true
-compensate_inertial_samples_out: false
 
 --- name:Bremen
 # Localization properties related to the geographic place (i.e.: latitude, longitude, magnetic declination).
@@ -34,6 +33,16 @@ location:
   longitude: 0.07709999 # 4deg 25 min 03 sec EAST
   altitude: 0.0
   magnetic_declination: 0.006690428 #0 deg 23 min EAST
+  magnetic_declination_mode: :EAST
+  dip_angle: 0.00663
+
+--- name:DLR-Oberpfaffenhofen
+# Localization properties related to the geographic place (i.e.: latitude, longitude, magnetic declination).
+location:
+  latitude: 0.83923808 # 48.0848 NORTH
+  longitude: 0.196881866 # 11.2805 EAST
+  altitude: 581 #meters
+  magnetic_declination: 0.0471238898  #2.70 deg EAST
   magnetic_declination_mode: :EAST
   dip_angle: 0.00663
 
