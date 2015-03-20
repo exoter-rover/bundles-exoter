@@ -53,7 +53,7 @@ Orocos::Process.run 'exoter_slam',
     read_joint_dispatcher.joints_samples.connect_to localization_frontend.joints_samples
     read_joint_dispatcher.ptu_samples.connect_to localization_frontend.ptu_samples
     imu_stim300.orientation_samples_out.connect_to localization_frontend.orientation_samples
-    imu_stim300.calibrated_sensors.connect_to localization_frontend.inertial_samples
+    imu_stim300.compensated_sensors_out.connect_to localization_frontend.inertial_samples
     localization_frontend.joints_samples_out.connect_to exoter_odometry.joints_samples
     localization_frontend.orientation_samples_out.connect_to exoter_odometry.orientation_samples
     puts "done"

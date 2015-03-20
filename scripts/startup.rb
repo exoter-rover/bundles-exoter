@@ -168,7 +168,7 @@ class Startup
         # Connect ports to the Front-End hub
         @read_joint_dispatcher.joints_samples.connect_to @localization_frontend.joints_samples
         @imu_stim300.orientation_samples_out.connect_to @localization_frontend.orientation_samples
-        @imu_stim300.calibrated_sensors.connect_to @localization_frontend.inertial_samples
+        @imu_stim300.compensated_sensors_out.connect_to @localization_frontend.inertial_samples
 
         if @configuration[:reference].casecmp("vicon").zero?
             @vicon.pose_samples.connect_to @localization_frontend.pose_reference_samples
