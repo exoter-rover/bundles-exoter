@@ -1,0 +1,155 @@
+--- name:default
+# transformation between segment cs (vicon data)and a choosen body fixed reference cs
+body_reference:
+  time:
+    microseconds: 0
+  sourceFrame: 'art'
+  targetFrame: 'body'
+  position:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+  cov_position:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+  orientation:
+    im:
+    - 0.0
+    - 0.0
+    - 0.0
+    re: 0.0
+  cov_orientation:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+  velocity:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+  cov_velocity:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+  angular_velocity:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+  cov_angular_velocity:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+# the network port to use for the vicon tracking system
+data_port: 5000
+# the network host of the ART tracking system
+host: '131.176.25.107'
+# the number of the body that is being tracked
+numBody: 3
+# set the origin of the segment, includes position and orientation.
+origin:
+  time:
+    microseconds: 0
+  sourceFrame: 'art'
+  targetFrame: 'body'
+  position:
+    data:
+    - 5.0
+    - 1.0
+    - 0.5
+  cov_position:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+  orientation:
+    im:
+    - 0.0
+    - 0.0
+    - 0.0
+    re: 0.0
+  cov_orientation:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+  velocity:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+  cov_velocity:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+  angular_velocity:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+  cov_angular_velocity:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+    - 0.0
+# the network port to use for the vicon tracking system
+server_port: 5000
+# from frame for the transformer
+source_frame: measurement
+# to frame for the transformer
+target_frame: segment
