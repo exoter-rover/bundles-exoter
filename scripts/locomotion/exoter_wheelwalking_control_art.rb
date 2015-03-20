@@ -60,7 +60,7 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     # setup exoter_odometry
     puts "Setting up imu_stim300"
     imu_stim300 = Orocos.name_service.get 'imu_stim300'
-    Orocos.conf.apply(imu_stim300, ['default', 'ExoTer','ESTEC','stim300_5g'], :override => true)
+    Orocos.conf.apply(imu_stim300, ['default', 'ExoTer','DLR-Oberpfaffenhofen','stim300_5g'], :override => true)
     imu_stim300.configure
     puts "done"
 
@@ -102,7 +102,7 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     wheel_walking_control.start
     ptu_control.start
     ar_tracking.start
-    #imu_stim300.start
+    imu_stim300.start
 
 
     Readline::readline("Press ENTER to exit\n") do
