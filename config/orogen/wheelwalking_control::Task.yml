@@ -5,3 +5,6 @@ joint_commands_names: [WHEEL_DRIVE_FL, WHEEL_DRIVE_FR, WHEEL_DRIVE_CL, WHEEL_DRI
 
 # Required reading joint names in that order. Joint dispatcher is searching by names.
 joint_readings_names: [left_passive, right_passive, rear_passive, fl_walking, fr_walking, ml_walking, mr_walking, rl_walking, rr_walking, fl_steer, fr_steer, rl_steer, rr_steer, fl_drive, fr_drive, ml_drive, mr_drive, rl_drive, rr_drive]
+
+# List of non-moving walking joints. Used to test adaptability of the kinematic model.
+disabled_walking_joints: []
