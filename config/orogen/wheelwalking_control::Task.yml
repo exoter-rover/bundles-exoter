@@ -19,4 +19,4 @@ offset_speed: 0.00
 step_length: 0.04
 
 # List of non-moving walking joints. Used to test adaptability of the kinematic model.
-disabled_walking_joints: []
+#disabled_walking_joints: [WHEEL_WALK_BL]

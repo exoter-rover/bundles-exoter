@@ -6,6 +6,29 @@ require 'readline'
 
 include Orocos
 
+options = {}
+options[:camera] = "no"
+options[:logging] = "nominal"
+
+OptionParser.new do |opt|
+    opt.banner = <<-EOD
+    usage: exoter_wheelwalking_control_art.rb [options] 
+    EOD
+
+    opt.on '-c or --camera=no/yes', String, 'set the camera on or off' do |camera|
+        options[:camera] = camera
+    end
+
+    opt.on '-l or --logging=none/minimum/nominal/all', String, 'set the type of log files you want. Nominal as default' do |logging|
+        options[:logging] = logging
+    end
+
+    opt.on '--help', 'this help message' do
+        puts opt
+       exit 0
+    end
+end.parse!(ARGV)
+
 ## Initialize orocos ##
 Bundles.initialize
 
@@ -13,7 +36,7 @@ Bundles.initialize
 Bundles.transformer.load_conf(Bundles.find_file('config', 'transforms_scripts.rb'))
 
 ## Execute the task 'platform_driver::Task' ##
-Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtruth' do
+Orocos::Process.run 'exoter_control', 'exoter_perception', 'exoter_proprioceptive', 'exoter_groundtruth' do
 
     # setup platform_driver
     puts "Setting up platform_driver"
@@ -42,6 +65,18 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     Orocos.conf.apply(ptu_control, ['default'], :override => true)
     ptu_control.configure
     puts "done"
+    
+    if options[:camera].casecmp("yes").zero?
+        puts "[INFO] Camera ON"
+        # setup exoter camera_firewire
+        puts "Setting up camera_firewire"
+        camera_firewire = Orocos.name_service.get 'camera_firewire'
+        Orocos.conf.apply(camera_firewire, ['default'], :override => true)
+        camera_firewire.configure
+        puts "done"
+    else
+        puts "[INFO] Camera OFF"
+    end
 
     # setup exoter wheel_walking_control
     puts "Setting up wheel_walking_control"
@@ -96,14 +131,16 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
 
 
     # Start the tasks
+    imu_stim300.start
     platform_driver.start
     read_joint_dispatcher.start
     command_joint_dispatcher.start
     wheel_walking_control.start
     ptu_control.start
     ar_tracking.start
-    imu_stim300.start
-
+    if options[:camera].casecmp("yes").zero?
+        camera_firewire.start
+    end
 
     Readline::readline("Press ENTER to exit\n") do
     end
