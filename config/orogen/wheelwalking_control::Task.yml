@@ -6,5 +6,17 @@ joint_commands_names: [WHEEL_DRIVE_FL, WHEEL_DRIVE_FR, WHEEL_DRIVE_CL, WHEEL_DRI
 # Required reading joint names in that order. Joint dispatcher is searching by names.
 joint_readings_names: [left_passive, right_passive, rear_passive, fl_walking, fr_walking, ml_walking, mr_walking, rl_walking, rr_walking, fl_steer, fr_steer, rl_steer, rr_steer, fl_drive, fr_drive, ml_drive, mr_drive, rl_drive, rr_drive]
 
+# Initial gait (either AXLE_BY_AXLE, SIDE_BY_SIDE, EVEN_ODD, SINGLE_WHEEL or NORMAL_DRIVING)
+initial_gait: AXLE_BY_AXLE
+
+# Initial discrete speed setting in m/s. Will get limited to +-MAX_SPEED (set in the code).
+discrete_speed: 0.02
+
+# Initial offset speed setting in m/s. Will get limited to +-MAX_OFFSET_SPEED (set in the code).
+offset_speed: 0.00
+
+# Initial step length setting in m. Will get limited to MIN/MAX_STEP_LENGTH (set in the code).
+step_length: 0.04
+
 # List of non-moving walking joints. Used to test adaptability of the kinematic model.
 disabled_walking_joints: []
