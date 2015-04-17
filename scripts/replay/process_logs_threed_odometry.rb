@@ -21,7 +21,7 @@ op = OptionParser.new do |opt|
         options[:reference] = reference
     end
 
-    opt.on "-i", "--imu=old/new", String, 'since the imu component changed. Please set the type' do |imu|
+    opt.on "-i", "--imu=old/new/last", String, 'since the imu component changed. Please set the type' do |imu|
         options[:imu] = imu
     end
 
@@ -113,6 +113,11 @@ Bundles.run 'exoter_control',
     end
 
     if options[:imu].casecmp("new").zero?
+        log_replay.imu_stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
+        log_replay.imu_stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
+    end
+
+    if options[:imu].casecmp("last").zero?
         log_replay.imu_stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
         log_replay.imu_stim300.compensated_sensors_out.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
     end
