@@ -11,6 +11,7 @@ killall $1 orogen_default_icp__GIcp
 killall $1 orogen_default_camera_bb2__Task
 killall $1 orogen_default_ptu_control__Task
 killall $1 orogen_default_odometry__Skid
+killall $1 orogen_default_threed_odometry__Task
 killall $1 orogen_default_transformer__Task
 
 #Exoter deployments
