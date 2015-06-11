@@ -1,0 +1,29 @@
+--- name:gp_sklearn
+# path to Gaussian Process for the Sklearn for x axis model.
+gaussian_process_x_axis_file: 'gp_sklearn_x_velocity.data'
+# path to Gaussian Process for the Sklearn for y axis model.
+gaussian_process_y_axis_file: ''
+# path to Gaussian Process for the Sklearn for z axis model.
+gaussian_process_z_axis_file: ''
+
+# Robot joint names to set as joint position input vector for the Gaussian process.
+gaussian_process_position_joint_names: [fl_steer, fr_steer, rl_steer, rr_steer,
+                                        fl_walking, fr_walking, ml_walking, mr_walking, rl_walking, rr_walking,
+                                        left_passive, right_passive, rear_passive]
+# Robot joint names to set as joint velocity input vector for the Gaussian process.
+gaussian_process_speed_joint_names: [fl_translation, fr_translation, ml_translation, mr_translation, rl_translation, rr_translation]
+
+# Frequency in Hertz for smoothing the Gaussian process prediction.
+gaussian_process_predict_frequency: 0.2 #Hertz
+
+# minimum time, in s, between two sequential samples arrive on delta_pose_samples
+delta_pose_samples_period: 0.08
+# minimum time, in s, between two sequential samples arrive on joints_samples
+joints_samples_period: 0.08
+# minimum time, in s, between two sequential samples arrive on orientation_samples
+orientation_samples_period: 0.08
+# minimum system time in s between two status readings
+stream_aligner_status_period: 1.0
+# maximum latency, in seconds, of the stream aligner. The aligner will start dropping samples if the difference between the last output and last input is greater than this
+aggregator_max_latency: 1.0
+
