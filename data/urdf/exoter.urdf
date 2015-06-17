@@ -8,7 +8,7 @@
 
 <!-- Link definitions -->
 <!-- Base Link of the Rover, main body of the rover, which looks like a Box -->
-<link name="body_base">
+<link name="body">
     <visual>
         <geometry>
             <mesh filename="./meshes/exoter/body_base_vicon_and_gps.stl" scale = "1 1 1"/>
@@ -408,7 +408,7 @@
 
 <!-- rear joint that connects base_link and rear_link with a revolute joint -->
 <joint name="rear_passive" type="continuous">
-    <parent link="body_base"/>
+    <parent link="body"/>
     <child link="rear_bogie"/>
     <origin xyz="-0.265 0 0" rpy="0.0 0.0 0.00"/> 
     <axis xyz="1 0 0 " /> <!-- revolute rotation about Y axis -->
@@ -417,7 +417,7 @@
 
 <!-- right joint that connects base_link and right_link with a revolute joint -->
 <joint name="right_passive" type="continuous">
-    <parent link="body_base"/>
+    <parent link="body"/>
     <child link="right_bogie"/>
     <origin xyz="0.1325 -0.223 0" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
@@ -426,7 +426,7 @@
 
 <!-- left joint that connects base_link and front_link with a revolute joint -->
 <joint name="left_passive" type="continuous">
-    <parent link="body_base"/>
+    <parent link="body"/>
     <child link="left_bogie"/>
     <origin xyz="0.1325 0.223 0" rpy="0 0.00 0"/> 
     <axis xyz="0 1 0" /> <!-- revolute rotation about Y axis -->
@@ -640,7 +640,7 @@
 
 <!-- Mast assembly with a fixed joint -->
 <joint name="mast_joint" type="fixed">
-    <parent link="body_base"/>
+    <parent link="body"/>
     <child link="mast_assembly"/>
     <origin xyz="0.076 0.0 0.0" rpy="0 0.0 0"/> 
     <limit lower="-1.6" upper="1.6" velocity="6.28" effort="100"/>
