@@ -61,8 +61,8 @@ end
 
 Bundles.run 'exoter_control',
             'exoter_perception',
-            'exoter_odometry',
             'threed_odometry::Task' => 'robot_odometry',
+            'exoter_odometry::Task' => 'exoter_odometry',
             :gdb => false do
 
     # Get the task names from control
