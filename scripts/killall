@@ -11,13 +11,17 @@ killall $1 orogen_default_icp__GIcp
 killall $1 orogen_default_camera_bb2__Task
 killall $1 orogen_default_ptu_control__Task
 killall $1 orogen_default_odometry__Skid
+killall $1 orogen_default_localization_frontend__Task
 killall $1 orogen_default_threed_odometry__Task
 killall $1 orogen_default_transformer__Task
+killall $1 orogen_default_visual_stereo__Task
+killall $1 orogen_default_viso2__Task
 
 #Exoter deployments
 killall $1 exoter_control
 killall $1 exoter_proprioceptive
 killall $1 exoter_perception
+killall $1 exoter_localization
 killall $1 exoter_registration
 killall $1 exoter_slam
 killall $1 exoter_groundtruth
