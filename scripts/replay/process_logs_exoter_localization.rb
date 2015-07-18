@@ -12,20 +12,24 @@ include Orocos
 options = {}
 options[:reference] = "none"
 options[:imu] = "new"
+options[:alone] = false
 
 op = OptionParser.new do |opt|
     opt.banner = <<-EOD
-    usage: process_logs_exoter_all.rb [options] <data_log_directory>
+    usage: process_logs_exoter_localization.rb [options] <data_log_directory>
     EOD
 
     opt.on "-r", "--reference=none/vicon/gnss", String, 'set the type of reference system available' do |reference|
         options[:reference] = reference
     end
 
-    opt.on "-i", "--imu=old/new", String, 'since the imu component changed. Please set the type' do |imu|
+    opt.on "-i", "--imu=old/new/last/ikf", String, 'chose imu component version or ikf orientation component. Please set the type' do |imu|
         options[:imu] = imu
     end
 
+    opt.on "--alone", String, 'set alone in case you only want to execute the localization tasks' do
+        options[:alone] = true
+    end
 
     opt.on '--help', 'this help message' do
         puts opt
@@ -56,19 +60,42 @@ else
 end
 
 if options[:imu].casecmp("old").zero?
-    puts "[INFO] Old type of IMU samples in logs"
+    puts "[INFO] Old type of IMU samples from logs"
+elsif options[:imu].casecmp("new").zero?
+    puts "[INFO] New type of IMU samples from logs"
+elsif options[:imu].casecmp("last").zero?
+    puts "[INFO] Last type of IMU samples from logs"
 else
-    puts "[INFO] New type of IMU samples in logs"
+    puts "[INFO] IKF orientation from logs"
 end
 
-Bundles.run 'exoter_slam',
+Bundles.run 'exoter_control',
+            'exoter_perception',
+            'exoter_localization',
             :gdb => false do
 
-    # Get the task names from slam
+    # Get the task names from control
+    read_joint_dispatcher = Orocos.name_service.get 'read_joint_dispatcher'
+    ptu_control = Orocos.name_service.get 'ptu_control'
+
+    # Get the task names from odometry
+    localization_frontend = Orocos.name_service.get 'localization_frontend'
+    exoter_odometry = Orocos.name_service.get 'exoter_odometry'
+
+    # Get the task names from localization
     localization_dispatcher = Orocos.name_service.get 'localization_dispatcher'
     localization_backend = Orocos.name_service.get 'localization_backend'
 
-    # Set configuration files for slam backend
+    # Set configuration files for control
+    Orocos.conf.apply(read_joint_dispatcher, ['reading'], :override => true)
+    Orocos.conf.apply(ptu_control, ['default'], :override => true)
+
+    # Set configuration files for odometry
+    Orocos.conf.apply(localization_frontend, ['default', 'hamming1hzsampling12hz'], :override => true)
+    Orocos.conf.apply(exoter_odometry, ['default', 'bessel50'], :override => true)
+    exoter_odometry.urdf_file = Bundles.find_file('data/odometry', 'exoter_odometry_model_complete.urdf')
+
+    # Set configuration files for localization
     Orocos.conf.apply(localization_dispatcher, ['default'], :override => true)
     Orocos.conf.apply(localization_backend, ['default'], :override => true)
 
@@ -78,6 +105,9 @@ Bundles.run 'exoter_slam',
     #################
     ## TRANSFORMER ##
     #################
+    if options[:alone] == false
+        Bundles.transformer.setup(localization_frontend)
+    end
     Bundles.transformer.setup(localization_backend)
 
     ###################
@@ -85,26 +115,75 @@ Bundles.run 'exoter_slam',
     ###################
     Bundles.log_all
 
-    # Configure tasks from slam
+    if options[:alone] == false
+        # Configure tasks from control
+        read_joint_dispatcher.configure
+        ptu_control.configure
+
+        # Configure tasks from odometry
+        localization_frontend.configure
+        exoter_odometry.configure
+    end
+
+    # Configure tasks from localization
     localization_dispatcher.configure
     localization_backend.configure
 
     ###########################
     ## LOG PORTS CONNECTIONS ##
     ###########################
-    log_replay.visual_odometry.delta_pose_samples_out.connect_to(localization_dispatcher.vodo_delta_pose, :type => :buffer, :size => 200)
-    log_replay.visual_odometry.point_cloud_samples_out.connect_to(localization_dispatcher.vodo_points, :type => :buffer, :size => 200)
-    log_replay.visual_odometry.point_cloud_uncertainty_out.connect_to(localization_dispatcher.vodo_covariance, :type => :buffer, :size => 200)
-    log_replay.visual_odometry.point_cloud_indexes_out.connect_to(localization_dispatcher.vodo_index, :type => :buffer, :size => 200)
-    log_replay.visual_odometry.delta_pose_jacobians_k_out.connect_to(localization_dispatcher.vodo_jacobian_k, :type => :buffer, :size => 200)
-    log_replay.visual_odometry.delta_pose_jacobians_k_m_out.connect_to(localization_dispatcher.vodo_jacobian_k_m, :type => :buffer, :size => 200)
+    if options[:alone] == false
+        log_replay.platform_driver.joints_readings.connect_to(read_joint_dispatcher.joints_readings, :type => :buffer, :size => 200)
 
-    # Localization odometry poses
-    log_replay.exoter_odometry.pose_samples_out.connect_to(localization_backend.pose_samples, :type => :buffer, :size => 200)
+        if options[:imu].casecmp("old").zero?
+            log_replay.stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
+            log_replay.stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
+        end
+
+        if options[:imu].casecmp("new").zero?
+            log_replay.imu_stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
+            log_replay.imu_stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
+        end
+
+        if options[:imu].casecmp("last").zero?
+            log_replay.imu_stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
+            log_replay.imu_stim300.compensated_sensors_out.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
+        end
+
+        if options[:imu].casecmp("ikf").zero?
+            log_replay.ikf_orientation_estimator.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
+            log_replay.imu_stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
+        end
+
+        if options[:reference].casecmp("vicon").zero?
+            log_replay.vicon.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 200)
+        end
+
+        if options[:reference].casecmp("gnss").zero?
+            log_replay.gnss_trimble.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 200)
+        end
+    else
+        #log_replay.visual_odometry.delta_pose_samples_out.connect_to(localization_dispatcher.vodo_delta_pose, :type => :buffer, :size => 200)
+        #log_replay.visual_odometry.point_cloud_samples_out.connect_to(localization_dispatcher.vodo_points, :type => :buffer, :size => 200)
+        #log_replay.visual_odometry.point_cloud_uncertainty_out.connect_to(localization_dispatcher.vodo_covariance, :type => :buffer, :size => 200)
+        #log_replay.visual_odometry.point_cloud_indexes_out.connect_to(localization_dispatcher.vodo_index, :type => :buffer, :size => 200)
+        #log_replay.visual_odometry.delta_pose_jacobians_k_out.connect_to(localization_dispatcher.vodo_jacobian_k, :type => :buffer, :size => 200)
+        #log_replay.visual_odometry.delta_pose_jacobians_k_m_out.connect_to(localization_dispatcher.vodo_jacobian_k_m, :type => :buffer, :size => 200)
+
+        # Localization odometry poses
+        log_replay.exoter_odometry.delta_pose_samples_out.connect_to(localization_backend.delta_pose_samples, :type => :buffer, :size => 200)
+    end
 
     #############################
     ## TASKS PORTS CONNECTIONS ##
     #############################
+    if options[:alone] == false
+        read_joint_dispatcher.joints_samples.connect_to localization_frontend.joints_samples
+        read_joint_dispatcher.ptu_samples.connect_to ptu_control.ptu_samples
+        localization_frontend.joints_samples_out.connect_to exoter_odometry.joints_samples
+        localization_frontend.orientation_samples_out.connect_to exoter_odometry.orientation_samples
+        exoter_odometry.delta_pose_samples_out.connect_to localization_backend.delta_pose_samples
+    end
 
     # Exteroceptive samples from dispatcher to back-end
     localization_dispatcher.vodo_samples_out.connect_to(localization_backend.vodo_samples, :type => :buffer, :size => 200)
@@ -112,6 +191,18 @@ Bundles.run 'exoter_slam',
     ###########
     ## START ##
     ###########
+    if options[:alone] == false
+
+        # Start tasks for control
+        read_joint_dispatcher.start
+        ptu_control.start
+
+        # Start tasks for odometry
+        localization_frontend.start
+        exoter_odometry.start
+    end
+
+    # Start tasks for localization
     localization_dispatcher.start
     localization_backend.start
 
