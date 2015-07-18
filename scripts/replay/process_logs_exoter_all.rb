@@ -22,7 +22,7 @@ op = OptionParser.new do |opt|
         options[:reference] = reference
     end
 
-    opt.on "-i", "--imu=old/new", String, 'since the imu component changed. Please set the type' do |imu|
+    opt.on "-i", "--imu=old/new/last/ikf", String, 'chose imu component version or ikf orientation component. Please set the type' do |imu|
         options[:imu] = imu
     end
 
@@ -56,14 +56,18 @@ else
 end
 
 if options[:imu].casecmp("old").zero?
-    puts "[INFO] Old type of IMU samples in logs"
+    puts "[INFO] Old type of IMU samples from logs"
+elsif options[:imu].casecmp("new").zero?
+    puts "[INFO] New type of IMU samples from logs"
+elsif options[:imu].casecmp("last").zero?
+    puts "[INFO] Last type of IMU samples from logs"
 else
-    puts "[INFO] New type of IMU samples in logs"
+    puts "[INFO] IKF orientation from logs"
 end
 
 Bundles.run 'exoter_control',
             'exoter_perception',
-            'exoter_odometry',
+            'exoter_localization',
             'exoter_exteroceptive',
             'exoter_slam',
             :gdb => false do
@@ -104,7 +108,7 @@ Bundles.run 'exoter_control',
     end
 
     Orocos.conf.apply(exoter_odometry, ['default', 'bessel50'], :override => true)
-    exoter_odometry.urdf_file = Bundles.find_file('data/odometry', 'exoter_odometry_model.urdf')
+    exoter_odometry.urdf_file = Bundles.find_file('data/odometry', 'exoter_odometry_model_complete.urdf')
     Orocos.conf.apply(visual_odometry, ['default', 'bumblebee'], :override => true)
     Orocos.conf.apply(icp, ['default', 'bilateral','pass','radius'], :override => true )
 
@@ -169,9 +173,18 @@ Bundles.run 'exoter_control',
 
     if options[:imu].casecmp("new").zero?
         log_replay.imu_stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
+        log_replay.imu_stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
+    end
+
+    if options[:imu].casecmp("last").zero?
+        log_replay.imu_stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
         log_replay.imu_stim300.compensated_sensors_out.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
     end
 
+    if options[:imu].casecmp("ikf").zero?
+        log_replay.ikf_orientation_estimator.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
+        log_replay.imu_stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
+    end
 
     if options[:reference].casecmp("vicon").zero?
         log_replay.vicon.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 200)
@@ -219,7 +232,7 @@ Bundles.run 'exoter_control',
     localization_dispatcher.vodo_samples_out.connect_to localization_backend.vodo_samples
 
     # Localization odometry poses
-    exoter_odometry.pose_samples_out.connect_to localization_backend.pose_samples
+    exoter_odometry.delta_pose_samples_out.connect_to localization_backend.delta_pose_samples
 
     ###########
     ## START ##
@@ -230,7 +243,7 @@ Bundles.run 'exoter_control',
     ptu_control.start
 
     # Start tasks from perception
-    #colorize_pointcloud.start
+    colorize_pointcloud.start
 
     # Start tasks from slam
     localization_frontend.start
