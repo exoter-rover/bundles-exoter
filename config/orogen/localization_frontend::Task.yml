@@ -27,15 +27,6 @@ world_source_frame: "world"
 # to frame for the transformer
 world_target_frame: "world_osg"
 
-# Exteroceptive sensor names as input ports in the task.
-exteroceptive_output_name: [left_frame, right_frame, point_cloud_samples]
-
-# Output estimated distance in meters between exteroceptive sensors samples (laser scans, camera images).
-exteroceptive_output_distance: [0.02, 0.02, 0.02]
-
-# Locomotion joints searching by names in order to compute relative movement.
-exteroceptive_jointNames: [fl_drive, fr_drive, ml_drive, mr_drive, rl_drive, rr_drive]
-
 # Effective wheel radius average for odometry
 wheelRadius: 0.072703
 
