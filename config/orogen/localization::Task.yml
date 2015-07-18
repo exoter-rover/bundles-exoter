@@ -10,11 +10,9 @@ navigation_frame: navigation
 # the body position can be used.
 world_frame: navigation #world
 
-#Names of the desired exteroceptive inputs.
-exteroceptive_inputs: [vodo_samples, icp_samples]
-
 # Time in s between pose_samples readings
 delta_pose_samples_period: 0.08
+visual_feature_samples_period: 0.4
 
 # Maximum time in seconds the transformer will wait until it starts dropping samples
 transformer_max_latency: 1.0

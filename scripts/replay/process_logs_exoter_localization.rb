@@ -83,8 +83,7 @@ Bundles.run 'exoter_control',
     exoter_odometry = Orocos.name_service.get 'exoter_odometry'
 
     # Get the task names from localization
-    localization_dispatcher = Orocos.name_service.get 'localization_dispatcher'
-    localization_backend = Orocos.name_service.get 'localization_backend'
+    msc_localization = Orocos.name_service.get 'msc_localization'
 
     # Set configuration files for control
     Orocos.conf.apply(read_joint_dispatcher, ['reading'], :override => true)
@@ -96,8 +95,7 @@ Bundles.run 'exoter_control',
     exoter_odometry.urdf_file = Bundles.find_file('data/odometry', 'exoter_odometry_model_complete.urdf')
 
     # Set configuration files for localization
-    Orocos.conf.apply(localization_dispatcher, ['default'], :override => true)
-    Orocos.conf.apply(localization_backend, ['default'], :override => true)
+    Orocos.conf.apply(msc_localization, ['default'], :override => true)
 
     # logs files
     log_replay = Orocos::Log::Replay.open( logfiles_path )
@@ -108,7 +106,7 @@ Bundles.run 'exoter_control',
     if options[:alone] == false
         Bundles.transformer.setup(localization_frontend)
     end
-    Bundles.transformer.setup(localization_backend)
+    Bundles.transformer.setup(msc_localization)
 
     ###################
     ## LOG THE PORTS ##
@@ -126,13 +124,14 @@ Bundles.run 'exoter_control',
     end
 
     # Configure tasks from localization
-    localization_dispatcher.configure
-    localization_backend.configure
+    msc_localization.configure
 
     ###########################
     ## LOG PORTS CONNECTIONS ##
     ###########################
     if options[:alone] == false
+
+        # Platform driver to localization front-end
         log_replay.platform_driver.joints_readings.connect_to(read_joint_dispatcher.joints_readings, :type => :buffer, :size => 200)
 
         if options[:imu].casecmp("old").zero?
@@ -163,15 +162,8 @@ Bundles.run 'exoter_control',
             log_replay.gnss_trimble.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 200)
         end
     else
-        #log_replay.visual_odometry.delta_pose_samples_out.connect_to(localization_dispatcher.vodo_delta_pose, :type => :buffer, :size => 200)
-        #log_replay.visual_odometry.point_cloud_samples_out.connect_to(localization_dispatcher.vodo_points, :type => :buffer, :size => 200)
-        #log_replay.visual_odometry.point_cloud_uncertainty_out.connect_to(localization_dispatcher.vodo_covariance, :type => :buffer, :size => 200)
-        #log_replay.visual_odometry.point_cloud_indexes_out.connect_to(localization_dispatcher.vodo_index, :type => :buffer, :size => 200)
-        #log_replay.visual_odometry.delta_pose_jacobians_k_out.connect_to(localization_dispatcher.vodo_jacobian_k, :type => :buffer, :size => 200)
-        #log_replay.visual_odometry.delta_pose_jacobians_k_m_out.connect_to(localization_dispatcher.vodo_jacobian_k_m, :type => :buffer, :size => 200)
-
         # Localization odometry poses
-        log_replay.exoter_odometry.delta_pose_samples_out.connect_to(localization_backend.delta_pose_samples, :type => :buffer, :size => 200)
+        log_replay.exoter_odometry.delta_pose_samples_out.connect_to(msc_localization.delta_pose_samples, :type => :buffer, :size => 200)
     end
 
     #############################
@@ -182,11 +174,11 @@ Bundles.run 'exoter_control',
         read_joint_dispatcher.ptu_samples.connect_to ptu_control.ptu_samples
         localization_frontend.joints_samples_out.connect_to exoter_odometry.joints_samples
         localization_frontend.orientation_samples_out.connect_to exoter_odometry.orientation_samples
-        exoter_odometry.delta_pose_samples_out.connect_to localization_backend.delta_pose_samples
+        exoter_odometry.delta_pose_samples_out.connect_to msc_localization.delta_pose_samples
     end
 
     # Exteroceptive samples from dispatcher to back-end
-    localization_dispatcher.vodo_samples_out.connect_to(localization_backend.vodo_samples, :type => :buffer, :size => 200)
+    log_replay.visual_stereo.features_samples_out.connect_to(msc_localization.visual_samples, :type => :buffer, :size => 200)
 
     ###########
     ## START ##
@@ -203,8 +195,7 @@ Bundles.run 'exoter_control',
     end
 
     # Start tasks for localization
-    localization_dispatcher.start
-    localization_backend.start
+    msc_localization.start
 
     # open the log replay widget
     control = Vizkit.control log_replay
