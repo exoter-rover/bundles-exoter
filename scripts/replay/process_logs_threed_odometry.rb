@@ -88,6 +88,7 @@ Bundles.run 'exoter_control',
     ## TRANSFORMER ##
     #################
     Bundles.transformer.setup(localization_frontend)
+    Bundles.transformer.setup(exoter_odometry)
 
     ###################
     ## LOG THE PORTS ##
@@ -138,6 +139,7 @@ Bundles.run 'exoter_control',
     read_joint_dispatcher.joints_samples.connect_to localization_frontend.joints_samples
     read_joint_dispatcher.ptu_samples.connect_to ptu_control.ptu_samples
     localization_frontend.joints_samples_out.connect_to exoter_odometry.joints_samples
+    #log_replay.stim300.orientation_samples_out.connect_to exoter_odometry.orientation_samples
     localization_frontend.orientation_samples_out.connect_to exoter_odometry.orientation_samples
 
     # Start tasks from control
