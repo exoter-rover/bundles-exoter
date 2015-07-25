@@ -61,7 +61,7 @@ end
 
 Bundles.run 'exoter_control',
             'exoter_perception',
-            'exoter_odometry',
+            'exoter_localization',
             :gdb => false do
 
     # Get the task names from control
@@ -79,7 +79,7 @@ Bundles.run 'exoter_control',
     # Set configuration files for odometry
     Orocos.conf.apply(localization_frontend, ['default', 'hamming1hzsampling12hz'], :override => true)
     Orocos.conf.apply(exoter_odometry, ['default', 'bessel50'], :override => true)
-    exoter_odometry.urdf_file = Bundles.find_file('data/odometry', 'exoter_odometry_model.urdf')
+    exoter_odometry.urdf_file = Bundles.find_file('data/odometry', 'exoter_odometry_model_complete.urdf')
 
     # logs files
     log_replay = Orocos::Log::Replay.open( logfiles_path )

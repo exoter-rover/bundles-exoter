@@ -3,6 +3,9 @@
 # From Frame for the transformer
 localization_source_frame: 'body'
 
+#Maximum number of sensor camera poses in the filter state.
+maximum_number_sensor_poses: 5
+
 # the global name that should be used for the internal navigation frame
 navigation_frame: navigation
 # the global name that should be used for the internal world frame
@@ -10,9 +13,12 @@ navigation_frame: navigation
 # the body position can be used.
 world_frame: navigation #world
 
+body_frame: body
+sensor_frame: left_camera
+
 # Time in s between pose_samples readings
 delta_pose_samples_period: 0.08
-visual_feature_samples_period: 0.4
+visual_features_samples_period: 0.4
 
 # Maximum time in seconds the transformer will wait until it starts dropping samples
 transformer_max_latency: 1.0
