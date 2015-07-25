@@ -178,7 +178,7 @@ Bundles.run 'exoter_control',
     end
 
     # Exteroceptive samples from dispatcher to back-end
-    log_replay.visual_stereo.features_samples_out.connect_to(msc_localization.visual_samples, :type => :buffer, :size => 200)
+    log_replay.visual_stereo.features_samples_out.connect_to(msc_localization.visual_features_samples, :type => :buffer, :size => 200)
 
     ###########
     ## START ##
