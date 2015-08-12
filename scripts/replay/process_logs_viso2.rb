@@ -14,14 +14,14 @@ options[:imu] = "new"
 
 op = OptionParser.new do |opt|
     opt.banner = <<-EOD
-    usage: process_logs_exoter_visual_odometry [options] <data_log_directory>
+    usage: proces_logs_viso2 [options] <data_log_directory>
     EOD
 
     opt.on "-r", "--reference=none/vicon/gnss", String, 'set the type of reference system available' do |reference|
         options[:reference] = reference
     end
 
-    opt.on "-i", "--imu=old/new", String, 'since the imu component changed. Please set the type' do |imu|
+    opt.on "-i", "--imu=old/new/last", String, 'since the imu component changed. Please set the type' do |imu|
         options[:imu] = imu
     end
 
@@ -48,9 +48,15 @@ Bundles.transformer.load_conf(Bundles.find_file('config', 'transforms_scripts.rb
 if options[:reference].casecmp("vicon").zero?
     puts "[INFO] Vicon Ground Truth system available"
 elsif options[:reference].casecmp("gnss").zero?
-    puts "[INFOR] GNSS Ground Truth system available"
+    puts "[INFO] GNSS Ground Truth system available"
 else
     puts "[INFO] No Ground Truth system available"
+end
+
+if options[:imu].casecmp("old").zero?
+    puts "[INFO] Old type of IMU samples in logs"
+else
+    puts "[INFO] New type of IMU samples in logs"
 end
 
 Orocos::Process.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
@@ -123,6 +129,11 @@ Orocos::Process.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
 
     if options[:imu].casecmp("new").zero?
         log_replay.imu_stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
+        log_replay.imu_stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
+    end
+
+    if options[:imu].casecmp("last").zero?
+        log_replay.imu_stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
         log_replay.imu_stim300.compensated_sensors_out.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
     end
 
@@ -134,8 +145,8 @@ Orocos::Process.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
         log_replay.gnss_trimble.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 200)
     end
 
-    log_replay.camera_bb2.left_frame.connect_to(localization_frontend.left_frame, :type => :buffer, :size => 200)
-    log_replay.camera_bb2.right_frame.connect_to(localization_frontend.right_frame, :type => :buffer, :size => 200)
+    #log_replay.camera_bb2.left_frame.connect_to(localization_frontend.left_frame, :type => :buffer, :size => 200)
+    #log_replay.camera_bb2.right_frame.connect_to(localization_frontend.right_frame, :type => :buffer, :size => 200)
 
     #############################
     ## TASKS PORTS CONNECTIONS ##
@@ -144,8 +155,8 @@ Orocos::Process.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     read_joint_dispatcher.joints_samples.connect_to localization_frontend.joints_samples
     read_joint_dispatcher.ptu_samples.connect_to ptu_control.ptu_samples
 
-    localization_frontend.left_frame_out.connect_to visual_odometry.left_frame
-    localization_frontend.right_frame_out.connect_to visual_odometry.right_frame
+    log_replay.camera_bb2.left_frame.connect_to visual_odometry.left_frame
+    log_replay.camera_bb2.right_frame.connect_to visual_odometry.right_frame
 
     ###########
     ## START ##
