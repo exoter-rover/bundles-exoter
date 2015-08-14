@@ -68,7 +68,7 @@ Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", rbsTruth)
 
 # Trajectory of the ground truth
 truthTrajectory = Vizkit.default_loader.TrajectoryVisualization
-truthTrajectory.setColor(Eigen::Vector3.new(0, 255, 0)) #Green line
+truthTrajectory.setColor(Eigen::Vector3.new(0, 1, 0)) #Green line
 truthTrajectory.setPluginName("Reference Trajectory")
 Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", truthTrajectory)
 
@@ -82,7 +82,7 @@ Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", odometryRBS)
 
 # Odometry robot trajectory
 odometryRobotTrajectory = Vizkit.default_loader.TrajectoryVisualization
-odometryRobotTrajectory.setColor(Eigen::Vector3.new(255, 0, 0))#Red line
+odometryRobotTrajectory.setColor(Eigen::Vector3.new(1, 0, 0))#Red line
 odometryRobotTrajectory.setPluginName("Odometry Trajectory")
 Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", odometryRobotTrajectory)
 
@@ -106,7 +106,8 @@ pointCloud = Vizkit.default_loader.PointcloudVisualization
 pointCloud.setKeepOldData(true)
 pointCloud.setMaxOldData(1)
 pointCloud.setPluginName("ToF Point Cloud")
-Vizkit.vizkit3d_widget.setPluginDataFrame("body", pointCloud)
+Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", pointCloud)
+#Vizkit.vizkit3d_widget.setPluginDataFrame("body", pointCloud)
 
 # Point cloud Visual Odometry  visualizer
 pointCloudVO = Vizkit.default_loader.PointcloudVisualization
@@ -125,7 +126,7 @@ Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", visualOdometryRBS)
 
 # Visual Odometry frame trajectory
 visualOdometryTrajectory = Vizkit.default_loader.TrajectoryVisualization
-visualOdometryTrajectory.setColor(Eigen::Vector3.new(255, 255, 255))#White line
+visualOdometryTrajectory.setColor(Eigen::Vector3.new(1, 1, 1))#White line
 visualOdometryTrajectory.setPluginName("Visual Odometry Trajectory")
 Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", visualOdometryTrajectory)
 
@@ -139,7 +140,7 @@ Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", icpRBS)
 
 # Iterative Closest Points frame trajectory
 icpTrajectory = Vizkit.default_loader.TrajectoryVisualization
-icpTrajectory.setColor(Eigen::Vector3.new(155, 155, 155))
+icpTrajectory.setColor(Eigen::Vector3.new(0.64, 0.64, 0.64))
 icpTrajectory.setPluginName("Iterative Closest Points Trajectory")
 Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", icpTrajectory)
 
@@ -253,15 +254,16 @@ end
 #colorize_pointcloud = Orocos::Async.proxy 'colorize_pointcloud'
 #
 #colorize_pointcloud.on_reachable do
-#    # Point Cloud
+#   # Point Cloud
 #    Vizkit.display colorize_pointcloud.port('colored_points'), :widget =>pointCloud
 #end
-#pituki_pointcloud = Orocos::Async.proxy 'pituki'
-#
-#pituki_pointcloud.on_reachable do
-#    # Point Cloud
-#    Vizkit.display pituki_pointcloud.port('point_cloud_samples_out'), :widget =>pointCloud
-#end
+
+pituki_pointcloud = Orocos::Async.proxy 'pituki'
+
+pituki_pointcloud.on_reachable do
+    # Point Cloud
+    Vizkit.display pituki_pointcloud.port('point_cloud_samples_out'), :widget =>pointCloud
+end
 
 # JointDispatcher
 read_joint_dispatcher = Orocos::Async.proxy 'read_joint_dispatcher'
@@ -358,15 +360,15 @@ icp.on_reachable do
 end
 
 # Localization Front-End
-localization_backend = Orocos::Async.proxy 'localization_backend'
+msc_localization = Orocos::Async.proxy 'msc_localization'
 
-localization_backend.on_reachable do
+msc_localization.on_reachable do
 
     # Robot pose
-    Vizkit.display localization_backend.port('pose_samples_out'), :widget =>localizationRBS
+    Vizkit.display msc_localization.port('pose_samples_out'), :widget =>localizationRBS
 
     # Trajectory
-    localization_backend.port('pose_samples_out').on_data do |localization_rbs,_|
+    msc_localization.port('pose_samples_out').on_data do |localization_rbs,_|
         localizationRobotTrajectory.updateTrajectory(localization_rbs.position)
     end
 
@@ -376,9 +378,11 @@ end
 
 # Enable the GUI when the task is reachable
 read_joint_dispatcher.on_reachable {Vizkit.vizkit3d_widget.setEnabled(true)} if logfile.nil?
+#localization_frontend.on_reachable {Vizkit.vizkit3d_widget.setEnabled(true)} if logfile.nil?
 
 # Disable the GUI until the task is reachable
 read_joint_dispatcher.on_unreachable {Vizkit.vizkit3d_widget.setEnabled(false)} if logfile.nil?
+#localization_frontend.on_unreachable {Vizkit.vizkit3d_widget.setEnabled(false)} if logfile.nil?
 
 Vizkit.control log_replay unless logfile.nil?
 Vizkit.exec
