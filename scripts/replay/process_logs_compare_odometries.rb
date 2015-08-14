@@ -11,6 +11,7 @@ include Orocos
 options = {}
 options[:reference] = "none"
 options[:imu] = "new"
+options[:reaction_forces] = false
 
 op = OptionParser.new do |opt|
     opt.banner = <<-EOD
@@ -21,8 +22,12 @@ op = OptionParser.new do |opt|
         options[:reference] = reference
     end
 
-    opt.on "-i", "--imu=old/new", String, 'since the imu component changed. Please set the type' do |imu|
+    opt.on "-i", "--imu=old/new/last", String, 'since the imu component changed. Please set the type' do |imu|
         options[:imu] = imu
+    end
+
+    opt.on "-f", "--reaction_forces", String, 'connect the reaction forces for the 3D Odometry' do
+        options[:reaction_forces] = true
     end
 
     opt.on '--help', 'this help message' do
@@ -54,15 +59,26 @@ else
 end
 
 if options[:imu].casecmp("old").zero?
-    puts "[INFO] Old type of IMU samples in logs"
+    puts "[INFO] Old type of IMU samples from logs"
+elsif options[:imu].casecmp("new").zero?
+    puts "[INFO] New type of IMU samples from logs"
+elsif options[:imu].casecmp("last").zero?
+    puts "[INFO] Last type of IMU samples from logs"
 else
-    puts "[INFO] New type of IMU samples in logs"
+    puts "[INFO] IKF orientation from logs"
+end
+
+if options[:reaction_forces]
+    puts "[INFO] Enhanced 3D Odometry with reaction forces"
+else
+    puts "[INFO] 3D Odometry without reaction forces enhancement"
 end
 
 Bundles.run 'exoter_control',
             'exoter_perception',
             'threed_odometry::Task' => 'robot_odometry',
             'exoter_odometry::Task' => 'exoter_odometry',
+            'odometry::Skid' => 'skid_odometry',
             :gdb => false do
 
     # Get the task names from control
@@ -73,6 +89,7 @@ Bundles.run 'exoter_control',
     localization_frontend = Orocos.name_service.get 'localization_frontend'
     exoter_odometry = Orocos.name_service.get 'exoter_odometry'
     robot_odometry = Orocos.name_service.get 'robot_odometry'
+    skid_odometry = Orocos.name_service.get 'skid_odometry'
 
     # Set configuration files for control
     Orocos.conf.apply(read_joint_dispatcher, ['reading'], :override => true)
@@ -87,6 +104,9 @@ Bundles.run 'exoter_control',
     Orocos.conf.apply(robot_odometry, ['default', 'bessel50'], :override => true)
     robot_odometry.urdf_file = Bundles.find_file('data/odometry', 'exoter_odometry_model_complete.urdf')
 
+    # Set configuration files for skid_odometry
+    Orocos.conf.apply(skid_odometry, ['default', 'exoter'], :override => true)
+
     # logs files
     log_replay = Orocos::Log::Replay.open( logfiles_path )
 
@@ -95,6 +115,7 @@ Bundles.run 'exoter_control',
     #################
     Bundles.transformer.setup(localization_frontend)
     Bundles.transformer.setup(exoter_odometry)
+    Bundles.transformer.setup(skid_odometry)
 
     ###################
     ## LOG THE PORTS ##
@@ -109,6 +130,7 @@ Bundles.run 'exoter_control',
     localization_frontend.configure
     exoter_odometry.configure
     robot_odometry.configure
+    skid_odometry.configure
 
     ###########################
     ## LOG PORTS CONNECTIONS ##
@@ -121,6 +143,11 @@ Bundles.run 'exoter_control',
     end
 
     if options[:imu].casecmp("new").zero?
+        log_replay.imu_stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
+        log_replay.imu_stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
+    end
+
+    if options[:imu].casecmp("last").zero?
         log_replay.imu_stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
         log_replay.imu_stim300.compensated_sensors_out.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
     end
@@ -138,12 +165,25 @@ Bundles.run 'exoter_control',
     ## TASKS PORTS CONNECTIONS ##
     #############################
 
+    #Front-End
     read_joint_dispatcher.joints_samples.connect_to localization_frontend.joints_samples
     read_joint_dispatcher.ptu_samples.connect_to ptu_control.ptu_samples
+
+    #Exoter odometry
     localization_frontend.joints_samples_out.connect_to exoter_odometry.joints_samples
-    localization_frontend.joints_samples_out.connect_to robot_odometry.joints_samples
     localization_frontend.orientation_samples_out.connect_to exoter_odometry.orientation_samples
+
+    #3D odometry
     localization_frontend.orientation_samples_out.connect_to robot_odometry.orientation_samples
+    localization_frontend.joints_samples_out.connect_to robot_odometry.joints_samples
+
+    if options[:reaction_forces]
+        localization_frontend.weighting_samples_out.connect_to robot_odometry.weighting_samples, :type => :buffer, :size => 1000
+    end
+
+    # Skid odometry
+    localization_frontend.joints_samples_out.connect_to skid_odometry.actuator_samples
+    localization_frontend.orientation_samples_out.connect_to skid_odometry.orientation_samples
 
     # Start tasks from control
     read_joint_dispatcher.start
@@ -153,6 +193,7 @@ Bundles.run 'exoter_control',
     localization_frontend.start
     exoter_odometry.start
     robot_odometry.start
+    skid_odometry.start
 
     #STDERR.puts 'everything is up and running'
     #loop do

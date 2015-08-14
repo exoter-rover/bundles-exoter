@@ -13,6 +13,7 @@ options = {}
 options[:reference] = "none"
 options[:imu] = "new"
 options[:alone] = false
+options[:reaction_forces] = false
 
 op = OptionParser.new do |opt|
     opt.banner = <<-EOD
@@ -29,6 +30,10 @@ op = OptionParser.new do |opt|
 
     opt.on "--alone", String, 'set alone in case you only want to execute the localization tasks' do
         options[:alone] = true
+    end
+
+    opt.on "-f", "--reaction_forces", String, 'connect the reaction forces for the 3D Odometry' do
+        options[:reaction_forces] = true
     end
 
     opt.on '--help', 'this help message' do
@@ -69,6 +74,13 @@ else
     puts "[INFO] IKF orientation from logs"
 end
 
+if options[:reaction_forces]
+    puts "[INFO] Enhanced 3D Odometry with reaction forces"
+else
+    puts "[INFO] 3D Odometry without reaction forces enhancement"
+end
+
+
 Bundles.run 'exoter_control',
             'exoter_perception',
             'exoter_localization',
@@ -95,7 +107,7 @@ Bundles.run 'exoter_control',
     exoter_odometry.urdf_file = Bundles.find_file('data/odometry', 'exoter_odometry_model_complete.urdf')
 
     # Set configuration files for localization
-    Orocos.conf.apply(msc_localization, ['default'], :override => true)
+    Orocos.conf.apply(msc_localization, ['default', 'bumblebee'], :override => true)
 
     # logs files
     log_replay = Orocos::Log::Replay.open( logfiles_path )
@@ -113,13 +125,13 @@ Bundles.run 'exoter_control',
     ###################
     Bundles.log_all
 
-    if options[:alone] == false
-        # Configure tasks from control
-        read_joint_dispatcher.configure
-        ptu_control.configure
+    # Configure tasks from control
+    read_joint_dispatcher.configure
+    ptu_control.configure
+    localization_frontend.configure
 
+    if options[:alone] == false
         # Configure tasks from odometry
-        localization_frontend.configure
         exoter_odometry.configure
     end
 
@@ -129,10 +141,20 @@ Bundles.run 'exoter_control',
     ###########################
     ## LOG PORTS CONNECTIONS ##
     ###########################
-    if options[:alone] == false
 
-        # Platform driver to localization front-end
-        log_replay.platform_driver.joints_readings.connect_to(read_joint_dispatcher.joints_readings, :type => :buffer, :size => 200)
+    # Platform driver to localization front-end
+    log_replay.platform_driver.joints_readings.connect_to(read_joint_dispatcher.joints_readings, :type => :buffer, :size => 200)
+
+    if options[:reference].casecmp("vicon").zero?
+        log_replay.vicon.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 200)
+    end
+
+    if options[:reference].casecmp("gnss").zero?
+        log_replay.gnss_trimble.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 200)
+    end
+
+
+    if options[:alone] == false
 
         if options[:imu].casecmp("old").zero?
             log_replay.stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
@@ -154,43 +176,41 @@ Bundles.run 'exoter_control',
             log_replay.imu_stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
         end
 
-        if options[:reference].casecmp("vicon").zero?
-            log_replay.vicon.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 200)
-        end
-
-        if options[:reference].casecmp("gnss").zero?
-            log_replay.gnss_trimble.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 200)
-        end
-    else
-        # Localization odometry poses
-        log_replay.exoter_odometry.delta_pose_samples_out.connect_to(msc_localization.delta_pose_samples, :type => :buffer, :size => 200)
     end
 
     #############################
     ## TASKS PORTS CONNECTIONS ##
     #############################
+    read_joint_dispatcher.joints_samples.connect_to localization_frontend.joints_samples,  :type => :buffer, :size => 1000
+    read_joint_dispatcher.ptu_samples.connect_to ptu_control.ptu_samples,  :type => :buffer, :size => 1000
+
     if options[:alone] == false
-        read_joint_dispatcher.joints_samples.connect_to localization_frontend.joints_samples
-        read_joint_dispatcher.ptu_samples.connect_to ptu_control.ptu_samples
-        localization_frontend.joints_samples_out.connect_to exoter_odometry.joints_samples
-        localization_frontend.orientation_samples_out.connect_to exoter_odometry.orientation_samples
-        exoter_odometry.delta_pose_samples_out.connect_to msc_localization.delta_pose_samples
+        localization_frontend.joints_samples_out.connect_to exoter_odometry.joints_samples,  :type => :buffer, :size => 1000
+        localization_frontend.orientation_samples_out.connect_to exoter_odometry.orientation_samples,  :type => :buffer, :size => 1000
+
+        if options[:reaction_forces]
+            localization_frontend.weighting_samples_out.connect_to exoter_odometry.weighting_samples, :type => :buffer, :size => 1000
+        end
+
+        exoter_odometry.delta_pose_samples_out.connect_to msc_localization.delta_pose_samples,  :type => :buffer, :size => 1000
+    else
+        # Localization odometry poses
+        log_replay.exoter_odometry.delta_pose_samples_out.connect_to(msc_localization.delta_pose_samples, :type => :buffer, :size => 1000)
     end
 
-    # Exteroceptive samples from dispatcher to back-end
-    log_replay.visual_stereo.features_samples_out.connect_to(msc_localization.visual_features_samples, :type => :buffer, :size => 200)
+    # Exteroceptive samples to the localization
+    log_replay.visual_stereo.features_samples_out.connect_to(msc_localization.visual_features_samples, :type => :buffer, :size => 1000)
 
     ###########
     ## START ##
     ###########
+    # Start tasks for control
+    read_joint_dispatcher.start
+    ptu_control.start
+    localization_frontend.start
+
     if options[:alone] == false
-
-        # Start tasks for control
-        read_joint_dispatcher.start
-        ptu_control.start
-
         # Start tasks for odometry
-        localization_frontend.start
         exoter_odometry.start
     end
 
