@@ -16,34 +16,34 @@ delta_visual_odometry_target_frame: "body_k-1" #transformer names. No transforma
 # Visual Odometry Stereo parameters. Including intrinsic and extrinsic camera calibration parameters among othersfor a full parameter list have a look at viso2Types.hpp and at viso_stereo.h of the viso2 library
 viso2_parameters:
   ransac_iters: 200 #number of RANSAC iterations
-  inlier_threshold: 1.5 #fundamental matrix inlier threshold
+  inlier_threshold: 2.0 #fundamental matrix inlier threshold
   reweighting: true #lower border weights (more robust to calibration errors)
   match:
     nms_n: 3 #non-max-suppression: min. distance between maxima (in pixels)
     nms_tau: 50 #non-max-suppression: interest point peakiness threshold
     match_binsize: 50 #matching bin width/height (affects efficiency only) Step size for matching features (forward/backward and right/left)
     match_radius: 200 #matching radius (du/dv in pixels)
-    match_disp_tolerance: 1 #dv tolerance for stereo matches (in pixels)
+    match_disp_tolerance: 2 #dv tolerance for stereo matches (in pixels)
     outlier_disp_tolerance: 5 #outlier removal: disparity tolerance (in pixels)
     outlier_flow_tolerance: 5 #outlier removal: flow tolerance (in pixels)
     multi_stage: 1 #0=disabled,1=multistage matching (denser and faster)
     half_resolution: 1 #0=disabled,1=match at half resolution, refine at full resolution
     refinement: 2 #refinement (0=none,1=pixel,2=subpixel)
   bucket:
-    max_features: 3 #maximal number of features per bucket
-    bucket_width: 10.0 #width of bucket
-    bucket_height: 10.0 #height of bucket
+    max_features: 2 #maximal number of features per bucket
+    bucket_width: 50.0 #width of bucket
+    bucket_height: 50.0 #height of bucket
 
 # Set to true if output debug information is desirable.
-output_debug: false #false
-image_ouput_type: :INTER_KEYPOINTS #:INTRA_MATCHES #:INTER_KEYPOINTS
+output_debug: true #false
+image_ouput_type: :INTRA_MATCHES #:INTER_KEYPOINTS
 
 --- name:bumblebee
 # the global name that should be used for the internal left_camera frame
 left_camera_frame: left_camera
 
 # the global name that should be used for the internal body frame
-body_frame: body
+body_frame: left_camera #body
 
 # maximum latency, in seconds, of the stream aligner. The aligner will start
 # dropping samples if the difference between the last output and last input is
