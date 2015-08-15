@@ -9,19 +9,24 @@ class Startup
     attr_accessor :locomotion_control
     attr_accessor :ptu_control
 
-    # SLAM
-    attr_accessor :localization_frontend
-    attr_accessor :exoter_odometry
+    # Proprioceptive
     attr_accessor :imu_stim300
 
-    # Perception
+    # Exteroceptive
     attr_accessor :camera_firewire
     attr_accessor :camera_bb2
     attr_accessor :camera_tof
+
+    # Localization
+    attr_accessor :localization_frontend
+    attr_accessor :exoter_odometry
+
+    # SLAM
     attr_accessor :colorize_pointcloud
 
     # Ground Truth
     attr_accessor :vicon
+    attr_accessor :gnss
 
 
     attr_accessor :tasks
