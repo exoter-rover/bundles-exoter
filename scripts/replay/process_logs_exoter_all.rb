@@ -66,9 +66,7 @@ else
 end
 
 Bundles.run 'exoter_control',
-            'exoter_perception',
             'exoter_localization',
-            'exoter_exteroceptive',
             'exoter_slam',
             :gdb => false do
 
@@ -76,18 +74,14 @@ Bundles.run 'exoter_control',
     read_joint_dispatcher = Orocos.name_service.get 'read_joint_dispatcher'
     ptu_control = Orocos.name_service.get 'ptu_control'
 
-    # Get the task names from perception
-    colorize_pointcloud = Orocos.name_service.get 'colorize_pointcloud'
+    # Get the task names from localization
     localization_frontend = Orocos.name_service.get 'localization_frontend'
-
-    # Get the task names from odometry
     exoter_odometry = Orocos.name_service.get 'exoter_odometry'
-
-    # Get the task names from exteroceptive
     visual_odometry = Orocos.name_service.get 'visual_odometry'
     icp = Orocos.name_service.get 'generalized_icp'
 
     # Get the task names from slam
+    colorize_pointcloud = Orocos.name_service.get 'colorize_pointcloud'
     localization_dispatcher = Orocos.name_service.get 'localization_dispatcher'
     localization_backend = Orocos.name_service.get 'localization_backend'
 

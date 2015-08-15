@@ -60,8 +60,7 @@ else
 end
 
 Bundles.run 'exoter_control',
-            'exoter_perception',
-            'exoter_odometry',
+            'exoter_localization',
             :gdb => false do
 
     # Get the task names from control

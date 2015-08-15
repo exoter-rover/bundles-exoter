@@ -70,7 +70,7 @@ else
     puts "[INFO] New type of IMU samples in logs"
 end
 
-Bundles.run 'exoter_perception',
+Bundles.run 'exoter_localization',
             :gdb => false do
 
     # Get the task names from perception

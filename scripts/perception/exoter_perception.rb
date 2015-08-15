@@ -9,7 +9,7 @@ include Orocos
 ## Initialize orocos ##
 Bundles.initialize
 
-Orocos::Process.run 'exoter_perception' do
+Orocos::Process.run 'exoter_exteroceptive' do
 
     # Camera firewire
     camera_firewire = TaskContext.get 'camera_firewire'

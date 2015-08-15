@@ -61,7 +61,7 @@ else
 end
 
 Bundles.run 'exoter_control',
-            'exoter_perception',
+            'exoter_localization',
             'odometry::Skid' => 'skid_odometry',
             :gdb => false do
 

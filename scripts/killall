@@ -20,9 +20,8 @@ killall $1 orogen_default_viso2__Task
 #Exoter deployments
 killall $1 exoter_control
 killall $1 exoter_proprioceptive
-killall $1 exoter_perception
+killall $1 exoter_exteroceptive
 killall $1 exoter_localization
-killall $1 exoter_registration
 killall $1 exoter_slam
 killall $1 exoter_groundtruth
 

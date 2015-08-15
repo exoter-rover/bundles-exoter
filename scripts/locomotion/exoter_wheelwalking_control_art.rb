@@ -36,7 +36,7 @@ Bundles.initialize
 Bundles.transformer.load_conf(Bundles.find_file('config', 'transforms_scripts.rb'))
 
 ## Execute the task 'platform_driver::Task' ##
-Orocos::Process.run 'exoter_control', 'exoter_perception', 'exoter_proprioceptive', 'exoter_groundtruth' do
+Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtruth' do
 
     # setup platform_driver
     puts "Setting up platform_driver"

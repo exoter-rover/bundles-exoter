@@ -71,7 +71,7 @@ else
 end
 
 Bundles.run 'exoter_control',
-            'exoter_perception',
+            'localization_frontend::Task' => 'localization_frontend',
             'threed_odometry::Task' => 'exoter_odometry',
             :gdb => false do
 

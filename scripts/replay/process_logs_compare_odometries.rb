@@ -75,7 +75,7 @@ else
 end
 
 Bundles.run 'exoter_control',
-            'exoter_perception',
+            'localization_frontend::Task' => 'localization_frontend',
             'threed_odometry::Task' => 'robot_odometry',
             'exoter_odometry::Task' => 'exoter_odometry',
             'odometry::Skid' => 'skid_odometry',

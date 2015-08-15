@@ -60,8 +60,8 @@ else
 end
 
 Bundles.run 'exoter_control',
-            'exoter_perception',
             'exoter_exteroceptive',
+            'exoter_localization',
             :valgrind => false do
 
     ## Get the task context ##

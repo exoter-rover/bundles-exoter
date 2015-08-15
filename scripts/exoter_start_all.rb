@@ -50,7 +50,6 @@ end
 Bundles.run 'exoter_control',
             'exoter_groundtruth',
             'exoter_proprioceptive',
-            'exoter_perception',
             'exoter_slam',
             'valgrind'=> false,
             'wait' => 1000 do

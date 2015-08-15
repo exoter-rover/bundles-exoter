@@ -82,7 +82,6 @@ end
 
 
 Bundles.run 'exoter_control',
-            'exoter_perception',
             'exoter_localization',
             :gdb => false do
 
