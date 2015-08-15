@@ -52,16 +52,14 @@ transformer_status_period: 0.08
 usePosition: false
 
 # wheel base
-leftWheelNames: [fl_drive, ml_drive, rl_drive]
+leftWheelNames: [fl_translation, ml_translation, rl_translation]
 # wheel base
-rightWheelNames: [fr_drive, mr_drive, rr_drive]
+rightWheelNames: [fr_translation, mr_translation, rr_translation]
 
 --- name:exoter
 # track width
 trackWidth: 0.620
 # wheel base
 wheelBase: 0.530
-# wheel radius average
-wheelRadiusAvg: 0.072703
 
 
