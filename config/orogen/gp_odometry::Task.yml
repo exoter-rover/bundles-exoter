@@ -1,6 +1,6 @@
 --- name:gp_sklearn
 # path to Gaussian Process for the Sklearn for x axis model.
-gaussian_process_x_axis_file: 'gp_sklearn_x_velocity.data'
+gaussian_process_x_axis_file: ''
 # path to Gaussian Process for the Sklearn for y axis model.
 gaussian_process_y_axis_file: ''
 # path to Gaussian Process for the Sklearn for z axis model.
