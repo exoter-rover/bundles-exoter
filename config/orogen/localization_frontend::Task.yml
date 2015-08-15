@@ -40,7 +40,7 @@ attitude_covariance_adjustment: 20.00
 
 # Locomotion joints searching by names.
 #joint_names: [left_passive, right_passive, rear_passive, fl_walking, fr_walking, ml_walking, mr_walking, rl_walking, rr_walking, fl_steer, fr_steer, rl_steer, rr_steer, fl_drive, fr_drive, ml_drive, mr_drive, rl_drive, rr_drive]
-odometry_joint_names: [left_passive, fl_mimic, fl_walking, fl_steer, fl_drive, fl_contact, fl_translation, fl_slipx, fl_slipy, fl_slipz,
+all_joint_names: [left_passive, fl_mimic, fl_walking, fl_steer, fl_drive, fl_contact, fl_translation, fl_slipx, fl_slipy, fl_slipz,
                             ml_mimic, ml_walking, ml_drive, ml_contact, ml_translation, ml_slipx, ml_slipy, ml_slipz,
                       rear_passive, rl_mimic, rl_walking, rl_steer, rl_drive, rl_contact, rl_translation, rl_slipx, rl_slipy, rl_slipz,
                             rr_mimic, rr_walking, rr_steer, rr_drive, rr_contact, rr_translation, rr_slipx, rr_slipy, rr_slipz,
