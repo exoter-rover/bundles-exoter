@@ -40,9 +40,9 @@ body_frame: body
 imu_frame: body #imu  #body
 
 # Time in s between joints_samples readings
-joints_samples_period: 0.08
+joints_samples_period: 0.082
 # Time in s between orientation_samples readings
-orientation_samples_period: 0.08
+orientation_samples_period: 0.082
 # Minimum system time in seconds between two updates of the status ports
 transformer_status_period: 1.0
 # Maximum time in seconds the transformer will wait until it starts dropping samples
