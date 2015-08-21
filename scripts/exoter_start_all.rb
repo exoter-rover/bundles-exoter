@@ -51,6 +51,9 @@ Bundles.run 'exoter_control',
             'exoter_groundtruth',
             'exoter_proprioceptive',
             'exoter_slam',
+            'exoter_perception',
+            'exoter_geometry',
+            'exoter_exteroceptive',
             'valgrind'=> false,
             'wait' => 1000 do
 
