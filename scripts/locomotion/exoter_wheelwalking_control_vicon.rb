@@ -58,11 +58,11 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     puts "done"
 
     # setup exoter_odometry
-    puts "Setting up imu_stim300"
-    imu_stim300 = Orocos.name_service.get 'imu_stim300'
-    Orocos.conf.apply(imu_stim300, ['default', 'ExoTer','ESTEC','stim300_5g'], :override => true)
-    imu_stim300.configure
-    puts "done"
+    #puts "Setting up imu_stim300"
+    #imu_stim300 = Orocos.name_service.get 'imu_stim300'
+    #Orocos.conf.apply(imu_stim300, ['default', 'ExoTer','ESTEC','stim300_5g'], :override => true)
+    #imu_stim300.configure
+    #puts "done"
 
     joystick = Orocos.name_service.get 'joystick'
 

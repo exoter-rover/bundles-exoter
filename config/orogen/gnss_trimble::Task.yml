@@ -1,4 +1,4 @@
---- name:ExoTer
+--- name:exoter
 # the device port
 serial_port: /dev/ttyXR0
 # Baud rate to open the serial com_port.
