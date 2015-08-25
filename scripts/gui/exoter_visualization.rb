@@ -114,7 +114,7 @@ pointCloudVO = Vizkit.default_loader.PointcloudVisualization
 pointCloudVO.setKeepOldData(true)
 pointCloudVO.setMaxOldData(1)
 pointCloudVO.setPluginName("VO Features")
-Vizkit.vizkit3d_widget.setPluginDataFrame("body", pointCloudVO)
+Vizkit.vizkit3d_widget.setPluginDataFrame("left_camera", pointCloudVO)
 
 #RigidBody of the visual odometry
 visualOdometryRBS = Vizkit.default_loader.RigidBodyStateVisualization
@@ -144,6 +144,12 @@ icpTrajectory.setColor(Eigen::Vector3.new(0.64, 0.64, 0.64))
 icpTrajectory.setPluginName("Iterative Closest Points Trajectory")
 Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", icpTrajectory)
 
+# Point cloud of features in the localization
+featureCloud = Vizkit.default_loader.PointcloudVisualization
+featureCloud.setKeepOldData(true)
+featureCloud.setMaxOldData(1)
+featureCloud.setPluginName("Visual Stereo Features")
+Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", featureCloud)
 
 #Contact points FL Wheel (RED)
 c0FL = Vizkit.default_loader.RigidBodyStateVisualization
@@ -315,12 +321,15 @@ end
 #    Vizkit.display camera_tof.port('pointcloud'), :widget =>pointCloud
 #end
 
-leftImage = Vizkit.default_loader.ImageView
-rightImage = Vizkit.default_loader.ImageView
+#leftImage = Vizkit.default_loader.ImageView
+#rightImage = Vizkit.default_loader.ImageView
 
-localization_frontend.on_reachable do
-    Vizkit.display localization_frontend.port('left_frame'), :widget => leftImage
-    Vizkit.display localization_frontend.port('right_frame'), :widget => rightImage
+visual_stereo = Orocos::Async.proxy 'visual_stereo'
+interFrameImage = Vizkit.default_loader.ImageView
+
+visual_stereo.on_reachable do
+    Vizkit.display visual_stereo.port('inter_frame_samples_out'), :widget => interFrameImage
+
 end
 
 # Visual Odometry tasks in Asynchronous mode
@@ -372,6 +381,8 @@ msc_localization.on_reachable do
         localizationRobotTrajectory.updateTrajectory(localization_rbs.position)
     end
 
+    # Features 3D Points
+    Vizkit.display msc_localization.port('features_point_samples_out'), :widget =>featureCloud
 end
 
 
