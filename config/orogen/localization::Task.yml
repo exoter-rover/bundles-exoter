@@ -4,13 +4,15 @@
 localization_source_frame: 'body'
 
 #Maximum number of sensor camera poses in the filter state.
-maximum_number_sensor_poses: 5
+maximum_number_sensor_poses: 10
+# Filter predict type for the uncertainty transformation
+predict_type: :ADDITION #:COMPOSITION
 
 # Desired update period. It cannot be smaller that the visual features samples period.
 update_period: 0.4
 
 # Filter update type
-update_type: :EKF #:UKF
+update_type: :EKF_OB #:UKF #NO_UPDATE
 
 # the global name that should be used for the internal navigation frame
 navigation_frame: navigation
@@ -33,13 +35,13 @@ transformer_status_period: 1.0
 # list of static transformations
 static_transformations: []
 
---- name:bumblebee
+--- name:bumblebee_stereo_noise
 # Measurement uncertainty in meters at the sensor plane projection.
 # ex = 0.1462 pixel^2 ey = 0.16428 pixel^2 noise
 measurement_covariance:
   rows: 2
   cols: 2
-#  data: [0.002, 0.00,
+#  data: [0.0018, 0.00,
 #        0.00, 0.002]
   data: [0.00018, 0.00,
         0.00, 0.0002]
@@ -48,7 +50,7 @@ measurement_covariance:
 delta_pose_samples_period: 0.08
 visual_features_samples_period: 0.4
 
---- name:bumblebee_low_noise
+--- name:bumblebee_mono_noise
 # Measurement uncertainty in meters at the sensor plane projection.
 measurement_covariance:
   rows: 2
