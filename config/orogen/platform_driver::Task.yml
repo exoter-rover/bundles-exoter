@@ -81,7 +81,7 @@ param_gear_motor_pan:
 
 # motor parameters of the steer drives
 param_gear_motor_steer: 
-  dPtpVelDefaultIncrS: 50000
+  dPtpVelDefaultIncrS: 30000
   dVelMaxEncIncrS: 70000
   dPosLimitLowIncr: -115111
   dBeltRatio: 1

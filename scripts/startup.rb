@@ -102,9 +102,9 @@ class Startup
         Orocos.conf.apply( @ptu_control, ['default'], :override => true)
         Orocos.conf.apply( @localization_frontend, ['default', 'hamming1hzsampling12hz'], :override => true)
         Orocos.conf.apply( @exoter_odometry, ['default', 'bessel50'], :override => true)
-        @exoter_odometry.urdf_file = Bundles.find_file('data/odometry', 'exoter_odometry_model.urdf')
+        @exoter_odometry.urdf_file = Bundles.find_file('data/odometry', 'exoter_odometry_model_complete.urdf')
 
-        Orocos.conf.apply( @imu_stim300, ['default','ExoTer','ESTEC','stim300_5g'], :override => true)
+        Orocos.conf.apply( @imu_stim300, ['default','exoter','ESTEC','stim300_5g'], :override => true)
         Orocos.conf.apply( @camera_firewire, ['default'], :override => true)
         Orocos.conf.apply( @camera_bb2, ['default'], :override => true)
         Orocos.conf.apply( @camera_tof, ['default'], :override => true)
@@ -116,7 +116,7 @@ class Startup
         end
 
         if @configuration[:reference].casecmp("gnss").zero?
-            Orocos.conf.apply( @gnss_trimble, ['ExoTer', 'Netherlands', 'DECOS'], :override => true)
+            Orocos.conf.apply( @gnss_trimble, ['exoter', 'Netherlands', 'DECOS'], :override => true)
             @localization_frontend.pose_reference_samples_period = 0.1 # GNSS/GPS is normally at 10Hz
         end
 
