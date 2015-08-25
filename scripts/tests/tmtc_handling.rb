@@ -65,10 +65,10 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     Orocos.conf.apply(ptu_control, ['default'], :override => true)
     ptu_control.configure
     puts "done"
-    
+
+    # setup exoter camera_firewire
     if options[:camera].casecmp("yes").zero?
         puts "[INFO] Camera ON"
-        # setup exoter camera_firewire
         puts "Setting up camera_firewire"
         camera_firewire = Orocos.name_service.get 'camera_firewire'
         Orocos.conf.apply(camera_firewire, ['default'], :override => true)
@@ -78,18 +78,18 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
         puts "[INFO] Camera OFF"
     end
 
-    # setup exoter wheel_walking_control
+    # setup exoter locomotion_control
     puts "Setting up locomotion_control"
     locomotion_control = Orocos.name_service.get 'locomotion_control'
     Orocos.conf.apply(locomotion_control, ['default'], :override => true)
     locomotion_control.configure
     puts "done"
 
-    # setup art
-    puts "Setting up vicon"
-    vicon = Orocos.name_service.get 'vicon'
-    Orocos.conf.apply(vicon, ['default', 'exoter'], :override => true)
-    vicon.configure
+    # setup ground_truth
+    puts "Setting up GNSS"
+    gnss = Orocos.name_service.get 'gnss_trimble'
+    Orocos.conf.apply(gnss, ['exoter','Netherlands','ESTEC'], :override => true)
+    gnss.configure
     puts "done"
 
     # setup exoter_odometry
@@ -130,8 +130,13 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     # Connect ports: ptu_control to command_joint_dispatcher
     ptu_control.ptu_commands_out.connect_to command_joint_dispatcher.ptu_commands
 
-    # Connect ports: ptu_control to command_joint_dispatcher
+    # Connect ports: telemetry_telecommand to locomotion_control
     telemetry_telecommand.locomotion_command.connect_to locomotion_control.motion_command
+
+    # Connect ports: telemetry_telecommand to ptu_control
+    telemetry_telecommand.ptu_command.connect_to ptu_control.ptu_joints_commands
+
+    gnss.pose_samples.connect_to telemetry_telecommand.current_pose
 
     puts "done"
 
@@ -142,8 +147,8 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     command_joint_dispatcher.start
     locomotion_control.start
     ptu_control.start
-    #imu_stim300.start
-    #vicon.start
+    imu_stim300.start
+    gnss.start
     telemetry_telecommand.start
     if options[:camera].casecmp("yes").zero?
         camera_firewire.start
