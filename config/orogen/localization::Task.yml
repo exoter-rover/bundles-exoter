@@ -62,4 +62,7 @@ measurement_covariance:
 delta_pose_samples_period: 0.08
 visual_features_samples_period: 0.4
 
+--- name:no_update
+# Filter update type
+update_type: :NO_UPDATE
 
