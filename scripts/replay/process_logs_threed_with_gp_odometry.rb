@@ -11,6 +11,7 @@ include Orocos
 options = {}
 options[:reference] = "none"
 options[:imu] = "new"
+options[:reaction_forces] = false
 
 op = OptionParser.new do |opt|
     opt.banner = <<-EOD
@@ -23,6 +24,10 @@ op = OptionParser.new do |opt|
 
     opt.on "-i", "--imu=old/new/last", String, 'since the imu component changed. Please set the type' do |imu|
         options[:imu] = imu
+    end
+
+    opt.on "-f", "--reaction_forces", String, 'connect the reaction forces for the 3D Odometry' do
+        options[:reaction_forces] = true
     end
 
     opt.on '--help', 'this help message' do
@@ -57,6 +62,12 @@ if options[:imu].casecmp("old").zero?
     puts "[INFO] Old type of IMU samples in logs"
 else
     puts "[INFO] New type of IMU samples in logs"
+end
+
+if options[:reaction_forces]
+    puts "[INFO] Enhanced 3D Odometry with reaction forces"
+else
+    puts "[INFO] 3D Odometry without reaction forces enhancement"
 end
 
 Bundles.run 'exoter_control',
@@ -154,6 +165,10 @@ Bundles.run 'exoter_control',
     read_joint_dispatcher.ptu_samples.connect_to ptu_control.ptu_samples
     localization_frontend.joints_samples_out.connect_to exoter_odometry.joints_samples
     localization_frontend.orientation_samples_out.connect_to exoter_odometry.orientation_samples
+
+    if options[:reaction_forces]
+        localization_frontend.weighting_samples_out.connect_to exoter_odometry.weighting_samples, :type => :buffer, :size => 200
+    end
 
     exoter_odometry.delta_pose_samples_out.connect_to gp_odometry.delta_pose_samples
     localization_frontend.joints_samples_out.connect_to gp_odometry.joints_samples
