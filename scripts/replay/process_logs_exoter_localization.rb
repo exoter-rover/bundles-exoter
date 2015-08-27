@@ -15,6 +15,7 @@ options[:imu] = "new"
 options[:odometry] = 'none'
 options[:reaction_forces] = false
 options[:visual] = 'none'
+options[:gp] = false
 
 op = OptionParser.new do |opt|
     opt.banner = <<-EOD
@@ -39,6 +40,10 @@ op = OptionParser.new do |opt|
 
     opt.on "-v", "--visual=task/log", String, 'select visual stereo task running task or from log files' do |visual|
         options[:visual] = visual
+    end
+
+    opt.on "-g", "--gaussian_processes", String, 'estimate Odometry uncertainty using Gaussian processes' do
+        options[:gp] = true
     end
 
     opt.on '--help', 'this help message' do
@@ -103,6 +108,12 @@ else
     exit 1
 end
 
+if options[:gp]
+    puts "[INFO] Gaussian processes to estimate uncertainty"
+else
+    puts "[INFO] No gaussian processes to estimate uncertainty"
+end
+
 Bundles.run 'exoter_control',
             'exoter_localization',
             :gdb => false do
@@ -114,6 +125,7 @@ Bundles.run 'exoter_control',
     # Get the task names from odometry
     localization_frontend = Orocos.name_service.get 'localization_frontend'
     exoter_odometry = Orocos.name_service.get 'exoter_odometry'
+    gp_odometry = Orocos.name_service.get 'gp_odometry'
 
     # Get the task names from localization
     msc_localization = Orocos.name_service.get 'msc_localization'
@@ -128,8 +140,15 @@ Bundles.run 'exoter_control',
     Orocos.conf.apply(exoter_odometry, ['default', 'bessel50'], :override => true)
     exoter_odometry.urdf_file = Bundles.find_file('data/odometry', 'exoter_odometry_model_complete.urdf')
 
+    if options[:gp]
+        Orocos.conf.apply(gp_odometry, ['gp_sklearn'], :override => true)
+        gp_odometry.gaussian_process_x_axis_file = Bundles.find_file('data/gaussian_processes', 'gp_sklearn_x_delta_pose.data')
+        gp_odometry.gaussian_process_y_axis_file = Bundles.find_file('data/gaussian_processes', 'gp_sklearn_y_delta_pose.data')
+        gp_odometry.gaussian_process_z_axis_file = Bundles.find_file('data/gaussian_processes', 'gp_sklearn_z_delta_pose.data')
+    end
+
     # Set configuration files for localization
-    Orocos.conf.apply(msc_localization, ['default', 'bumblebee_mono_noise'], :override => true)
+    Orocos.conf.apply(msc_localization, ['default', 'bumblebee_stereo_noise'], :override => true)
     Orocos.conf.apply(visual_stereo, ['default', 'bumblebee'], :override => true)
 
     # logs files
@@ -162,6 +181,10 @@ Bundles.run 'exoter_control',
     if options[:odometry].casecmp("task").zero?
         # Configure tasks from odometry
         exoter_odometry.configure
+    end
+
+    if options[:gp]
+        gp_odometry.configure
     end
 
     # Configure tasks from localization
@@ -225,7 +248,14 @@ Bundles.run 'exoter_control',
             localization_frontend.weighting_samples_out.connect_to exoter_odometry.weighting_samples, :type => :buffer, :size => 1000
         end
 
-        exoter_odometry.delta_pose_samples_out.connect_to msc_localization.delta_pose_samples,  :type => :buffer, :size => 1000
+        if options[:gp]
+            exoter_odometry.delta_pose_samples_out.connect_to gp_odometry.delta_pose_samples,  :type => :buffer, :size => 200
+            localization_frontend.joints_samples_out.connect_to gp_odometry.joints_samples, :type => :buffer, :size => 200
+            localization_frontend.orientation_samples_out.connect_to gp_odometry.orientation_samples, :type => :buffer, :size => 200
+            gp_odometry.delta_pose_samples_out.connect_to msc_localization.delta_pose_samples,  :type => :buffer, :size => 1000
+        else
+            exoter_odometry.delta_pose_samples_out.connect_to msc_localization.delta_pose_samples,  :type => :buffer, :size => 1000
+        end
 
     elsif options[:odometry].casecmp("log").zero?
         # Localization odometry poses
@@ -234,8 +264,8 @@ Bundles.run 'exoter_control',
 
     if options[:visual].casecmp("task").zero?
         # Camera images for the visual task
-        log_replay.camera_bb2.left_frame.connect_to visual_stereo.left_frame
-        log_replay.camera_bb2.right_frame.connect_to visual_stereo.right_frame
+        log_replay.camera_bb2.left_frame.connect_to visual_stereo.left_frame, :type => :buffer, :size => 200
+        log_replay.camera_bb2.right_frame.connect_to visual_stereo.right_frame, :type => :buffer, :size => 200
 
         # Exteroceptive samples to the localization
         visual_stereo.features_samples_out.connect_to msc_localization.visual_features_samples, :type => :buffer, :size => 1000
@@ -256,6 +286,10 @@ Bundles.run 'exoter_control',
     if options[:odometry].casecmp("task").zero?
         # Start tasks for odometry
         exoter_odometry.start
+    end
+
+    if options[:gp]
+        gp_odometry.start
     end
 
     # Start tasks for localization

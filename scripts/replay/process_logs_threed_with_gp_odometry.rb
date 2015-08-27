@@ -161,21 +161,20 @@ Bundles.run 'exoter_control',
     ## TASKS PORTS CONNECTIONS ##
     #############################
 
-    read_joint_dispatcher.joints_samples.connect_to localization_frontend.joints_samples
-    read_joint_dispatcher.ptu_samples.connect_to ptu_control.ptu_samples
-    localization_frontend.joints_samples_out.connect_to exoter_odometry.joints_samples
-    localization_frontend.orientation_samples_out.connect_to exoter_odometry.orientation_samples
+    read_joint_dispatcher.joints_samples.connect_to localization_frontend.joints_samples, :type => :buffer, :size => 200
+    read_joint_dispatcher.ptu_samples.connect_to ptu_control.ptu_samples, :type => :buffer, :size => 200
+    localization_frontend.joints_samples_out.connect_to exoter_odometry.joints_samples, :type => :buffer, :size => 200
+    localization_frontend.orientation_samples_out.connect_to exoter_odometry.orientation_samples, :type => :buffer, :size => 200
 
     if options[:reaction_forces]
         localization_frontend.weighting_samples_out.connect_to exoter_odometry.weighting_samples, :type => :buffer, :size => 200
     end
 
-    exoter_odometry.delta_pose_samples_out.connect_to gp_odometry.delta_pose_samples
-    localization_frontend.joints_samples_out.connect_to gp_odometry.joints_samples
-    localization_frontend.orientation_samples_out.connect_to gp_odometry.orientation_samples
+    exoter_odometry.delta_pose_samples_out.connect_to gp_odometry.delta_pose_samples, :type => :buffer, :size => 200
+    localization_frontend.joints_samples_out.connect_to gp_odometry.joints_samples, :type => :buffer, :size => 200
+    localization_frontend.orientation_samples_out.connect_to gp_odometry.orientation_samples, :type => :buffer, :size => 200
 
-
-    gp_odometry.delta_pose_samples_out.connect_to msc_localization.delta_pose_samples,  :type => :buffer, :size => 1000
+    gp_odometry.delta_pose_samples_out.connect_to msc_localization.delta_pose_samples,  :type => :buffer, :size => 200
 
     # Start tasks from control
     read_joint_dispatcher.start
