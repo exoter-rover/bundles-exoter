@@ -15,6 +15,10 @@ OptionParser.new do |opt|
     usage: tmtc_handling.rb [options] 
     EOD
 
+    opt.on '-r or --reference=none/vicon/gnss', String, 'set the type of reference system available' do |reference|
+        options[:reference] = reference
+    end
+
     opt.on '-c or --camera=no/yes', String, 'set the camera on or off' do |camera|
         options[:camera] = camera
     end
@@ -36,7 +40,7 @@ Bundles.initialize
 Bundles.transformer.load_conf(Bundles.find_file('config', 'transforms_scripts.rb'))
 
 ## Execute the task 'platform_driver::Task' ##
-Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtruth', 'exoter_tmtchandling' do
+Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtruth', 'exoter_tmtchandling', 'exoter_exteroceptive' do
 
     # setup platform_driver
     puts "Setting up platform_driver"
@@ -74,6 +78,11 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
         Orocos.conf.apply(camera_firewire, ['default'], :override => true)
         camera_firewire.configure
         puts "done"
+        puts "Setting up camera_bb2"
+        camera_bb2 = Orocos.name_service.get 'camera_bb2'
+        Orocos.conf.apply(camera_bb2, ['default'], :override => true)
+        camera_bb2.configure
+        puts "done"
     else
         puts "[INFO] Camera OFF"
     end
@@ -86,11 +95,23 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     puts "done"
 
     # setup ground_truth
-    puts "Setting up GNSS"
-    gnss = Orocos.name_service.get 'gnss_trimble'
-    Orocos.conf.apply(gnss, ['exoter','Netherlands','ESTEC'], :override => true)
-    gnss.configure
-    puts "done"
+    if options[:reference].casecmp("vicon").zero?
+        puts "[INFO] Vicon Ground Truth system available"
+        puts "Setting up vicon"
+        vicon = Orocos.name_service.get 'vicon'
+        Orocos.conf.apply(vicon, ['default', 'exoter'], :override => true)
+        vicon.configure
+        puts "done"
+    elsif options[:reference].casecmp("gnss").zero?
+        puts "[INFO] GNSS Ground Truth system available"
+        puts "Setting up GNSS"
+        gnss = Orocos.name_service.get 'gnss_trimble'
+        Orocos.conf.apply(gnss, ['exoter','Netherlands','ESTEC'], :override => true)
+        gnss.configure
+        puts "done"
+    else
+        puts "[INFO] No Ground Truth system available"
+    end
 
     # setup exoter_odometry
     puts "Setting up imu_stim300"
@@ -98,7 +119,7 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     Orocos.conf.apply(imu_stim300, ['default', 'exoter','ESTEC','stim300_5g'], :override => true)
     imu_stim300.configure
     puts "done"
-    
+
     # setup telemetry_telecommand
     puts "Setting up telemetry_telecommand"
     telemetry_telecommand = Orocos.name_service.get 'telemetry_telecommand'
@@ -136,7 +157,23 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     # Connect ports: telemetry_telecommand to ptu_control
     telemetry_telecommand.ptu_command.connect_to ptu_control.ptu_joints_commands
 
-    gnss.pose_samples.connect_to telemetry_telecommand.current_pose
+    if options[:reference].casecmp("vicon").zero?
+        # Connect ports: vicon to telemetry_telecommand
+        vicon.pose_samples.connect_to telemetry_telecommand.current_pose
+    elsif options[:reference].casecmp("gnss").zero?
+        # Connect ports: gnss to telemetry_telecommand
+        gnss.pose_samples.connect_to telemetry_telecommand.current_pose
+    end
+
+    # Connect ports: ptu_control to telemetry_telecommand
+    ptu_control.ptu_samples_out.connect_to telemetry_telecommand.current_ptu
+
+    # Connect ports: camera_firewire to camera_bb2
+    camera_firewire.frame.connect_to camera_bb2.frame_in
+
+    # Connect ports: camera_bb2 to telemetry_telecommand
+    camera_bb2.left_frame.connect_to telemetry_telecommand.left_frame
+    camera_bb2.right_frame.connect_to telemetry_telecommand.right_frame
 
     puts "done"
 
@@ -148,10 +185,15 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     locomotion_control.start
     ptu_control.start
     imu_stim300.start
-    gnss.start
     telemetry_telecommand.start
     if options[:camera].casecmp("yes").zero?
         camera_firewire.start
+        camera_bb2.start
+    end
+    if options[:reference].casecmp("vicon").zero?
+        vicon.start
+    elsif options[:reference].casecmp("gnss").zero?
+        gnss.start
     end
 
     Readline::readline("Press ENTER to exit\n") do
