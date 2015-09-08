@@ -168,15 +168,15 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     # Connect ports: ptu_control to telemetry_telecommand
     ptu_control.ptu_samples_out.connect_to telemetry_telecommand.current_ptu
 
-    # Connect ports: camera_firewire to camera_bb2
-    camera_firewire.frame.connect_to camera_bb2.frame_in
-
-    # Connect ports: camera_bb2 to telemetry_telecommand
-    camera_bb2.left_frame.connect_to telemetry_telecommand.left_frame
-    camera_bb2.right_frame.connect_to telemetry_telecommand.right_frame
+    if options[:camera].casecmp("yes").zero?
+        # Connect ports: camera_firewire to camera_bb2
+        camera_firewire.frame.connect_to camera_bb2.frame_in
+        # Connect ports: camera_bb2 to telemetry_telecommand
+        camera_bb2.left_frame.connect_to telemetry_telecommand.left_frame
+        camera_bb2.right_frame.connect_to telemetry_telecommand.right_frame
+    end
 
     puts "done"
-
 
     # Start the tasks
     platform_driver.start
