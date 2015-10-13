@@ -83,6 +83,16 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
         Orocos.conf.apply(camera_bb2, ['default'], :override => true)
         camera_bb2.configure
         puts "done"
+        puts "Setting up stereo"
+        stereo = Orocos.name_service.get 'stereo'
+        Orocos.conf.apply(stereo, ['default'], :override => true)
+        stereo.configure
+        puts "done"
+        puts "Setting up pointcloud"
+        pointcloud = Orocos.name_service.get 'pointcloud'
+        Orocos.conf.apply(pointcloud, ['default'], :override => true)
+        pointcloud.configure
+        puts "done"
     else
         puts "[INFO] Camera OFF"
     end
@@ -114,11 +124,11 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     end
 
     # setup exoter_odometry
-    puts "Setting up imu_stim300"
-    imu_stim300 = Orocos.name_service.get 'imu_stim300'
-    Orocos.conf.apply(imu_stim300, ['default', 'exoter','ESTEC','stim300_5g'], :override => true)
-    imu_stim300.configure
-    puts "done"
+    #puts "Setting up imu_stim300"
+    #imu_stim300 = Orocos.name_service.get 'imu_stim300'
+    #Orocos.conf.apply(imu_stim300, ['default', 'exoter','ESTEC','stim300_5g'], :override => true)
+    #imu_stim300.configure
+    #puts "done"
 
     # setup telemetry_telecommand
     puts "Setting up telemetry_telecommand"
@@ -172,8 +182,11 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
         # Connect ports: camera_firewire to camera_bb2
         camera_firewire.frame.connect_to camera_bb2.frame_in
         # Connect ports: camera_bb2 to telemetry_telecommand
-        camera_bb2.left_frame.connect_to telemetry_telecommand.left_frame
-        camera_bb2.right_frame.connect_to telemetry_telecommand.right_frame
+        camera_bb2.left_frame.connect_to stereo.left_frame
+        camera_bb2.right_frame.connect_to stereo.right_frame
+        telemetry_telecommand.store_image_filename.connect_to camera_bb2.store_image_filename
+        stereo.distance_frame.connect_to pointcloud.frame
+        camera_bb2.left_frame.connect_to pointcloud.color_frame
     end
 
     puts "done"
@@ -184,11 +197,13 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     command_joint_dispatcher.start
     locomotion_control.start
     ptu_control.start
-    imu_stim300.start
+    #imu_stim300.start
     telemetry_telecommand.start
     if options[:camera].casecmp("yes").zero?
         camera_firewire.start
         camera_bb2.start
+        stereo.start
+        pointcloud.start
     end
     if options[:reference].casecmp("vicon").zero?
         vicon.start
