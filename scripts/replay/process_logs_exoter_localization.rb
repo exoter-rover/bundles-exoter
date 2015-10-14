@@ -157,8 +157,9 @@ Bundles.run 'exoter_control',
     #################
     ## TRANSFORMER ##
     #################
+    Bundles.transformer.setup(localization_frontend)
     if options[:odometry].casecmp("task").zero?
-        Bundles.transformer.setup(localization_frontend)
+        Bundles.transformer.setup(exoter_odometry)
     end
 
     Bundles.transformer.setup(msc_localization)

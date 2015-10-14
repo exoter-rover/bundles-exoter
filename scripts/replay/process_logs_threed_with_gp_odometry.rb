@@ -100,7 +100,7 @@ Bundles.run 'exoter_control',
     gp_odometry.gaussian_process_z_axis_file = Bundles.find_file('data/gaussian_processes', 'gp_sklearn_z_delta_pose.data')
 
     # Set configuration files for localization
-    Orocos.conf.apply(msc_localization, ['default', 'no_update', 'bumblebee_mono_noise'], :override => true)
+    Orocos.conf.apply(msc_localization, ['default', 'no_update'], :override => true)
 
     # logs files
     log_replay = Orocos::Log::Replay.open( logfiles_path )
