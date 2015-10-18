@@ -77,9 +77,9 @@ stereoCameraCalibration:
     height: 768
 #Distance between left and right camera
   extrinsic:
-    tx: 0.12042814 #baseline in x (meters)
-    ty: 0.00063857 #baseline in y (meters)
-    tz: 0.0003051 #baseline in z (meters)
+    tx: 120.42814 #0.12042814 #baseline in x (meters)
+    ty: 0.63857 #0.00063857 #baseline in y (meters)
+    tz: 0.3051 #0.0003051 #baseline in z (meters)
     rx: 0.00125 #rotation along x (rad)
     ry: -0.00333 #rotation along y (rad)
     rz: 0.00542 #rotation along z (rad)
