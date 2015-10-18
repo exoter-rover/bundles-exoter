@@ -74,14 +74,20 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     if options[:camera].casecmp("yes").zero?
         puts "[INFO] Camera ON"
         puts "Setting up camera_firewire"
-        camera_firewire = Orocos.name_service.get 'camera_firewire'
-        Orocos.conf.apply(camera_firewire, ['default'], :override => true)
-        camera_firewire.configure
+        camera_firewire_pan_cam = Orocos.name_service.get 'camera_firewire_pan_cam'
+        Orocos.conf.apply(camera_firewire_pan_cam, ['default'], :override => true)
+        camera_firewire_pan_cam.configure
+#        camera_firewire_loc_cam = Orocos.name_service.get 'camera_firewire_loc_cam'
+#        Orocos.conf.apply(camera_firewire_loc_cam, ['default','loc_cam'], :override => true)
+#        camera_firewire_loc_cam.configure
         puts "done"
         puts "Setting up camera_bb2"
-        camera_bb2 = Orocos.name_service.get 'camera_bb2'
-        Orocos.conf.apply(camera_bb2, ['default'], :override => true)
-        camera_bb2.configure
+        camera_bb2_pan_cam = Orocos.name_service.get 'camera_bb2_pan_cam'
+        Orocos.conf.apply(camera_bb2_pan_cam, ['default'], :override => true)
+        camera_bb2_pan_cam.configure
+#        camera_bb2_loc_cam = Orocos.name_service.get 'camera_bb2_loc_cam'
+#        Orocos.conf.apply(camera_bb2_loc_cam, ['default','loc_cam'], :override => true)
+#        camera_bb2_loc_cam.configure
         puts "done"
         puts "Setting up stereo"
         stereo = Orocos.name_service.get 'stereo'
@@ -124,11 +130,11 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     end
 
     # setup exoter_odometry
-    #puts "Setting up imu_stim300"
-    #imu_stim300 = Orocos.name_service.get 'imu_stim300'
-    #Orocos.conf.apply(imu_stim300, ['default', 'exoter','ESTEC','stim300_5g'], :override => true)
-    #imu_stim300.configure
-    #puts "done"
+    puts "Setting up imu_stim300"
+    imu_stim300 = Orocos.name_service.get 'imu_stim300'
+    Orocos.conf.apply(imu_stim300, ['default', 'exoter','ESTEC','stim300_5g'], :override => true)
+    imu_stim300.configure
+    puts "done"
 
     # setup telemetry_telecommand
     puts "Setting up telemetry_telecommand"
@@ -178,17 +184,24 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     # Connect ports: ptu_control to telemetry_telecommand
     ptu_control.ptu_samples_out.connect_to telemetry_telecommand.current_ptu
 
+    imu_stim300.orientation_samples_out.connect_to telemetry_telecommand.current_imu
+    locomotion_control.bema_joints.connect_to telemetry_telecommand.current_bema
+    telemetry_telecommand.bema_command.connect_to locomotion_control.bema_command
+    telemetry_telecommand.walking_command.connect_to locomotion_control.walking_command
+
+
     if options[:camera].casecmp("yes").zero?
         # Connect ports: camera_firewire to camera_bb2
-        camera_firewire.frame.connect_to camera_bb2.frame_in
+        camera_firewire_pan_cam.frame.connect_to camera_bb2_pan_cam.frame_in
+        #camera_firewire_loc_cam.frame.connect_to camera_bb2_loc_cam.frame_in
         # Connect ports: camera_bb2 to telemetry_telecommand
-        camera_bb2.left_frame.connect_to stereo.left_frame
-        camera_bb2.right_frame.connect_to stereo.right_frame
-        telemetry_telecommand.store_image_filename.connect_to camera_bb2.store_image_filename
+        camera_bb2_pan_cam.left_frame.connect_to stereo.left_frame
+        camera_bb2_pan_cam.right_frame.connect_to stereo.right_frame
+        telemetry_telecommand.pancam_store_image_filename.connect_to camera_bb2_pan_cam.store_image_filename
+#        telemetry_telecommand.loccam_store_image_filename.connect_to camera_bb2_loc_cam.store_image_filename
         stereo.distance_frame.connect_to pointcloud.frame
-        camera_bb2.left_frame.connect_to pointcloud.color_frame
+        camera_bb2_pan_cam.left_frame.connect_to pointcloud.color_frame
     end
-
     puts "done"
 
     # Start the tasks
@@ -200,8 +213,10 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     #imu_stim300.start
     telemetry_telecommand.start
     if options[:camera].casecmp("yes").zero?
-        camera_firewire.start
-        camera_bb2.start
+        camera_firewire_pan_cam.start
+        camera_bb2_pan_cam.start
+        #camera_firewire_loc_cam.start
+        #camera_bb2_loc_cam.start
         stereo.start
         pointcloud.start
     end
