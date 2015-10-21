@@ -200,6 +200,7 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
         telemetry_telecommand.pancam_store_image_filename.connect_to camera_bb2_pan_cam.store_image_filename
 #        telemetry_telecommand.loccam_store_image_filename.connect_to camera_bb2_loc_cam.store_image_filename
         stereo.distance_frame.connect_to pointcloud.frame
+        stereo.disparity_frame.connect_to pointcloud.disparity_frame
         camera_bb2_pan_cam.left_frame.connect_to pointcloud.color_frame
     end
     puts "done"
@@ -210,7 +211,7 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     command_joint_dispatcher.start
     locomotion_control.start
     ptu_control.start
-    #imu_stim300.start
+    imu_stim300.start
     telemetry_telecommand.start
     if options[:camera].casecmp("yes").zero?
         camera_firewire_pan_cam.start
