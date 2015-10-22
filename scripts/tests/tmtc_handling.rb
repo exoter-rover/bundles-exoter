@@ -153,7 +153,7 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     platform_driver.joints_readings.connect_to read_joint_dispatcher.joints_readings
 
     # Connect ports: read_joint_dispatcher to wheel_walking_control
-    read_joint_dispatcher.joints_samples.connect_to locomotion_control.joints_readings
+    read_joint_dispatcher.motors_samples.connect_to locomotion_control.joints_readings
 
     # Connect ports: wheel_walking_control to command_joint_dispatcher
     locomotion_control.joints_commands.connect_to command_joint_dispatcher.joints_commands
