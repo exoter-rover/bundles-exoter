@@ -100,6 +100,6 @@ whitebalance_red: 650
 # width of the camera frame
 width: 1024
 
---- name:LocCam
+--- name:loc_cam
 # unique camerea id
 camera_id: '49712223536067003'

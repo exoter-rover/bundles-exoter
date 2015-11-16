@@ -77,27 +77,33 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
         camera_firewire_pan_cam = Orocos.name_service.get 'camera_firewire_pan_cam'
         Orocos.conf.apply(camera_firewire_pan_cam, ['default'], :override => true)
         camera_firewire_pan_cam.configure
-#        camera_firewire_loc_cam = Orocos.name_service.get 'camera_firewire_loc_cam'
-#        Orocos.conf.apply(camera_firewire_loc_cam, ['default','loc_cam'], :override => true)
-#        camera_firewire_loc_cam.configure
+        #camera_firewire_loc_cam = Orocos.name_service.get 'camera_firewire_loc_cam'
+        #Orocos.conf.apply(camera_firewire_loc_cam, ['default','loc_cam'], :override => true)
+        #camera_firewire_loc_cam.configure
         puts "done"
         puts "Setting up camera_bb2"
         camera_bb2_pan_cam = Orocos.name_service.get 'camera_bb2_pan_cam'
         Orocos.conf.apply(camera_bb2_pan_cam, ['default'], :override => true)
         camera_bb2_pan_cam.configure
-#        camera_bb2_loc_cam = Orocos.name_service.get 'camera_bb2_loc_cam'
-#        Orocos.conf.apply(camera_bb2_loc_cam, ['default','loc_cam'], :override => true)
-#        camera_bb2_loc_cam.configure
+        #camera_bb2_loc_cam = Orocos.name_service.get 'camera_bb2_loc_cam'
+        #Orocos.conf.apply(camera_bb2_loc_cam, ['default','loc_cam'], :override => true)
+        #camera_bb2_loc_cam.configure
         puts "done"
         puts "Setting up stereo"
-        stereo = Orocos.name_service.get 'stereo'
-        Orocos.conf.apply(stereo, ['default'], :override => true)
-        stereo.configure
+        stereo_pan_cam = Orocos.name_service.get 'stereo_pan_cam'
+        Orocos.conf.apply(stereo_pan_cam, ['default'], :override => true)
+        stereo_pan_cam.configure
+        #stereo_loc_cam = Orocos.name_service.get 'stereo_loc_cam'
+        #Orocos.conf.apply(stereo_loc_cam, ['default'], :override => true)
+        #stereo_loc_cam.configure
         puts "done"
         puts "Setting up pointcloud"
-        pointcloud = Orocos.name_service.get 'pointcloud'
-        Orocos.conf.apply(pointcloud, ['default'], :override => true)
-        pointcloud.configure
+        pointcloud_pan_cam = Orocos.name_service.get 'pointcloud_pan_cam'
+        Orocos.conf.apply(pointcloud_pan_cam, ['default'], :override => true)
+        pointcloud_pan_cam.configure
+        #pointcloud_loc_cam = Orocos.name_service.get 'pointcloud_loc_cam'
+        #Orocos.conf.apply(pointcloud_loc_cam, ['default'], :override => true)
+        #pointcloud_loc_cam.configure
         puts "done"
     else
         puts "[INFO] Camera OFF"
@@ -122,7 +128,7 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
         puts "[INFO] GNSS Ground Truth system available"
         puts "Setting up GNSS"
         gnss = Orocos.name_service.get 'gnss_trimble'
-        Orocos.conf.apply(gnss, ['exoter','Netherlands','ESTEC'], :override => true)
+        Orocos.conf.apply(gnss, ['exoter','Netherlands','SEROM'], :override => true)
         gnss.configure
         puts "done"
     else
@@ -132,7 +138,7 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     # setup exoter_odometry
     puts "Setting up imu_stim300"
     imu_stim300 = Orocos.name_service.get 'imu_stim300'
-    Orocos.conf.apply(imu_stim300, ['default', 'exoter','ESTEC','stim300_5g'], :override => true)
+    Orocos.conf.apply(imu_stim300, ['default', 'exoter','SEROM','stim300_5g'], :override => true)
     imu_stim300.configure
     puts "done"
 
@@ -144,7 +150,7 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     puts "done"
 
     # Log all ports
-    Orocos.log_all_ports
+    Orocos.log_all_ports(:exclude_ports => ['camera_firewire_pan_cam.frame','camera_firewire_loc_cam.frame'])
 
     # Connect ports
     puts "Connecting ports"
@@ -195,13 +201,20 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
         camera_firewire_pan_cam.frame.connect_to camera_bb2_pan_cam.frame_in
         #camera_firewire_loc_cam.frame.connect_to camera_bb2_loc_cam.frame_in
         # Connect ports: camera_bb2 to telemetry_telecommand
-        camera_bb2_pan_cam.left_frame.connect_to stereo.left_frame
-        camera_bb2_pan_cam.right_frame.connect_to stereo.right_frame
+        camera_bb2_pan_cam.left_frame.connect_to stereo_pan_cam.left_frame
+        camera_bb2_pan_cam.right_frame.connect_to stereo_pan_cam.right_frame
+        #camera_bb2_loc_cam.left_frame.connect_to stereo_loc_cam.left_frame
+        #camera_bb2_loc_cam.right_frame.connect_to stereo_loc_cam.right_frame
+        
         telemetry_telecommand.pancam_store_image_filename.connect_to camera_bb2_pan_cam.store_image_filename
-#        telemetry_telecommand.loccam_store_image_filename.connect_to camera_bb2_loc_cam.store_image_filename
-        stereo.distance_frame.connect_to pointcloud.frame
-        stereo.disparity_frame.connect_to pointcloud.disparity_frame
-        camera_bb2_pan_cam.left_frame.connect_to pointcloud.color_frame
+        #telemetry_telecommand.loccam_store_image_filename.connect_to camera_bb2_loc_cam.store_image_filename
+
+        stereo_pan_cam.distance_frame.connect_to pointcloud_pan_cam.frame
+        stereo_pan_cam.disparity_frame.connect_to pointcloud_pan_cam.disparity_frame
+        camera_bb2_pan_cam.left_frame.connect_to pointcloud_pan_cam.color_frame
+        #stereo_loc_cam.distance_frame.connect_to pointcloud_loc_cam.frame
+        #stereo_loc_cam.disparity_frame.connect_to pointcloud_loc_cam.disparity_frame
+        #camera_bb2_loc_cam.left_frame.connect_to pointcloud_loc_cam.color_frame
     end
     puts "done"
 
@@ -218,8 +231,10 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
         camera_bb2_pan_cam.start
         #camera_firewire_loc_cam.start
         #camera_bb2_loc_cam.start
-        stereo.start
-        pointcloud.start
+        stereo_pan_cam.start
+        #stereo_loc_cam.start
+        pointcloud_pan_cam.start
+        #pointcloud_loc_cam.start
     end
     if options[:reference].casecmp("vicon").zero?
         vicon.start
