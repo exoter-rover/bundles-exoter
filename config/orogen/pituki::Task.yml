@@ -1,4 +1,11 @@
 --- name:default
+
+sensor_point_cloud_height: 144
+sensor_point_cloud_width: 176
+
+ # resulting ply file
+output_ply: 'point_cloud_scene.ply'
+
 # the global name that should be used for the internal body frame
 body_frame: body
 # the global name that should be used for the internal world frame
@@ -9,7 +16,32 @@ point_cloud_samples_period: 0.5
 # list of static transformations
 static_transformations: []
 # Minimum system time in seconds between two updates of the status ports
-transformer_status_period: 0.08
+transformer_status_period: 0.5
 # Maximum time in seconds the transformer will wait until it starts dropping samples
 transformer_max_latency: 1.0
+
+outlierfilter_config:
+  type: NONE
+
+--- name:bilateral
+# Configuration parameters for the bilateral filter.
+bfilter_config:
+  filterOn: true
+  spatial_width: 2.0 #size of the window bilateral filter
+  range_sigma: 0.02 #the standard deviation of the Gaussian for the intensity difference
+
+
+--- name:statistical
+# Configuration parameters for Radius Outlier Removal filter.
+outlierfilter_config:
+  type: STATISTICAL
+  parameter_one: 30 #the number of nearest neighbors to use for mean distance estimation (nr_k)
+  parameter_two: 1.0 #the standard deviation multiplier for the distance threshold calculation.(stddev_null)
+
+--- name:radius
+# Configuration parameters for Radius Outlier Removal filter.
+outlierfilter_config:
+  type: RADIUS
+  parameter_one: 0.2 #Get the radius of the sphere that will determine which points are neighbors.
+  parameter_two: 40 #number of neighbors that need to be present in order to be classified as an inlier
 
