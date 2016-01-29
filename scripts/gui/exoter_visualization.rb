@@ -91,13 +91,13 @@ Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", odometryRobotTrajectory)
 localizationRBS = Vizkit.default_loader.RigidBodyStateVisualization
 localizationRBS.displayCovariance(true)
 localizationRBS.setPluginName("Localization Pose")
-localizationRBS.setColor(Eigen::Vector3.new(0, 0, 0))#Black
+localizationRBS.setColor(Eigen::Vector3.new(255, 255, 255))#White
 localizationRBS.resetModel(0.4)
 Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", localizationRBS)
 
 # Odometry robot trajectory
 localizationRobotTrajectory = Vizkit.default_loader.TrajectoryVisualization
-localizationRobotTrajectory.setColor(Eigen::Vector3.new(0, 0, 0))#Black line
+localizationRobotTrajectory.setColor(Eigen::Vector3.new(1, 1, 1))#White line
 localizationRobotTrajectory.setPluginName("Localization Trajectory")
 Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", localizationRobotTrajectory)
 
@@ -107,7 +107,6 @@ pointCloud.setKeepOldData(true)
 pointCloud.setMaxOldData(1)
 pointCloud.setPluginName("ToF Point Cloud")
 Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", pointCloud)
-#Vizkit.vizkit3d_widget.setPluginDataFrame("body", pointCloud)
 
 # Point cloud Visual Odometry  visualizer
 pointCloudVO = Vizkit.default_loader.PointcloudVisualization
@@ -120,13 +119,13 @@ Vizkit.vizkit3d_widget.setPluginDataFrame("left_camera", pointCloudVO)
 visualOdometryRBS = Vizkit.default_loader.RigidBodyStateVisualization
 visualOdometryRBS.displayCovariance(true)
 visualOdometryRBS.setPluginName("Visual Odometry Pose")
-visualOdometryRBS.setColor(Eigen::Vector3.new(255, 255, 255))#White
+visualOdometryRBS.setColor(Eigen::Vector3.new(0, 0, 0))#Black
 visualOdometryRBS.resetModel(0.2)
 Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", visualOdometryRBS)
 
 # Visual Odometry frame trajectory
 visualOdometryTrajectory = Vizkit.default_loader.TrajectoryVisualization
-visualOdometryTrajectory.setColor(Eigen::Vector3.new(1, 1, 1))#White line
+visualOdometryTrajectory.setColor(Eigen::Vector3.new(0, 0, 0))#Black line
 visualOdometryTrajectory.setPluginName("Visual Odometry Trajectory")
 Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", visualOdometryTrajectory)
 
@@ -199,7 +198,19 @@ c0RR.resetModel(0.1)
 c0RR.displayCovariance(true)
 Vizkit.vizkit3d_widget.setPluginDataFrame("body", c0RR)
 
+#RigidBody of the BodyCenter from odometry
+sam_odo_rbs = Vizkit.default_loader.RigidBodyStateVisualization
+sam_odo_rbs.displayCovariance(true)
+sam_odo_rbs.setPluginName("Odometry SAM Pose")
+sam_odo_rbs.setColor(Eigen::Vector3.new(255, 10, 0))#Red
+sam_odo_rbs.resetModel(0.2)
+Vizkit.vizkit3d_widget.setPluginDataFrame("sam", sam_odo_rbs)
 
+# Odometry robot trajectory
+sam_odo_trajectory = Vizkit.default_loader.TrajectoryVisualization
+sam_odo_trajectory.setColor(Eigen::Vector3.new(1, 0.1, 0))#Red line
+sam_odo_trajectory.setPluginName("Odometry SAM Trajectory")
+Vizkit.vizkit3d_widget.setPluginDataFrame("sam", sam_odo_trajectory)
 
 # Joints Dispatcher or Localization FrontEnd
 #read_joint_dispatcher = Orocos::Async.proxy 'read_joint_dispatcher'
@@ -303,14 +314,13 @@ exoter_odometry.on_reachable do
     Vizkit.display vector_rbs.sub_port([:rbsChain, 4]), :widget => c0RL
     Vizkit.display vector_rbs.sub_port([:rbsChain, 5]), :widget => c0RR
 
-    # Robot pose
+    # Odometry Robot pose
     Vizkit.display exoter_odometry.port('pose_samples_out'), :widget =>odometryRBS
 
     # Trajectory
     exoter_odometry.port('pose_samples_out').on_data do |pose_rbs,_|
         odometryRobotTrajectory.updateTrajectory(pose_rbs.position)
     end
-
 end
 
 
@@ -383,6 +393,32 @@ msc_localization.on_reachable do
 
     # Features 3D Points
     Vizkit.display msc_localization.port('features_point_samples_out'), :widget =>featureCloud
+end
+
+# Localization Front-End
+sam = Orocos::Async.proxy 'sam'
+
+sam.on_reachable do
+
+    # Odometry Robot pose
+    Vizkit.display sam.port('odo_pose_samples_out'), :widget =>sam_odo_rbs
+
+    # Trajectory
+    sam.port('odo_pose_samples_out').on_data do |pose_rbs,_|
+        sam_odo_trajectory.updateTrajectory(pose_rbs.position)
+    end
+
+    # SAM Robot pose
+    Vizkit.display sam.port('sam_pose_samples_out'), :widget =>localizationRBS
+
+    # Trajectory
+    sam.port('sam_pose_samples_out').on_data do |localization_rbs,_|
+        localizationRobotTrajectory.updateTrajectory(localization_rbs.position)
+    end
+
+    # Point Cloud
+    Vizkit.display sam.port('point_cloud_samples_out'), :widget =>pointCloud
+
 end
 
 
