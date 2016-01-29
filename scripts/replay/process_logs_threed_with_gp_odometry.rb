@@ -84,7 +84,7 @@ Bundles.run 'exoter_control',
     gp_odometry = Orocos.name_service.get 'gp_odometry'
 
     # Get the task names from localization
-    msc_localization = Orocos.name_service.get 'msc_localization'
+    #msc_localization = Orocos.name_service.get 'msc_localization'
 
     # Set configuration files for control
     Orocos.conf.apply(read_joint_dispatcher, ['reading'], :override => true)
@@ -100,7 +100,7 @@ Bundles.run 'exoter_control',
     gp_odometry.gaussian_process_z_axis_file = Bundles.find_file('data/gaussian_processes', 'gp_sklearn_z_delta_pose.data')
 
     # Set configuration files for localization
-    Orocos.conf.apply(msc_localization, ['default', 'no_update'], :override => true)
+    #Orocos.conf.apply(msc_localization, ['default', 'no_update'], :override => true)
 
     # logs files
     log_replay = Orocos::Log::Replay.open( logfiles_path )
@@ -109,7 +109,7 @@ Bundles.run 'exoter_control',
     ## TRANSFORMER ##
     #################
     Bundles.transformer.setup(localization_frontend)
-    Bundles.transformer.setup(msc_localization)
+    #Bundles.transformer.setup(msc_localization)
 
     ###################
     ## LOG THE PORTS ##
@@ -126,7 +126,7 @@ Bundles.run 'exoter_control',
     gp_odometry.configure
 
     # Configure tasks from localization
-    msc_localization.configure
+    #msc_localization.configure
 
     ###########################
     ## LOG PORTS CONNECTIONS ##
@@ -174,7 +174,7 @@ Bundles.run 'exoter_control',
     localization_frontend.joints_samples_out.connect_to gp_odometry.joints_samples, :type => :buffer, :size => 200
     localization_frontend.orientation_samples_out.connect_to gp_odometry.orientation_samples, :type => :buffer, :size => 200
 
-    gp_odometry.delta_pose_samples_out.connect_to msc_localization.delta_pose_samples,  :type => :buffer, :size => 200
+    #gp_odometry.delta_pose_samples_out.connect_to msc_localization.delta_pose_samples,  :type => :buffer, :size => 200
 
     # Start tasks from control
     read_joint_dispatcher.start
@@ -186,7 +186,7 @@ Bundles.run 'exoter_control',
     gp_odometry.start
 
     # Start tasks for localization
-    msc_localization.start
+    #msc_localization.start
 
 
     # open the log replay widget

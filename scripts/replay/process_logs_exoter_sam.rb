@@ -136,7 +136,7 @@ Bundles.run 'exoter_control',
 
     # Set configuration files for slam
     Orocos.conf.apply(colorize_pointcloud, ['default'], :override => true)
-    Orocos.conf.apply(sam, ['default', 'tof_camera', 'bilateral', 'radius', 'sift_keypoints_5_percent', 'fpfh_feature'], :override => true)
+    Orocos.conf.apply(sam, ['default', 'tof_camera', 'bilateral', 'radius', 'sift_keypoints_3_contrast', 'fpfh_feature'], :override => true)
 
     # logs files
     log_replay = Orocos::Log::Replay.open( logfiles_path )
@@ -249,8 +249,8 @@ Bundles.run 'exoter_control',
     elsif options[:odometry].casecmp("log").zero?
         if options[:gp]
             log_replay.exoter_odometry.delta_pose_samples_out.connect_to(gp_odometry.delta_pose_samples, :type => :buffer, :size => 1000)
-            localization_frontend.joints_samples_out.connect_to gp_odometry.joints_samples, :type => :buffer, :size => 200
-            localization_frontend.orientation_samples_out.connect_to gp_odometry.orientation_samples, :type => :buffer, :size => 200
+            localization_frontend.joints_samples_out.connect_to gp_odometry.joints_samples, :type => :buffer, :size => 500
+            localization_frontend.orientation_samples_out.connect_to gp_odometry.orientation_samples, :type => :buffer, :size =>500
             gp_odometry.delta_pose_samples_out.connect_to sam.delta_pose_samples,  :type => :buffer, :size => 1000
         else
             # SLAM odometry poses
@@ -259,7 +259,7 @@ Bundles.run 'exoter_control',
     end
 
     # Point clouds to SLAM
-    colorize_pointcloud.colored_points.connect_to sam.point_cloud_samples
+    colorize_pointcloud.colored_points.connect_to sam.point_cloud_samples#, :type => :buffer, :size => 2
 
     ###########
     ## START ##
