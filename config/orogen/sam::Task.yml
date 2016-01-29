@@ -7,7 +7,7 @@ sam_localization_source_frame: 'sam'
 odometry_localization_source_frame: 'body'
 
 # Error per distance traveled (0 - 1).
-error_per_distance_traveled: 0.02
+error_per_distance_traveled: 0.05
 
 # Minimum distance (in meters) to set a new node for the optimization.
 distance_segment: 0.2
@@ -53,6 +53,13 @@ sensor_point_cloud_height: 144
 # PCL Point clouds needs to be organized. It will take this property to organize them.
 sensor_point_cloud_width: 176
 
+#Error variance in meters to estimate the point position by the sensing device.
+point_variance:
+  data:
+  - 0.003
+  - 0.003
+  - 0.003
+
 --- name:bilateral
 # Configuration parameters for the bilateral filter.
 bfilter_config:
@@ -74,27 +81,33 @@ outlier_config:
   parameter_one: 30 #the number of nearest neighbors to use for mean distance estimation (nr_k)
   parameter_two: 1.0 #the standard deviation multiplier for the distance threshold calculation.(stddev_null)
 
---- name:sift_keypoints_10_percent
+--- name:sift_keypoints_5_contrast
 # Configuration parameters for SIFT Keypoints.
 sift_config:
-    min_scale: 0.08
+    min_scale: 0.06
     nr_octaves: 10
     nr_octaves_per_scale: 10
-    min_contrast: 5.0
+    min_contrast: 5
 
---- name:sift_keypoints_5_percent
+--- name:sift_keypoints_4_contrast
 # Configuration parameters for SIFT Keypoints.
 sift_config:
-    min_scale: 0.08
+    min_scale: 0.10
     nr_octaves: 10
     nr_octaves_per_scale: 10
-    min_contrast: 2.0
+    min_contrast: 4
+
+--- name:sift_keypoints_3_contrast
+# Configuration parameters for SIFT Keypoints.
+sift_config:
+    min_scale: 0.10
+    nr_octaves: 10
+    nr_octaves_per_scale: 10
+    min_contrast: 3.0
 
 --- name:fpfh_feature
 # Configuration parameters for Feature descriptor.
 feature_config:
     normal_radius: 0.1
     feature_radius: 1.0
-
-
 
