@@ -34,6 +34,9 @@ slip_joint_names: [fl_slipx, fr_slipx, ml_slipx, mr_slipx, rl_slipx, rr_slipx,
 
 contact_joint_names: [fl_contact, fr_contact, ml_contact, mr_contact, rl_contact, rr_contact]
 
+#ONLY FOR THE EXPERIMENTS TO COMPARE WITH CONTACT ODOMETRY
+#speed_translation_joint_names: [fl_translation, fr_translation, ml_translation, mr_translation, rl_translation, rr_translation]
+
 # the global name that should be used for the internal body frame
 body_frame: body
 # the global name that should be used for the internal imu frame
@@ -107,3 +110,173 @@ iir_filter:
     - -1.74151766e-04
     - 2.70798275e-05
 
+--- name:coyote3
+# path to the rover urdf file
+urdf_file: '../../../../bundles/exoter/data/urdf/coyote3/urdf/coyote3.urdf'
+
+contact_point_segments: [col_wheel_front_left_01_slip_z,
+                        col_wheel_front_left_02_slip_z,
+                        col_wheel_front_left_03_slip_z,
+                        col_wheel_front_left_04_slip_z,
+                        col_wheel_front_left_05_slip_z,
+                        col_wheel_front_right_01_slip_z,
+                        col_wheel_front_right_02_slip_z,
+                        col_wheel_front_right_03_slip_z,
+                        col_wheel_front_right_04_slip_z,
+                        col_wheel_front_right_05_slip_z,
+                        col_wheel_rear_left_01_slip_z,
+                        col_wheel_rear_left_02_slip_z,
+                        col_wheel_rear_left_03_slip_z,
+                        col_wheel_rear_left_04_slip_z,
+                        col_wheel_rear_left_05_slip_z,
+                        col_wheel_rear_right_01_slip_z,
+                        col_wheel_rear_right_02_slip_z,
+                        col_wheel_rear_right_03_slip_z,
+                        col_wheel_rear_right_04_slip_z,
+                        col_wheel_rear_right_05_slip_z]
+
+contact_angle_segments: [col_wheel_front_left_01_contact,
+                        col_wheel_front_left_02_contact,
+                        col_wheel_front_left_03_contact,
+                        col_wheel_front_left_04_contact,
+                        col_wheel_front_left_05_contact,
+                        col_wheel_front_right_01_contact,
+                        col_wheel_front_right_02_contact,
+                        col_wheel_front_right_03_contact,
+                        col_wheel_front_right_04_contact,
+                        col_wheel_front_right_05_contact,
+                        col_wheel_rear_left_01_contact,
+                        col_wheel_rear_left_02_contact,
+                        col_wheel_rear_left_03_contact,
+                        col_wheel_rear_left_04_contact,
+                        col_wheel_rear_left_05_contact,
+                        col_wheel_rear_right_01_contact,
+                        col_wheel_rear_right_02_contact,
+                        col_wheel_rear_right_03_contact,
+                        col_wheel_rear_right_04_contact,
+                        col_wheel_rear_right_05_contact]
+
+# Model type to use: ANALYTICAL or NUMERICAL approach.You must write :NUMERICAL in case you are using the Kinematics model from threed_odometry library.
+kinematic_model_type: :NUMERICAL
+
+# from frame for the transformer
+odometry_source_frame: "body" #transformer names. No transformation convention
+# to frame for the transformer
+odometry_target_frame: "navigation" #transformer names. No transformation convention
+
+# from frame for the transformer
+delta_odometry_source_frame: "body" #transformer names. No transformation convention
+# to frame for the transformer
+delta_odometry_target_frame: "body_k-1" #transformer names. No transformation convention
+
+
+all_joint_names: [link_rear_bar,
+                  motor_wheel_rear_left,
+                  col_wheel_rear_left_01_contact,
+                  col_wheel_rear_left_01_slip_z,
+                  col_wheel_rear_left_02_contact,
+                  col_wheel_rear_left_02_slip_z,
+                  col_wheel_rear_left_03_contact,
+                  col_wheel_rear_left_03_slip_z,
+                  col_wheel_rear_left_04_contact,
+                  col_wheel_rear_left_04_slip_z,
+                  col_wheel_rear_left_05_contact,
+                  col_wheel_rear_left_05_slip_z,
+                  motor_wheel_rear_right,
+                  col_wheel_rear_right_01_contact,
+                  col_wheel_rear_right_01_slip_z,
+                  col_wheel_rear_right_02_contact,
+                  col_wheel_rear_right_02_slip_z,
+                  col_wheel_rear_right_03_contact,
+                  col_wheel_rear_right_03_slip_z,
+                  col_wheel_rear_right_04_contact,
+                  col_wheel_rear_right_04_slip_z,
+                  col_wheel_rear_right_05_contact,
+                  col_wheel_rear_right_05_slip_z,
+                  motor_laser_scanner,
+                  motor_wheel_front_left,
+                  col_wheel_front_left_01_contact,
+                  col_wheel_front_left_01_slip_z,
+                  col_wheel_front_left_02_contact,
+                  col_wheel_front_left_02_slip_z,
+                  col_wheel_front_left_03_contact,
+                  col_wheel_front_left_03_slip_z,
+                  col_wheel_front_left_04_contact,
+                  col_wheel_front_left_04_slip_z,
+                  col_wheel_front_left_05_contact,
+                  col_wheel_front_left_05_slip_z,
+                  motor_wheel_front_right,
+                  col_wheel_front_right_01_contact,
+                  col_wheel_front_right_01_slip_z,
+                  col_wheel_front_right_02_contact,
+                  col_wheel_front_right_02_slip_z,
+                  col_wheel_front_right_03_contact,
+                  col_wheel_front_right_03_slip_z,
+                  col_wheel_front_right_04_contact,
+                  col_wheel_front_right_04_slip_z,
+                  col_wheel_front_right_05_contact,
+                  col_wheel_front_right_05_slip_z]
+
+slip_joint_names: [col_wheel_front_left_01_slip_z,
+                  col_wheel_front_left_02_slip_z,
+                  col_wheel_front_left_03_slip_z,
+                  col_wheel_front_left_04_slip_z,
+                  col_wheel_front_left_05_slip_z,
+                  col_wheel_front_right_01_slip_z,
+                  col_wheel_front_right_02_slip_z,
+                  col_wheel_front_right_03_slip_z,
+                  col_wheel_front_right_04_slip_z,
+                  col_wheel_front_right_05_slip_z,
+                  col_wheel_rear_left_01_slip_z,
+                  col_wheel_rear_left_02_slip_z,
+                  col_wheel_rear_left_03_slip_z,
+                  col_wheel_rear_left_04_slip_z,
+                  col_wheel_rear_left_05_slip_z,
+                  col_wheel_rear_right_01_slip_z,
+                  col_wheel_rear_right_02_slip_z,
+                  col_wheel_rear_right_03_slip_z,
+                  col_wheel_rear_right_04_slip_z,
+                  col_wheel_rear_right_05_slip_z]
+
+contact_joint_names: [col_wheel_front_left_01_contact,
+                     col_wheel_front_left_02_contact,
+                     col_wheel_front_left_03_contact,
+                     col_wheel_front_left_04_contact,
+                     col_wheel_front_left_05_contact,
+                     col_wheel_front_right_01_contact,
+                     col_wheel_front_right_02_contact,
+                     col_wheel_front_right_03_contact,
+                     col_wheel_front_right_04_contact,
+                     col_wheel_front_right_05_contact,
+                     col_wheel_rear_left_01_contact,
+                     col_wheel_rear_left_02_contact,
+                     col_wheel_rear_left_03_contact,
+                     col_wheel_rear_left_04_contact,
+                     col_wheel_rear_left_05_contact,
+                     col_wheel_rear_right_01_contact,
+                     col_wheel_rear_right_02_contact,
+                     col_wheel_rear_right_03_contact,
+                     col_wheel_rear_right_04_contact,
+                     col_wheel_rear_right_05_contact]
+
+#ONLY FOR THE EXPERIMENTS TO COMPARE WITH CONTACT ODOMETRY
+#speed_translation_joint_names: [fl_translation, fr_translation, ml_translation, mr_translation, rl_translation, rr_translation]
+
+# the global name that should be used for the internal body frame
+body_frame: body
+# the global name that should be used for the internal imu frame
+imu_frame: body #imu  #body
+
+# Time in s between joints_samples readings
+joints_samples_period: 0.082
+# Time in s between orientation_samples readings
+orientation_samples_period: 0.082
+# Minimum system time in seconds between two updates of the status ports
+transformer_status_period: 1.0
+# Maximum time in seconds the transformer will wait until it starts dropping samples
+transformer_max_latency: 0.1
+
+# Set to true if desired orientation noise from orientation_samples input port.Otherwise it uses the motion model Leasts-Squares error to fill the uncertainty.
+orientation_samples_noise_on: true #false
+# Set to true if output debug information is desirable.
+output_debug: true
