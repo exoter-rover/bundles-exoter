@@ -64,7 +64,7 @@ param_gear_motor_tilt:
 param_gear_motor_pan: 
   dPtpVelDefaultIncrS: 40000
   dVelMaxEncIncrS: 68000
-  dPosLimitLowIncr: -320000
+  dPosLimitLowIncr: -535000
   dBeltRatio: 1
   iSign: 1
   iEncOffsetIncr: 0
@@ -75,7 +75,7 @@ param_gear_motor_pan:
   bIsSteer: 1
   iEncIncrPerRevMot: 512
   dAccIncrS2: 100000
-  dPosLimitHighIncr: 320000
+  dPosLimitHighIncr: 115000
   dAnalogFactor: 0.00067139
   dNominalCurrent: 0.081
 

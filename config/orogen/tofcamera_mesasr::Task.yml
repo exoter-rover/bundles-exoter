@@ -2,23 +2,23 @@
 # Acquisition mode, use bitwise OR operator to turn on multiple modes at the same time;
 # possible values: AM_COR_FIX_PTRN, AM_MEDIAN, AM_TOGGLE_FRQ, AM_CONV_GRAY, AM_SW_ANF, AM_RESERVED0,
 # AM_RESERVED1, AM_CONF_MAP, AM_HW_TRIGGER, AM_SW_TRIGGER, AM_DENOISE_ANF, AM_MEDIANCROSS
-acquisition_mode: AM_COR_FIX_PTRN|AM_MEDIAN|AM_CONV_GRAY|AM_CONF_MAP|AM_SW_TRIGGER|AM_DENOISE_ANF
+#acquisition_mode: AM_COR_FIX_PTRN|AM_MEDIAN|AM_CONV_GRAY|AM_CONF_MAP|AM_SW_TRIGGER|AM_DENOISE_ANF
 # Timeout in ms for reading and writing
 timeout: 3000
 # Integration time of the camera; [0,255]
-integration_time: 100
+integration_time: 255
 # Dual integration time; only available for firmware 0x73; [0,100]
-dual_integration_time: 0
+#dual_integration_time: 0
 # Modulation frequency of the LEDs; possible values: MF_40MHz, MF_30MHz, MF_21MHz, MF_20MHz, MF_19MHz, MF_60MHz, MF_15MHz, MF_10MHz, MF_29MHz, MF_31MHz, MF_14_5MHz, MF_15_5MHz
 modulation_frequency: :MF_15MHz #:MF_31MHz (5m) #:MF_15MHz (10m)
 # Minimal integration time for auto exposure; if the value is 255, the auto exposure is turn off; [0,255]
 min_int_time: 255
 # Percent over position for auto exposure; [0,100]
-percent_over_pos: 0
+#percent_over_pos: 0
 # Desired position for auto exposure; [0,255]
-desired_pos: 0
+#desired_pos: 0
 # The coordinate of points with lower amplitude than threshold will set to zero. [0, 65535]
-amplitude_threshold: 255
+amplitude_threshold: 0
 # The coordinate of points with lower confidence than threshold will set to zero. [0, 65535]
 confidence_threshold: 0
 # Remove the points with zero coordinates

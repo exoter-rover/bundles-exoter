@@ -15,6 +15,10 @@ OptionParser.new do |opt|
     usage: tmtc_handling.rb [options] 
     EOD
 
+    opt.on '-r or --reference=none/vicon/gnss', String, 'set the type of reference system available' do |reference|
+        options[:reference] = reference
+    end
+
     opt.on '-c or --camera=no/yes', String, 'set the camera on or off' do |camera|
         options[:camera] = camera
     end
@@ -36,7 +40,7 @@ Bundles.initialize
 Bundles.transformer.load_conf(Bundles.find_file('config', 'transforms_scripts.rb'))
 
 ## Execute the task 'platform_driver::Task' ##
-Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtruth', 'exoter_tmtchandling' do
+Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtruth', 'exoter_tmtchandling', 'exoter_exteroceptive' do
 
     # setup platform_driver
     puts "Setting up platform_driver"
@@ -70,9 +74,36 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     if options[:camera].casecmp("yes").zero?
         puts "[INFO] Camera ON"
         puts "Setting up camera_firewire"
-        camera_firewire = Orocos.name_service.get 'camera_firewire'
-        Orocos.conf.apply(camera_firewire, ['default'], :override => true)
-        camera_firewire.configure
+        camera_firewire_pan_cam = Orocos.name_service.get 'camera_firewire_pan_cam'
+        Orocos.conf.apply(camera_firewire_pan_cam, ['default'], :override => true)
+        camera_firewire_pan_cam.configure
+        #camera_firewire_loc_cam = Orocos.name_service.get 'camera_firewire_loc_cam'
+        #Orocos.conf.apply(camera_firewire_loc_cam, ['default','loc_cam'], :override => true)
+        #camera_firewire_loc_cam.configure
+        puts "done"
+        puts "Setting up camera_bb2"
+        camera_bb2_pan_cam = Orocos.name_service.get 'camera_bb2_pan_cam'
+        Orocos.conf.apply(camera_bb2_pan_cam, ['default'], :override => true)
+        camera_bb2_pan_cam.configure
+        #camera_bb2_loc_cam = Orocos.name_service.get 'camera_bb2_loc_cam'
+        #Orocos.conf.apply(camera_bb2_loc_cam, ['default','loc_cam'], :override => true)
+        #camera_bb2_loc_cam.configure
+        puts "done"
+        puts "Setting up stereo"
+        stereo_pan_cam = Orocos.name_service.get 'stereo_pan_cam'
+        Orocos.conf.apply(stereo_pan_cam, ['default'], :override => true)
+        stereo_pan_cam.configure
+        #stereo_loc_cam = Orocos.name_service.get 'stereo_loc_cam'
+        #Orocos.conf.apply(stereo_loc_cam, ['default'], :override => true)
+        #stereo_loc_cam.configure
+        puts "done"
+        puts "Setting up pointcloud"
+        pointcloud_pan_cam = Orocos.name_service.get 'pointcloud_pan_cam'
+        Orocos.conf.apply(pointcloud_pan_cam, ['default'], :override => true)
+        pointcloud_pan_cam.configure
+        #pointcloud_loc_cam = Orocos.name_service.get 'pointcloud_loc_cam'
+        #Orocos.conf.apply(pointcloud_loc_cam, ['default'], :override => true)
+        #pointcloud_loc_cam.configure
         puts "done"
     else
         puts "[INFO] Camera OFF"
@@ -86,19 +117,31 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     puts "done"
 
     # setup ground_truth
-    puts "Setting up GNSS"
-    gnss = Orocos.name_service.get 'gnss_trimble'
-    Orocos.conf.apply(gnss, ['exoter','Netherlands','ESTEC'], :override => true)
-    gnss.configure
-    puts "done"
+    if options[:reference].casecmp("vicon").zero?
+        puts "[INFO] Vicon Ground Truth system available"
+        puts "Setting up vicon"
+        vicon = Orocos.name_service.get 'vicon'
+        Orocos.conf.apply(vicon, ['default', 'exoter'], :override => true)
+        vicon.configure
+        puts "done"
+    elsif options[:reference].casecmp("gnss").zero?
+        puts "[INFO] GNSS Ground Truth system available"
+        puts "Setting up GNSS"
+        gnss = Orocos.name_service.get 'gnss_trimble'
+        Orocos.conf.apply(gnss, ['exoter','Netherlands','SEROM'], :override => true)
+        gnss.configure
+        puts "done"
+    else
+        puts "[INFO] No Ground Truth system available"
+    end
 
     # setup exoter_odometry
     puts "Setting up imu_stim300"
     imu_stim300 = Orocos.name_service.get 'imu_stim300'
-    Orocos.conf.apply(imu_stim300, ['default', 'exoter','ESTEC','stim300_5g'], :override => true)
+    Orocos.conf.apply(imu_stim300, ['default', 'exoter','SEROM','stim300_5g'], :override => true)
     imu_stim300.configure
     puts "done"
-    
+
     # setup telemetry_telecommand
     puts "Setting up telemetry_telecommand"
     telemetry_telecommand = Orocos.name_service.get 'telemetry_telecommand'
@@ -107,7 +150,7 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     puts "done"
 
     # Log all ports
-    Orocos.log_all_ports
+    Orocos.log_all_ports(:exclude_ports => ['camera_firewire_pan_cam.frame','camera_firewire_loc_cam.frame'])
 
     # Connect ports
     puts "Connecting ports"
@@ -116,7 +159,7 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     platform_driver.joints_readings.connect_to read_joint_dispatcher.joints_readings
 
     # Connect ports: read_joint_dispatcher to wheel_walking_control
-    read_joint_dispatcher.joints_samples.connect_to locomotion_control.joints_readings
+    read_joint_dispatcher.motors_samples.connect_to locomotion_control.joints_readings
 
     # Connect ports: wheel_walking_control to command_joint_dispatcher
     locomotion_control.joints_commands.connect_to command_joint_dispatcher.joints_commands
@@ -136,10 +179,44 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     # Connect ports: telemetry_telecommand to ptu_control
     telemetry_telecommand.ptu_command.connect_to ptu_control.ptu_joints_commands
 
-    gnss.pose_samples.connect_to telemetry_telecommand.current_pose
+    if options[:reference].casecmp("vicon").zero?
+        # Connect ports: vicon to telemetry_telecommand
+        vicon.pose_samples.connect_to telemetry_telecommand.current_pose
+    elsif options[:reference].casecmp("gnss").zero?
+        # Connect ports: gnss to telemetry_telecommand
+        gnss.pose_samples.connect_to telemetry_telecommand.current_pose
+    end
 
+    # Connect ports: ptu_control to telemetry_telecommand
+    ptu_control.ptu_samples_out.connect_to telemetry_telecommand.current_ptu
+
+    imu_stim300.orientation_samples_out.connect_to telemetry_telecommand.current_imu
+    locomotion_control.bema_joints.connect_to telemetry_telecommand.current_bema
+    telemetry_telecommand.bema_command.connect_to locomotion_control.bema_command
+    telemetry_telecommand.walking_command.connect_to locomotion_control.walking_command
+
+
+    if options[:camera].casecmp("yes").zero?
+        # Connect ports: camera_firewire to camera_bb2
+        camera_firewire_pan_cam.frame.connect_to camera_bb2_pan_cam.frame_in
+        #camera_firewire_loc_cam.frame.connect_to camera_bb2_loc_cam.frame_in
+        # Connect ports: camera_bb2 to telemetry_telecommand
+        camera_bb2_pan_cam.left_frame.connect_to stereo_pan_cam.left_frame
+        camera_bb2_pan_cam.right_frame.connect_to stereo_pan_cam.right_frame
+        #camera_bb2_loc_cam.left_frame.connect_to stereo_loc_cam.left_frame
+        #camera_bb2_loc_cam.right_frame.connect_to stereo_loc_cam.right_frame
+        
+        telemetry_telecommand.pancam_store_image_filename.connect_to camera_bb2_pan_cam.store_image_filename
+        #telemetry_telecommand.loccam_store_image_filename.connect_to camera_bb2_loc_cam.store_image_filename
+
+        stereo_pan_cam.distance_frame.connect_to pointcloud_pan_cam.frame
+        stereo_pan_cam.disparity_frame.connect_to pointcloud_pan_cam.disparity_frame
+        camera_bb2_pan_cam.left_frame.connect_to pointcloud_pan_cam.color_frame
+        #stereo_loc_cam.distance_frame.connect_to pointcloud_loc_cam.frame
+        #stereo_loc_cam.disparity_frame.connect_to pointcloud_loc_cam.disparity_frame
+        #camera_bb2_loc_cam.left_frame.connect_to pointcloud_loc_cam.color_frame
+    end
     puts "done"
-
 
     # Start the tasks
     platform_driver.start
@@ -148,10 +225,21 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     locomotion_control.start
     ptu_control.start
     imu_stim300.start
-    gnss.start
     telemetry_telecommand.start
     if options[:camera].casecmp("yes").zero?
-        camera_firewire.start
+        camera_firewire_pan_cam.start
+        camera_bb2_pan_cam.start
+        #camera_firewire_loc_cam.start
+        #camera_bb2_loc_cam.start
+        stereo_pan_cam.start
+        #stereo_loc_cam.start
+        pointcloud_pan_cam.start
+        #pointcloud_loc_cam.start
+    end
+    if options[:reference].casecmp("vicon").zero?
+        vicon.start
+    elsif options[:reference].casecmp("gnss").zero?
+        gnss.start
     end
 
     Readline::readline("Press ENTER to exit\n") do

@@ -1,6 +1,6 @@
 --- name:exoter
 # the device port
-serial_port: /dev/ttyXR0
+serial_port: /dev/ttyUSB1
 # Baud rate to open the serial com_port.
 serial_baudrate: 38400
 # the expected time (in seconds) to have a whole package in the fd (the device port)
@@ -36,6 +36,14 @@ pose_origin:
   - 597220.14273647161
   - 5786238.5623347349
   - 2.9529999999999998
+
+--- name:SEROM
+# Origin in UTM coordinates, that is used for position readings.
+pose_origin:
+  data:
+  - 377771.4
+  - 4823945.2
+  - 143.674
 
 --- name:DECOS
 # Origin in UTM coordinates, that is used for position readings.

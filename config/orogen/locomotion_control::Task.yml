@@ -73,5 +73,5 @@ rover_parameters:
   - -0.305
 # no documentation available for this property
 target_window: 0.05
-position_limit: 0.72
+position_limit: 1.75
 velocity_limit: 1.35

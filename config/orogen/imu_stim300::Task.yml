@@ -16,6 +16,16 @@ revision: :REV_D
 timeout: 0.008 #in seconds
 use_filter: true
 
+--- name:SEROM
+# Localization properties related to the geographic place (i.e.: latitude, longitude, magnetic declination).
+location:
+  latitude: 0.7563039873
+  longitude: 0.022534499
+  altitude: 150.0
+  magnetic_declination:  0.006690428
+  magnetic_declination_mode: :EAST
+  dip_angle: 0.00663
+
 --- name:Bremen
 # Localization properties related to the geographic place (i.e.: latitude, longitude, magnetic declination).
 location:
