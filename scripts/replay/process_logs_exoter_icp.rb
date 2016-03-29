@@ -91,7 +91,7 @@ Bundles.run 'exoter_control',
     ## Get the task
     STDERR.print "setting up icp..."
     icp = Orocos.name_service.get 'generalized_icp'
-    Orocos.conf.apply(icp, ['default', 'bilateral','pass','radius'], :override => true )
+    Orocos.conf.apply(icp, ['default','pass','bilateral','radius'], :override => true )
     STDERR.puts "done"
 
 

@@ -4,15 +4,13 @@
 localization_source_frame: 'body'
 
 #Maximum number of sensor camera poses in the filter state.
-maximum_number_sensor_poses: 10
-# Filter predict type for the uncertainty transformation
-predict_type: :ADDITION #:COMPOSITION
+maximum_number_sensor_poses: 20
 
 # Desired update period. It cannot be smaller that the visual features samples period.
 update_period: 0.4
 
 # Filter update type
-update_type: :EKF_OB #:UKF #NO_UPDATE
+update_type: :EKF_OB #:EKF_OB #:UKF #NO_UPDATE
 
 # the global name that should be used for the internal navigation frame
 navigation_frame: navigation
@@ -41,10 +39,10 @@ static_transformations: []
 measurement_covariance:
   rows: 2
   cols: 2
-#  data: [0.0018, 0.00,
-#        0.00, 0.002]
-  data: [0.00018, 0.00,
-        0.00, 0.0002]
+  data: [0.05, 0.00,
+        0.00, 0.05]
+#  data: [0.00018, 0.00,
+#        0.00, 0.0002]
 
 # Time in s between pose_samples readings
 delta_pose_samples_period: 0.08

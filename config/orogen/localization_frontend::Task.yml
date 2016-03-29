@@ -36,7 +36,7 @@ wheel_radius_joint_names: [fl_wheel]
 passive_offset_joint_name: "left_bogie"
 
 # Value to fix some imu  log test that did not estimate the uncertainty correctly.
-attitude_covariance_adjustment: 20.00
+attitude_covariance_adjustment: 1.0 #10000000000.00
 
 # Locomotion joints searching by names.
 #joint_names: [left_passive, right_passive, rear_passive, fl_walking, fr_walking, ml_walking, mr_walking, rl_walking, rr_walking, fl_steer, fr_steer, rl_steer, rr_steer, fl_drive, fr_drive, ml_drive, mr_drive, rl_drive, rr_drive]

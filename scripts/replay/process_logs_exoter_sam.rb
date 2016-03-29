@@ -14,7 +14,6 @@ options[:reference] = "none"
 options[:imu] = "new"
 options[:odometry] = 'none'
 options[:reaction_forces] = false
-options[:visual] = 'none'
 options[:gp] = false
 
 op = OptionParser.new do |opt|
@@ -36,10 +35,6 @@ op = OptionParser.new do |opt|
 
     opt.on "-f", "--reaction_forces", String, 'connect the reaction forces for the 3D Odometry' do
         options[:reaction_forces] = true
-    end
-
-    opt.on "-v", "--visual=task/log", String, 'select visual stereo task running task or from log files' do |visual|
-        options[:visual] = visual
     end
 
     opt.on "-g", "--gaussian_processes", String, 'estimate Odometry uncertainty using Gaussian processes' do
@@ -89,7 +84,7 @@ if options[:odometry].casecmp("task").zero?
 elsif options[:odometry].casecmp("log").zero?
     puts "[INFO] Odometry from log files"
 else
-    puts "[INFO] No Odometry selected"
+    puts "[INFO] No Odometry selected! EXIT"
     exit 1
 end
 
@@ -97,15 +92,6 @@ if options[:reaction_forces]
     puts "[INFO] Enhanced 3D Odometry with reaction forces"
 else
     puts "[INFO] 3D Odometry without reaction forces enhancement"
-end
-
-if options[:visual].casecmp("task").zero?
-    puts "[INFO] Visual task running"
-elsif options[:visual].casecmp("log").zero?
-    puts "[INFO] Visual information from log files"
-else
-    puts "[INFO] No Visual selected"
-    exit 1
 end
 
 if options[:gp]
@@ -116,6 +102,7 @@ end
 
 Bundles.run 'exoter_control',
             'exoter_localization',
+            'exoter_slam',
             :gdb => false do
 
     # Get the task names from control
@@ -127,9 +114,9 @@ Bundles.run 'exoter_control',
     exoter_odometry = Orocos.name_service.get 'exoter_odometry'
     gp_odometry = Orocos.name_service.get 'gp_odometry'
 
-    # Get the task names from localization
-    msc_localization = Orocos.name_service.get 'msc_localization'
-    visual_stereo = Orocos.name_service.get 'visual_stereo'
+    # Get the task names from slam
+    colorize_pointcloud = Orocos.name_service.get 'colorize_pointcloud'
+    sam = Orocos.name_service.get 'sam'
 
     # Set configuration files for control
     Orocos.conf.apply(read_joint_dispatcher, ['reading'], :override => true)
@@ -147,9 +134,9 @@ Bundles.run 'exoter_control',
         gp_odometry.gaussian_process_z_axis_file = Bundles.find_file('data/gaussian_processes', 'gp_sklearn_z_delta_pose.data')
     end
 
-    # Set configuration files for localization
-    Orocos.conf.apply(msc_localization, ['default', 'bumblebee_stereo_noise'], :override => true)
-    Orocos.conf.apply(visual_stereo, ['default', 'bumblebee'], :override => true)
+    # Set configuration files for slam
+    Orocos.conf.apply(colorize_pointcloud, ['default'], :override => true)
+    Orocos.conf.apply(sam, ['default', 'tof_camera', 'bilateral', 'radius', 'sift_keypoints_3_contrast', 'fpfh_feature'], :override => true)
 
     # logs files
     log_replay = Orocos::Log::Replay.open( logfiles_path )
@@ -162,12 +149,8 @@ Bundles.run 'exoter_control',
         Bundles.transformer.setup(exoter_odometry)
     end
 
-    Bundles.transformer.setup(msc_localization)
-
-    if options[:visual].casecmp("task").zero?
-        Bundles.transformer.setup(visual_stereo)
-    end
-
+    Bundles.transformer.setup(colorize_pointcloud)
+    Bundles.transformer.setup(sam)
 
     ###################
     ## LOG THE PORTS ##
@@ -188,12 +171,9 @@ Bundles.run 'exoter_control',
         gp_odometry.configure
     end
 
-    # Configure tasks from localization
-    msc_localization.configure
-
-    if options[:visual].casecmp("task").zero?
-        visual_stereo.configure
-    end
+    # Configure tasks from slam
+    colorize_pointcloud.configure
+    sam.configure
 
     ###########################
     ## LOG PORTS CONNECTIONS ##
@@ -202,6 +182,7 @@ Bundles.run 'exoter_control',
     # Platform driver to localization front-end
     log_replay.platform_driver.joints_readings.connect_to(read_joint_dispatcher.joints_readings, :type => :buffer, :size => 200)
 
+    # Reference trajectory
     if options[:reference].casecmp("vicon").zero?
         log_replay.vicon.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 200)
     end
@@ -210,7 +191,7 @@ Bundles.run 'exoter_control',
         log_replay.gnss_trimble.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 200)
     end
 
-
+    # Odometry port connections
     if options[:odometry].casecmp("task").zero?
 
         if options[:imu].casecmp("old").zero?
@@ -235,6 +216,13 @@ Bundles.run 'exoter_control',
 
     end
 
+    # Exteroceptive connections
+    log_replay.camera_tof.pointcloud.connect_to(localization_frontend.point_cloud_samples, :type => :buffer, :size => 200)
+
+    # Colored point cloud connections
+    log_replay.camera_bb2.left_frame.connect_to(colorize_pointcloud.camera, :type => :buffer, :size => 200)
+    localization_frontend.point_cloud_samples_out.connect_to colorize_pointcloud.points
+
     #############################
     ## TASKS PORTS CONNECTIONS ##
     #############################
@@ -253,32 +241,30 @@ Bundles.run 'exoter_control',
             exoter_odometry.delta_pose_samples_out.connect_to gp_odometry.delta_pose_samples,  :type => :buffer, :size => 200
             localization_frontend.joints_samples_out.connect_to gp_odometry.joints_samples, :type => :buffer, :size => 200
             localization_frontend.orientation_samples_out.connect_to gp_odometry.orientation_samples, :type => :buffer, :size => 200
-            gp_odometry.delta_pose_samples_out.connect_to msc_localization.delta_pose_samples,  :type => :buffer, :size => 1000
+            gp_odometry.delta_pose_samples_out.connect_to sam.delta_pose_samples,  :type => :buffer, :size => 1000
         else
-            exoter_odometry.delta_pose_samples_out.connect_to msc_localization.delta_pose_samples,  :type => :buffer, :size => 1000
+            exoter_odometry.delta_pose_samples_out.connect_to sam.delta_pose_samples,  :type => :buffer, :size => 1000
         end
 
     elsif options[:odometry].casecmp("log").zero?
-        # Localization odometry poses
-        log_replay.exoter_odometry.delta_pose_samples_out.connect_to(msc_localization.delta_pose_samples, :type => :buffer, :size => 1000)
+        if options[:gp]
+            log_replay.exoter_odometry.delta_pose_samples_out.connect_to(gp_odometry.delta_pose_samples, :type => :buffer, :size => 1000)
+            localization_frontend.joints_samples_out.connect_to gp_odometry.joints_samples, :type => :buffer, :size => 500
+            localization_frontend.orientation_samples_out.connect_to gp_odometry.orientation_samples, :type => :buffer, :size =>500
+            gp_odometry.delta_pose_samples_out.connect_to sam.delta_pose_samples,  :type => :buffer, :size => 1000
+        else
+            # SLAM odometry poses
+            log_replay.exoter_odometry.delta_pose_samples_out.connect_to(sam.delta_pose_samples, :type => :buffer, :size => 1000)
+        end
     end
 
-    if options[:visual].casecmp("task").zero?
-        # Camera images for the visual task
-        log_replay.camera_bb2.left_frame.connect_to visual_stereo.left_frame, :type => :buffer, :size => 200
-        log_replay.camera_bb2.right_frame.connect_to visual_stereo.right_frame, :type => :buffer, :size => 200
-
-        # Exteroceptive samples to the localization
-        visual_stereo.features_samples_out.connect_to msc_localization.visual_features_samples, :type => :buffer, :size => 1000
-
-    elsif options[:visual].casecmp("log").zero?
-        # Exteroceptive samples to the localization
-        log_replay.visual_stereo.features_samples_out.connect_to(msc_localization.visual_features_samples, :type => :buffer, :size => 1000)
-    end
+    # Point clouds to SLAM
+    colorize_pointcloud.colored_points.connect_to sam.point_cloud_samples#, :type => :buffer, :size => 2
 
     ###########
     ## START ##
     ###########
+
     # Start tasks for control
     read_joint_dispatcher.start
     ptu_control.start
@@ -293,14 +279,9 @@ Bundles.run 'exoter_control',
         gp_odometry.start
     end
 
-    # Start tasks for localization
-    msc_localization.start
-
-    if options[:visual].casecmp("task").zero?
-        # Start tasks for visual
-        visual_stereo.start
-    end
-
+    # Start tasks for slam
+    colorize_pointcloud.start
+    sam.start
 
     # open the log replay widget
     control = Vizkit.control log_replay

@@ -25,8 +25,8 @@ Orocos::Process.run 'orientation_estimator::IKF' => 'ikf_orientation_estimator' 
     log_replay = Orocos::Log::Replay.open( ARGV[0] )
 
     #Mapping the inputs ports in the orientation task
-    log_replay.imu_stim300.calibrated_sensors.connect_to(ikf_attitude_task.imu_samples, :type => :buffer, :size => 10)
-    #log_replay.imu_stim300.inertial_sensors_out.connect_to(ikf_attitude_task.imu_samples, :type => :buffer, :size => 10)
+    # log_replay.imu_stim300.calibrated_sensors.connect_to(ikf_attitude_task.imu_samples, :type => :buffer, :size => 10) # for exoter test at estec
+    log_replay.imu_stim300.inertial_sensors_out.connect_to(ikf_attitude_task.imu_samples, :type => :buffer, :size => 10) #for exoter test at DLR (stand alone imu test)
 
     # log all the output ports
     Orocos.log_all_ports

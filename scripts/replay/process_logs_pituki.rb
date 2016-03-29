@@ -12,18 +12,23 @@ include Orocos
 options = {}
 options[:reference] = "none"
 options[:imu] = "new"
+options[:reaction_forces] = false
 
 op = OptionParser.new do |opt|
     opt.banner = <<-EOD
-    usage: process_logs_exoter_pituki.rb [options] <data_log_directory>
+    usage: process_logs_pituki.rb [options] <data_log_directory>
     EOD
 
     opt.on "-r", "--reference=none/vicon/gnss", String, 'set the type of reference system available' do |reference|
         options[:reference] = reference
     end
 
-    opt.on "-i", "--imu=old/new/last/ikf", String, 'chose imu component version or ikf orientation component. Please set the type' do |imu|
+    opt.on "-i", "--imu=old/new/last", String, 'since the imu component changed. Please set the type' do |imu|
         options[:imu] = imu
+    end
+
+    opt.on "-f", "--reaction_forces", String, 'connect the reaction forces for the 3D Odometry' do
+        options[:reaction_forces] = true
     end
 
     opt.on '--help', 'this help message' do
@@ -41,7 +46,7 @@ if !logfiles_path
     exit 1
 end
 
-Orocos::CORBA::max_message_size = 100000000000
+Orocos::CORBA::max_message_size = 1000000000000000000
 Bundles.initialize
 Bundles.transformer.load_conf(Bundles.find_file('config', 'transforms_scripts_ground_truth.rb'))
 
@@ -49,19 +54,21 @@ Bundles.transformer.load_conf(Bundles.find_file('config', 'transforms_scripts_gr
 if options[:reference].casecmp("vicon").zero?
     puts "[INFO] Vicon Ground Truth system available"
 elsif options[:reference].casecmp("gnss").zero?
-    puts "[INFOR] GNSS Ground Truth system available"
+    puts "[INFO] GNSS Ground Truth system available"
 else
     puts "[INFO] No Ground Truth system available"
 end
 
 if options[:imu].casecmp("old").zero?
-    puts "[INFO] Old type of IMU samples from logs"
-elsif options[:imu].casecmp("new").zero?
-    puts "[INFO] New type of IMU samples from logs"
-elsif options[:imu].casecmp("last").zero?
-    puts "[INFO] Last type of IMU samples from logs"
+    puts "[INFO] Old type of IMU samples in logs"
 else
-    puts "[INFO] IKF orientation from logs"
+    puts "[INFO] New type of IMU samples in logs"
+end
+
+if options[:reaction_forces]
+    puts "[INFO] Enhanced 3D Odometry with reaction forces"
+else
+    puts "[INFO] 3D Odometry without reaction forces enhancement"
 end
 
 Bundles.run 'exoter_control',
@@ -101,7 +108,7 @@ Bundles.run 'exoter_control',
     Orocos.conf.apply(exoter_odometry, ['default', 'bessel50'], :override => true)
     exoter_odometry.urdf_file = Bundles.find_file('data/odometry', 'exoter_odometry_model_complete.urdf')
 
-    Orocos.conf.apply(pituki, ['default'], :override => true)
+    Orocos.conf.apply(pituki, ['default', 'bilateral', 'radius'], :override => true)
 
     # logs files
     log_replay = Orocos::Log::Replay.open( logfiles_path )
