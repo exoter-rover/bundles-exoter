@@ -66,6 +66,8 @@ buttons_changed = FALSE
 
 Orocos::Process.run 'controldev::JoystickTask' => 'joystick' do
 
+    Orocos.conf.load_dir('/home/exoter/dev/bundles/exoter/config/orogen')
+
     ## Get the Joystick task context ##
     joystick = TaskContext.get 'joystick'
     Orocos.conf.apply(joystick, ['default', 'logitech_gamepad'], :override => true)
