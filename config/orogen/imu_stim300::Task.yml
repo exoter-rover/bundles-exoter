@@ -13,7 +13,7 @@ filter_configuration:
 # IMU port in ExoTer
 port: '/dev/ttyUSB0'
 revision: :REV_D
-timeout: 0.008 #in seconds
+timeout: 0.009 #in seconds
 use_filter: true
 
 --- name:SEROM
