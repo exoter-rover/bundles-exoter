@@ -56,7 +56,7 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     # setup imu_stim300 
     puts "Setting up imu_stim300"
     imu_stim300 = Orocos.name_service.get 'imu_stim300'
-    Orocos.conf.apply(imu_stim300, ['default', 'ExoTer','ESTEC','stim300_5g'], :override => true)
+    Orocos.conf.apply(imu_stim300, ['default', 'exoter','ESTEC','stim300_5g'], :override => true)
     imu_stim300.configure
     puts "done"
 

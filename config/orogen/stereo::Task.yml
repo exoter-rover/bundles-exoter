@@ -9,7 +9,7 @@ image_rotated: false
 image_scaling_factor: 1.0
 # configuration values for libElas
 libElas_conf:
-  disp_min: 5
+  disp_min: 0
   disp_max: 350
   support_threshold: 0.8500000238418579
   support_texture: 10
@@ -17,7 +17,7 @@ libElas_conf:
   incon_window_size: 5
   incon_threshold: 5
   incon_min_support: 5
-  add_corners: false
+  add_corners: true
   grid_size: 20
   beta: 0.019999999552965164
   gamma: 3.0

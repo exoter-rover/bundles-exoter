@@ -9,6 +9,7 @@ include Orocos
 options = {}
 options[:camera] = "no"
 options[:logging] = "nominal"
+options[:reference] = "none"
 
 OptionParser.new do |opt|
     opt.banner = <<-EOD
