@@ -1,3 +1,8 @@
+#    ___        _____    ___   ___ ___ ___ 
+#   | __|_ ____|_   _|__| _ \ | _ ) _ )_  )
+#   | _|\ \ / _ \| |/ -_)   / | _ \ _ \/ / 
+#   |___/_\_\___/|_|\___|_|_\ |___/___/___|
+#                                        
 --- name:default
 # parameter for distortion using the frame_helper
 calibration_parameters:
@@ -35,6 +40,11 @@ calibration_parameters:
 # bit depth per channel
 output_format: :MODE_RGB
 
+#    _  _ ___  ___ ___   ___ ___ ___ 
+#   | || |   \| _ \ _ \ | _ ) _ )_  )
+#   | __ | |) |  _/   / | _ \ _ \/ / 
+#   |_||_|___/|_| |_|_\ |___/___/___|
+#                                    
 --- name:loc_cam
 calibration_parameters:
   camLeft:

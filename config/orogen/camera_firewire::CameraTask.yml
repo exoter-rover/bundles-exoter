@@ -1,3 +1,8 @@
+#    ___            _    _     _               ___ 
+#   | _ )_  _ _ __ | |__| |___| |__  ___ ___  |_  )
+#   | _ \ || | '  \| '_ \ / -_) '_ \/ -_) -_)  / / 
+#   |___/\_,_|_|_|_|_.__/_\___|_.__/\___\___| /___|
+#                                                                                 
 --- name:default
 # count of frames if grab mode is MultiFrame
 acquisition_frame_count: 200
@@ -100,6 +105,47 @@ whitebalance_red: 650
 # width of the camera frame
 width: 1024
 
---- name:loc_cam
+#     ___                _                        ___   _         __ _    
+#    / __|_ _ __ _ _____| |_  ___ _ __  ___ _ _  |_  ) | |   ___ / _| |_  
+#   | (_ | '_/ _` (_-<_-< ' \/ _ \ '_ \/ -_) '_|  / /  | |__/ -_)  _|  _| 
+#    \___|_| \__,_/__/__/_||_\___/ .__/\___|_|   /___| |____\___|_|  \__| 
+#                                |_|                                      
+--- name:pan_cam_left
+# output format of the camera --> not the output port! see below
+camera_format: :MODE_RGB
+# unique camerea id
+camera_id: '49712223535938046'
+# bit depth per channel
+channel_data_depth: 8
+# height of the camera frame
+height: 960
+# width of the camera frame
+width: 1280
+
+#     ___                _                        ___   ___ _      _   _    
+#    / __|_ _ __ _ _____| |_  ___ _ __  ___ _ _  |_  ) | _ (_)__ _| |_| |_  
+#   | (_ | '_/ _` (_-<_-< ' \/ _ \ '_ \/ -_) '_|  / /  |   / / _` | ' \  _| 
+#    \___|_| \__,_/__/__/_||_\___/ .__/\___|_|   /___| |_|_\_\__, |_||_\__| 
+#                                |_|                         |___/          
+--- name:pan_cam_right
+# output format of the camera --> not the output port! see below
+camera_format: :MODE_RGB
+# unique camerea id
+camera_id: '49712223535938026'
+# bit depth per channel
+channel_data_depth: 8
+# height of the camera frame
+height: 960
+# width of the camera frame
+width: 1280
+
+--- name:loc_cam_front
+# unique camerea id
+camera_id: '49712223532727488'
+
+--- name:loc_cam_rear
 # unique camerea id
 camera_id: '49712223536067003'
+
+# Text to ASCII Art Generator online tool -> Just try it!
+#http://patorjk.com/software/taag/#p=display&h=2&v=2&c=bash&w=%20&f=Small&t=Grasshoper%202%20Left
