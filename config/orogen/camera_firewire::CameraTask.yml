@@ -37,7 +37,7 @@ exposure: 5000
 # exposure mode (auto, manual, external, none)
 exposure_mode: auto
 # frames per second
-fps: 4
+fps: 3.75
 # size of the frame buffer
 frame_buffer_size: 10
 # External trigger event, allowed values:  EdgeRising, EdgeFalling, EdgeAny, LevelHigh, LevelLow, none

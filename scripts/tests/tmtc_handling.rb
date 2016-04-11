@@ -100,7 +100,7 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
         Orocos.conf.apply(camera_bb2_loc_cam_front, ['loc_cam_front'], :override => true)
         camera_bb2_loc_cam_front.configure
         camera_bb2_loc_cam_rear = Orocos.name_service.get 'camera_bb2_loc_cam_rear'
-        Orocos.conf.apply(camera_bb2_loc_cam_rear ['loc_cam_rear'], :override => true)
+        Orocos.conf.apply(camera_bb2_loc_cam_rear, ['loc_cam_rear'], :override => true)
         camera_bb2_loc_cam_rear.configure
         puts "done"
         puts "Setting up stereo"
@@ -112,7 +112,7 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
         stereo_loc_cam_front.configure
         stereo_loc_cam_rear = Orocos.name_service.get 'stereo_loc_cam_rear'
         Orocos.conf.apply(stereo_loc_cam_rear, ['locCam'], :override => true)
-        stereo_loc_cam_front_rear.configure
+        stereo_loc_cam_rear.configure
         puts "done"
         puts "Setting up pointcloud"
         pointcloud_pan_cam = Orocos.name_service.get 'pointcloud_pan_cam'
