@@ -55,7 +55,7 @@ Orocos::Process.run 'exoter_control',
     # Localization
     puts "Setting up localization_frontend"
     localization_frontend = Orocos.name_service.get 'localization_frontend'
-    Orocos.conf.apply(localization_frontend, ['default', 'bessel50'], :override => true)
+    Orocos.conf.apply(localization_frontend, ['default', 'hamming1hzsampling12hz'], :override => true)
     localization_frontend.urdf_file = Bundles.find_file('data/odometry', 'exoter_odometry_model_complete.urdf')
     Bundles.transformer.setup(localization_frontend)
     localization_frontend.configure
@@ -73,7 +73,7 @@ Orocos::Process.run 'exoter_control',
     # STIM300 IMU
     puts "Setting up imu_stim300 imu"
     imu_stim300 = TaskContext.get 'imu_stim300'
-    Orocos.conf.apply(imu_stim300,  ['default','ExoTer','ESTEC','stim300_5g'], :override => true)
+    Orocos.conf.apply(imu_stim300,  ['default','exoter','ESTEC','stim300_5g'], :override => true)
     imu_stim300.configure
     puts "done"
 
@@ -102,7 +102,7 @@ Orocos::Process.run 'exoter_control',
     # Connect the ports
     puts "Connecting localization ports"
     read_joint_dispatcher.joints_samples.connect_to localization_frontend.joints_samples
-    read_joint_dispatcher.ptu_samples.connect_to localization_frontend.ptu_samples
+#    read_joint_dispatcher.ptu_samples.connect_to localization_frontend.ptu_samples
     imu_stim300.orientation_samples_out.connect_to localization_frontend.orientation_samples
     imu_stim300.compensated_sensors_out.connect_to localization_frontend.inertial_samples
     localization_frontend.joints_samples_out.connect_to exoter_odometry.joints_samples
