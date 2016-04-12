@@ -119,6 +119,84 @@ calibration_parameters:
 # bit depth per channel
 output_format: :MODE_RGB
 
-                          #--- name:stitch
-                          # Distance in pixels between left and right image for a rough stitching. Leave empty for not stitching
+#--- name:stitch
+# Distance in pixels between left and right image for a rough stitching. Leave empty for not stitching
+
+#    ___           ___            
+#   | _ \__ _ _ _ / __|__ _ _ __  
+#   |  _/ _` | ' \ (__/ _` | '  \ 
+#   |_| \__,_|_||_\___\__,_|_|_|_|
+#                                 
+--- name:pan_cam_left
+calibration_parameters:
+
+  camLeft:
+    fx: 1447.44597
+    fy: 1449.95732
+    cx: 648.41215
+    cy: 480.09902
+    d0: -0.25497        
+    d1: 0.22028
+    d2: 0.00040
+    d3: -0.00012
+    width: 1280
+    height: 960
+  camRight:
+    fx: 1446.31014
+    fy: 1448.80289
+    cx: 651.10761
+    cy:  488.16099
+    d0: -0.25702   
+    d1: 0.22335   
+    d2: 0.00009   
+    d3: 0.00056
+    width: 1280
+    height: 960
+  extrinsic:
+    tx: -499.84374
+    ty: 1.45738 
+    tz: -0.55354
+    rx: -0.00507
+    ry: 0.00466  
+    rz: -0.00064
+
+# bit depth per channel
+output_format: :MODE_RGB
+
+--- name:pan_cam_right
+calibration_parameters:
+
+  camLeft:
+    fx: 1447.44597
+    fy: 1449.95732
+    cx: 648.41215
+    cy: 480.09902
+    d0: -0.25497        
+    d1: 0.22028
+    d2: 0.00040
+    d3: -0.00012
+    width: 1280
+    height: 960
+  camRight:
+    fx: 1446.31014
+    fy: 1448.80289
+    cx: 651.10761
+    cy:  488.16099
+    d0: -0.25702   
+    d1: 0.22335   
+    d2: 0.00009   
+    d3: 0.00056
+    width: 1280
+    height: 960
+  extrinsic:
+    tx: -499.84374
+    ty: 1.45738 
+    tz: -0.55354
+    rx: -0.00507
+    ry: 0.00466  
+    rz: -0.00064
+
+# bit depth per channel
+output_format: :MODE_RGB
+
 

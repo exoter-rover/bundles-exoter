@@ -102,6 +102,12 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
         camera_bb2_loc_cam_rear = Orocos.name_service.get 'camera_bb2_loc_cam_rear'
         Orocos.conf.apply(camera_bb2_loc_cam_rear, ['loc_cam_rear'], :override => true)
         camera_bb2_loc_cam_rear.configure
+        camera_bb2_pan_cam_left = Orocos.name_service.get 'camera_bb2_pan_cam_left'
+        Orocos.conf.apply(camera_bb2_pan_cam_left, ['pan_cam_left'], :override => true)
+        camera_bb2_pan_cam_left.configure
+        camera_bb2_pan_cam_right = Orocos.name_service.get 'camera_bb2_pan_cam_right'
+        Orocos.conf.apply(camera_bb2_pan_cam_right, ['pan_cam_right'], :override => true)
+        camera_bb2_pan_cam_right.configure
         puts "done"
         puts "Setting up stereo"
         stereo_pan_cam = Orocos.name_service.get 'stereo_pan_cam'
@@ -183,7 +189,7 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     puts "done"
 
     # Log all ports
-    Orocos.log_all_ports(:exclude_ports => ['camera_firewire_pan_cam.frame','camera_firewire_loc_cam.frame'])
+    Orocos.log_all_ports(:exclude_ports => ['camera_firewire_pan_cam_left.frame','camera_firewire_pan_cam_right.frame','camera_firewire_loc_cam_front.frame','camera_firewire_loc_cam_rear.frame'])
 
     # Connect ports
     puts "Connecting ports"
@@ -250,15 +256,19 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
         camera_bb2_loc_cam_front.right_frame.connect_to stereo_loc_cam_front.right_frame
         camera_bb2_loc_cam_rear.left_frame.connect_to stereo_loc_cam_rear.left_frame
         camera_bb2_loc_cam_rear.right_frame.connect_to stereo_loc_cam_rear.right_frame
-        camera_firewire_pan_cam_left.frame.connect_to stereo_pan_cam.left_frame
-        camera_firewire_pan_cam_right.frame.connect_to stereo_pan_cam.right_frame
+        camera_firewire_pan_cam_left.frame.connect_to camera_bb2_pan_cam_left.frame_in_left
+        camera_bb2_pan_cam_left.left_frame.connect_to stereo_pan_cam.left_frame
+        camera_firewire_pan_cam_right.frame.connect_to camera_bb2_pan_cam_right.frame_in_right
+        camera_bb2_pan_cam_right.right_frame.connect_to stereo_pan_cam.right_frame
         
-        telemetry_telecommand.pancam_store_image_filename.connect_to camera_bb2_loc_cam_front.store_image_filename
-        telemetry_telecommand.loccam_store_image_filename.connect_to camera_bb2_loc_cam_rear.store_image_filename
+        telemetry_telecommand.pancam_left_store_image_filename.connect_to camera_bb2_pan_cam_left.store_image_filename
+        telemetry_telecommand.pancam_right_store_image_filename.connect_to camera_bb2_pan_cam_right.store_image_filename
+        telemetry_telecommand.loccam_front_store_image_filename.connect_to camera_bb2_loc_cam_front.store_image_filename
+        telemetry_telecommand.loccam_rear_store_image_filename.connect_to camera_bb2_loc_cam_rear.store_image_filename
 
         stereo_pan_cam.distance_frame.connect_to pointcloud_pan_cam.frame
         stereo_pan_cam.disparity_frame.connect_to pointcloud_pan_cam.disparity_frame
-        camera_firewire_pan_cam_left.frame.connect_to pointcloud_pan_cam.color_frame
+        camera_bb2_pan_cam_left.left_frame.connect_to pointcloud_pan_cam.color_frame
         stereo_loc_cam_front.distance_frame.connect_to pointcloud_loc_cam_front.frame
         stereo_loc_cam_front.disparity_frame.connect_to pointcloud_loc_cam_front.disparity_frame
         camera_bb2_loc_cam_front.left_frame.connect_to pointcloud_loc_cam_front.color_frame
@@ -283,6 +293,8 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
         camera_firewire_pan_cam_right.start
         camera_firewire_loc_cam_front.start
         camera_firewire_loc_cam_rear.start
+        camera_bb2_pan_cam_left.start
+        camera_bb2_pan_cam_right.start
         camera_bb2_loc_cam_front.start
         camera_bb2_loc_cam_rear.start
         stereo_pan_cam.start
