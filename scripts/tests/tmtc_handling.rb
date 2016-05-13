@@ -122,13 +122,13 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
         puts "done"
         puts "Setting up pointcloud"
         pointcloud_pan_cam = Orocos.name_service.get 'pointcloud_pan_cam'
-        Orocos.conf.apply(pointcloud_pan_cam, ['default'], :override => true)
+        Orocos.conf.apply(pointcloud_pan_cam, ['pan_cam'], :override => true)
         pointcloud_pan_cam.configure
         pointcloud_loc_cam_front = Orocos.name_service.get 'pointcloud_loc_cam_front'
-        Orocos.conf.apply(pointcloud_loc_cam_front, ['default'], :override => true)
+        Orocos.conf.apply(pointcloud_loc_cam_front, ['loc_cam_front'], :override => true)
         pointcloud_loc_cam_front.configure
         pointcloud_loc_cam_rear = Orocos.name_service.get 'pointcloud_loc_cam_rear'
-        Orocos.conf.apply(pointcloud_loc_cam_rear, ['default'], :override => true)
+        Orocos.conf.apply(pointcloud_loc_cam_rear, ['loc_cam_rear'], :override => true)
         pointcloud_loc_cam_rear.configure
         puts "done"
     else
@@ -242,10 +242,11 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
     puts "Connecting TM/TC ports"
     # Connect ports: ptu_control to telemetry_telecommand
     ptu_control.ptu_samples_out.connect_to telemetry_telecommand.current_ptu
-    imu_stim300.orientation_samples_out.connect_to telemetry_telecommand.current_imu
+    # imu_stim300.orientation_samples_out.connect_to telemetry_telecommand.current_imu
     locomotion_control.bema_joints.connect_to telemetry_telecommand.current_bema
     telemetry_telecommand.bema_command.connect_to locomotion_control.bema_command
-    telemetry_telecommand.walking_command.connect_to locomotion_control.walking_command
+    telemetry_telecommand.walking_command_front.connect_to locomotion_control.walking_command_front
+    telemetry_telecommand.walking_command_rear.connect_to locomotion_control.walking_command_rear
 
 
     if options[:camera].casecmp("yes").zero?
@@ -256,8 +257,10 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_groundtru
         camera_bb2_loc_cam_front.right_frame.connect_to stereo_loc_cam_front.right_frame
         camera_bb2_loc_cam_rear.left_frame.connect_to stereo_loc_cam_rear.left_frame
         camera_bb2_loc_cam_rear.right_frame.connect_to stereo_loc_cam_rear.right_frame
+        #camera_firewire_pan_cam_left.frame.connect_to stereo_pan_cam.left_frame
         camera_firewire_pan_cam_left.frame.connect_to camera_bb2_pan_cam_left.frame_in_left
         camera_bb2_pan_cam_left.left_frame.connect_to stereo_pan_cam.left_frame
+        #camera_firewire_pan_cam_right.frame.connect_to stereo_pan_cam.right_frame
         camera_firewire_pan_cam_right.frame.connect_to camera_bb2_pan_cam_right.frame_in_right
         camera_bb2_pan_cam_right.right_frame.connect_to stereo_pan_cam.right_frame
         

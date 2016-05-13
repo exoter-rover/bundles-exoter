@@ -1,2 +1,10 @@
 --- name:default
+camera_id: PAN_STEREO
+--- name:pan_cam
+camera_id: PAN_STEREO
+--- name:loc_cam_front
+camera_id: FLOC_STEREO
+--- name:loc_cam_rear
+camera_id: RLOC_STEREO
+
 

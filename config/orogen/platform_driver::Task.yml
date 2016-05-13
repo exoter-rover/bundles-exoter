@@ -110,7 +110,7 @@ param_gear_motor_walk:
   dDecIncrS2: 100000
   dCurrMax: 2.0
   dGearRatio: 1900
-  bIsSteer: 1 #0 if wheel walking need to be applied
+  bIsSteer: 0 #0 if wheel walking need to be applied. 1 otherwise.
   iEncIncrPerRevMot: 512
   dAccIncrS2: 100000
   dPosLimitHighIncr: 250222
