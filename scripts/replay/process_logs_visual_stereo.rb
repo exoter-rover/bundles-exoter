@@ -5,6 +5,8 @@ require 'orocos/log'
 require 'rock/bundle'
 require 'vizkit'
 require 'utilrb'
+require 'readline'
+require 'optparse'
 
 include Orocos
 

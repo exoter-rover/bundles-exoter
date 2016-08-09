@@ -6,6 +6,7 @@ require 'rock/bundle'
 require 'vizkit'
 require 'utilrb'
 require 'readline'
+require 'optparse'
 
 include Orocos
 
@@ -18,7 +19,7 @@ options[:gp] = false
 
 op = OptionParser.new do |opt|
     opt.banner = <<-EOD
-    usage: process_logs_exoter_localization.rb [options] <data_log_directory>
+    usage: process_logs_exoter_sam.rb [options] <data_log_directory>
     EOD
 
     opt.on "-r", "--reference=none/vicon/gnss", String, 'set the type of reference system available' do |reference|
