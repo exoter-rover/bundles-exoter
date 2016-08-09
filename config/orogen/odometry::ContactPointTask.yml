@@ -1,0 +1,51 @@
+--- name:default
+# Time in s between actuator_samples readings
+contact_samples_period: 0.08
+
+orientation_samples_period: 0.08
+
+# the frame name for the body frame
+body_frame: body
+
+# configuration struct for the asguard odometry class
+odometry_config:
+  seed: 42
+  constError:
+    translation:
+      data:
+      - 0.000
+      - 0.000
+      - 0.000
+    yaw: 0.00000
+  distError:
+    translation:
+      data:
+      - 0.0
+      - 0.0
+      - 0.0
+    yaw: 0.0
+  tiltError:
+    translation:
+      data:
+      - 0.0
+      - 0.0
+      - 0.0
+    yaw: 0.0
+  dthetaError:
+    translation:
+      data:
+      - 0.0
+      - 0.0
+      - 0.0
+    yaw: 0.0
+  useZeroVelocity: true
+
+# the frame name for the odometry frame
+odometry_frame: navigation
+
+# Maximum time in seconds the transformer will wait until it starts dropping samples
+aggregator_max_latency: 0.1
+# Minimum system time in seconds between two updates of the status ports
+stream_aligner_status_period: 0.08
+
+
