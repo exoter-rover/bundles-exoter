@@ -64,7 +64,7 @@ end
 
 Orocos::CORBA::max_message_size = 100000000000
 Bundles.initialize
-Bundles.transformer.load_conf(Bundles.find_file('config', 'transforms_scripts.rb'))
+Bundles.transformer.load_conf(Bundles.find_file('config', 'transforms_scripts_vsd_slam.rb'))
 
 # Configuration values
 if options[:reference].casecmp("vicon").zero?
@@ -118,7 +118,7 @@ end
 Bundles.run 'exoter_control',
             'exoter_localization',
             'exoter_slam',
-            :gdb => false do
+            :gdb => false, :output=>nil do
 
     # Get the task names from control
     read_joint_dispatcher = Orocos.name_service.get 'read_joint_dispatcher'

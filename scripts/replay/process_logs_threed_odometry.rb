@@ -5,6 +5,7 @@ require 'orocos/log'
 require 'rock/bundle'
 require 'vizkit'
 require 'utilrb'
+require 'optparse'
 
 include Orocos
 
@@ -47,7 +48,7 @@ end
 
 Orocos::CORBA::max_message_size = 100000000000
 Bundles.initialize
-Bundles.transformer.load_conf(Bundles.find_file('config', 'transforms_scripts.rb'))
+Bundles.transformer.load_conf(Bundles.find_file('config', 'transforms_scripts_exoter_odometry.rb'))
 
 # Configuration values
 if options[:reference].casecmp("vicon").zero?
