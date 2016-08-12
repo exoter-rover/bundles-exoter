@@ -6,19 +6,25 @@ require 'orocos/async'
 require 'vizkit'
 require 'optparse'
 
-hostname = nil
-logfile = nil
+options = {}
+options[:hostname] = nil
+options[:mode] = "ground_truth"
+options[:logfile] = nil
 
-options = OptionParser.new do |opt|
+op = OptionParser.new do |opt|
     opt.banner = <<-EOD
     exoter_visualization [options]  </path/to/model/urdf_file>
     EOD
     opt.on '--host=HOSTNAME', String, 'the host we should contact to find RTT tasks' do |host|
-        hostname = host
+        options[:hostname] = host
+    end
+
+    opt.on '--tf_mode=ground_truth/exoter_odometry/sam/vsd_slam', String, 'visualization mode' do |mode|
+        options[:mode] = mode
     end
 
     opt.on '--log=LOGFILE', String, 'path to the log file' do |log|
-        logfile = log
+        options[:logfile] = log
     end
 
     opt.on '--help', 'this help message' do
@@ -27,7 +33,7 @@ options = OptionParser.new do |opt|
     end
 end
 
-args = options.parse(ARGV)
+args = op.parse(ARGV)
 model_file = args.shift
 
 if !model_file
@@ -36,15 +42,15 @@ if !model_file
     exit 1
 end
 
-if hostname
-    Orocos::CORBA.name_service.ip = hostname
+if options[:hostname]
+    Orocos::CORBA.name_service.ip = options[:hostname]
 end
 
 # load log files and add the loaded tasks to the Orocos name service
-log_replay = Orocos::Log::Replay.open(logfile) unless logfile.nil?
+log_replay = Orocos::Log::Replay.open(options[:logfile]) unless options[:logfile].nil?
 
 # If log replay track only needed ports
-unless logfile.nil?
+unless options[:logfile].nil?
     log_replay.track(true)
     log_replay.transformer_broadcaster.rename('foo')
 end
@@ -52,7 +58,9 @@ end
 
 Orocos::CORBA::max_message_size = 100000000000
 Bundles.initialize
-Bundles.transformer.load_conf(Bundles.find_file('config', 'transforms_scripts.rb'))
+transformation_file = Bundles.find_file('config', 'transforms_scripts_' + options[:mode] + '.rb')
+puts "Loading transformation file: " + transformation_file
+Bundles.transformer.load_conf(transformation_file)
 
 robotVis = Vizkit.default_loader.RobotVisualization
 robotVis.modelFile = model_file.dup
@@ -198,56 +206,46 @@ c0RR.resetModel(0.1)
 c0RR.displayCovariance(true)
 Vizkit.vizkit3d_widget.setPluginDataFrame("body", c0RR)
 
-#RigidBody of the BodyCenter from odometry
-sam_odo_rbs = Vizkit.default_loader.RigidBodyStateVisualization
-sam_odo_rbs.displayCovariance(true)
-sam_odo_rbs.setPluginName("Odometry SAM Pose")
-sam_odo_rbs.setColor(Eigen::Vector3.new(255, 10, 0))#Red
-sam_odo_rbs.resetModel(0.2)
-Vizkit.vizkit3d_widget.setPluginDataFrame("sam", sam_odo_rbs)
+if options[:mode].casecmp("sam").zero?
+    #RigidBody of the BodyCenter from odometry
+    sam_odo_rbs = Vizkit.default_loader.RigidBodyStateVisualization
+    sam_odo_rbs.displayCovariance(true)
+    sam_odo_rbs.setPluginName("Odometry SAM Pose")
+    sam_odo_rbs.setColor(Eigen::Vector3.new(255, 10, 0))#Red
+    sam_odo_rbs.resetModel(0.2)
+    Vizkit.vizkit3d_widget.setPluginDataFrame("sam", sam_odo_rbs)
 
-# Odometry robot trajectory
-sam_odo_trajectory = Vizkit.default_loader.TrajectoryVisualization
-sam_odo_trajectory.setColor(Eigen::Vector3.new(1, 0.1, 0))#Red line
-sam_odo_trajectory.setPluginName("Odometry SAM Trajectory")
-Vizkit.vizkit3d_widget.setPluginDataFrame("sam", sam_odo_trajectory)
+    # Odometry robot trajectory
+    sam_odo_trajectory = Vizkit.default_loader.TrajectoryVisualization
+    sam_odo_trajectory.setColor(Eigen::Vector3.new(1, 0.1, 0))#Red line
+    sam_odo_trajectory.setPluginName("Odometry SAM Trajectory")
+    Vizkit.vizkit3d_widget.setPluginDataFrame("sam", sam_odo_trajectory)
+end
 
-# Joints Dispatcher or Localization FrontEnd
-#read_joint_dispatcher = Orocos::Async.proxy 'read_joint_dispatcher'
-localization_frontend = Orocos::Async.proxy 'localization_frontend'
 
-#read_joint_dispatcher.on_reachable do
-localization_frontend.on_reachable do
+if options[:mode].casecmp("vsd_slam").zero?
+    #RigidBody of the BodyCenter from odometry
+    vsd_slam_odo_rbs = Vizkit.default_loader.RigidBodyStateVisualization
+    vsd_slam_odo_rbs.displayCovariance(true)
+    vsd_slam_odo_rbs.setPluginName("Odometry VSD_SLAM Pose")
+    vsd_slam_odo_rbs.setColor(Eigen::Vector3.new(255, 250, 0))#Yellow
+    vsd_slam_odo_rbs.resetModel(0.2)
+    Vizkit.vizkit3d_widget.setPluginDataFrame("vsd_slam", vsd_slam_odo_rbs)
+
+    # Odometry robot trajectory
+    vsd_slam_odo_trajectory = Vizkit.default_loader.TrajectoryVisualization
+    vsd_slam_odo_trajectory.setColor(Eigen::Vector3.new(1, 1, 0))#Yellow line
+    vsd_slam_odo_trajectory.setPluginName("Odometry VSD_SLAM Trajectory")
+    Vizkit.vizkit3d_widget.setPluginDataFrame("vsd_slam", vsd_slam_odo_trajectory)
+end
+
+# Joints Dispatcher for the joints of the robot visualization
+read_joint_dispatcher = Orocos::Async.proxy 'read_joint_dispatcher'
+
+read_joint_dispatcher.on_reachable do
 
     #Joints positions
-    #read_joint_dispatcher.port('joints_samples').on_data do |joints,_|
-    localization_frontend.port('joints_samples_out').on_data do |joints,_|
-
-        joints.names.push("dummy")
-        joints.elements.push(Types::Base::JointState.new(:speed=> 0.00, :position => 0.00))
-
-        joints.each_with_name do |value, name|
-            #puts "Value: #{value} with name #{name}"
-            if name == "left_passive" then
-                joints.names.push("fl_mimic")
-                joints.elements.push(Types::Base::JointState.new(:speed=> 0.00, :position => -value.position))
-                joints.names.push("ml_mimic")
-                joints.elements.push(Types::Base::JointState.new(:speed=> 0.00, :position => -value.position))
-            elsif name == "right_passive" then
-                joints.names.push("fr_mimic")
-                joints.elements.push(Types::Base::JointState.new(:speed=> 0.00, :position => -value.position))
-                joints.names.push("mr_mimic")
-                joints.elements.push(Types::Base::JointState.new(:speed=> 0.00, :position => -value.position))
-            elsif name == "rear_passive" then
-                joints.names.push("rr_mimic")
-                joints.elements.push(Types::Base::JointState.new(:speed=> 0.00, :position => -value.position))
-                joints.names.push("rl_mimic")
-                joints.elements.push(Types::Base::JointState.new(:speed=> 0.00, :position => -value.position))
-            end
-        end
-        #joints.each do |value|
-        #    puts "Vis Joint Value: #{value.position}"
-        #end
+    read_joint_dispatcher.port('joints_samples').on_data do |joints,_|
 
         robotVis.updateData(joints)
         #puts "joints #{joints.names}"
@@ -334,13 +332,13 @@ end
 #leftImage = Vizkit.default_loader.ImageView
 #rightImage = Vizkit.default_loader.ImageView
 
-visual_stereo = Orocos::Async.proxy 'visual_stereo'
-interFrameImage = Vizkit.default_loader.ImageView
-
-visual_stereo.on_reachable do
-    Vizkit.display visual_stereo.port('inter_frame_samples_out'), :widget => interFrameImage
-
-end
+#visual_stereo = Orocos::Async.proxy 'visual_stereo'
+#interFrameImage = Vizkit.default_loader.ImageView
+#
+#visual_stereo.on_reachable do
+#    Vizkit.display visual_stereo.port('inter_frame_samples_out'), :widget => interFrameImage
+#
+#end
 
 # Visual Odometry tasks in Asynchronous mode
 visual_odometry = Orocos::Async.proxy 'visual_odometry'
@@ -395,43 +393,70 @@ msc_localization.on_reachable do
     Vizkit.display msc_localization.port('features_point_samples_out'), :widget =>featureCloud
 end
 
-# Localization Front-End
-sam = Orocos::Async.proxy 'sam'
 
-sam.on_reachable do
+if options[:mode].casecmp("sam").zero?
 
-    # Odometry Robot pose
-    Vizkit.display sam.port('odo_pose_samples_out'), :widget =>sam_odo_rbs
+    # Smoothing and Mapping
+    sam = Orocos::Async.proxy 'sam'
 
-    # Trajectory
-    sam.port('odo_pose_samples_out').on_data do |pose_rbs,_|
-        sam_odo_trajectory.updateTrajectory(pose_rbs.position)
+    sam.on_reachable do
+
+        # Odometry Robot pose
+        Vizkit.display sam.port('odo_pose_samples_out'), :widget =>sam_odo_rbs
+
+        # Trajectory
+        sam.port('odo_pose_samples_out').on_data do |pose_rbs,_|
+            sam_odo_trajectory.updateTrajectory(pose_rbs.position)
+        end
+
+        # SAM Robot pose
+        Vizkit.display sam.port('sam_pose_samples_out'), :widget =>localizationRBS
+
+        # Trajectory
+        sam.port('sam_pose_samples_out').on_data do |localization_rbs,_|
+            localizationRobotTrajectory.updateTrajectory(localization_rbs.position)
+        end
+
+        # Point Cloud
+        Vizkit.display sam.port('point_cloud_samples_out'), :widget =>pointCloud
     end
-
-    # SAM Robot pose
-    Vizkit.display sam.port('sam_pose_samples_out'), :widget =>localizationRBS
-
-    # Trajectory
-    sam.port('sam_pose_samples_out').on_data do |localization_rbs,_|
-        localizationRobotTrajectory.updateTrajectory(localization_rbs.position)
-    end
-
-    # Point Cloud
-    Vizkit.display sam.port('point_cloud_samples_out'), :widget =>pointCloud
-
 end
 
 
+if options[:mode].casecmp("vsd_slam").zero?
+
+    # Visual SLAM
+    vsd_slam = Orocos::Async.proxy 'vsd_slam'
+
+    vsd_slam.on_reachable do
+
+        # Odometry Robot pose
+        Vizkit.display vsd_slam.port('odo_pose_samples_out'), :widget =>vsd_slam_odo_rbs
+
+        # Trajectory
+        vsd_slam.port('odo_pose_samples_out').on_data do |pose_rbs,_|
+            vsd_slam_odo_trajectory.updateTrajectory(pose_rbs.position)
+        end
+
+        # VSD_SLAM Robot pose
+        Vizkit.display vsd_slam.port('pose_samples_out'), :widget =>localizationRBS
+
+        # Trajectory
+        vsd_slam.port('pose_samples_out').on_data do |localization_rbs,_|
+            localizationRobotTrajectory.updateTrajectory(localization_rbs.position)
+        end
+    end
+end
 
 # Enable the GUI when the task is reachable
-read_joint_dispatcher.on_reachable {Vizkit.vizkit3d_widget.setEnabled(true)} if logfile.nil?
-#localization_frontend.on_reachable {Vizkit.vizkit3d_widget.setEnabled(true)} if logfile.nil?
+read_joint_dispatcher.on_reachable {Vizkit.vizkit3d_widget.setEnabled(true)} if options[:logfile].nil?
+#localization_frontend.on_reachable {Vizkit.vizkit3d_widget.setEnabled(true)} if options[:logfile].nil?
 
 # Disable the GUI until the task is reachable
-read_joint_dispatcher.on_unreachable {Vizkit.vizkit3d_widget.setEnabled(false)} if logfile.nil?
-#localization_frontend.on_unreachable {Vizkit.vizkit3d_widget.setEnabled(false)} if logfile.nil?
+read_joint_dispatcher.on_unreachable {Vizkit.vizkit3d_widget.setEnabled(false)} if options[:logfile].nil?
+#localization_frontend.on_unreachable {Vizkit.vizkit3d_widget.setEnabled(false)} if options[:logfile].nil?
 
-Vizkit.control log_replay unless logfile.nil?
+Vizkit.control log_replay unless options[:logfile].nil?
 Vizkit.exec
 
 
