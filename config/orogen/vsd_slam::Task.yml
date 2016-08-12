@@ -1,25 +1,32 @@
 --- name:default
 # the global name that should be used for the internal body frame
 body_frame: body
+
 # the global name that should be used for the internal navigation frame
 navigation_frame: navigation
+
 # the global name that should be used for the internal world frame
-world_frame: world
+world_frame: navigation
 
 # Time in s between delta_pose_samples readings
 delta_pose_samples_period: 0.08
-# Frame of the Visual Stereo localization (normally "visual stereo" frame)The Visual Stereo localization target frame is taken from the world frame of the transformer.
+
+# Frame of the Visual Stereo localization (normally "vsd_slam" frame) The Visual Stereo localization target frame is taken from the world frame of the transformer.
 vsd_slam_localization_source_frame: 'vsd_slam'
-# Frame of the Odometry localization (normally "body" frame)The odometry localization target frame is taken from the last SAM localization source frame.
-odometry_localization_source_frame: 'body'
 
 --- name:bumblebee
 # the global name that should be used for the internal sensor frame
 sensor_frame: left_camera
+
+# Frame of the Odometry localization (normally sensor_frame value of the transformer) The odometry localization target frame is taken from the last SAM localization source frame.
+odometry_localization_source_frame: 'left_camera'
+
 # Time in s between visual_features_samples readings
 visual_features_samples_period: 0.4
+
 # Maximum time in seconds the transformer will wait until it starts dropping samples
 transformer_max_latency: 0.8
+
 # Minimum system time in seconds between two updates of the status ports
 transformer_status_period: 1.0
 
