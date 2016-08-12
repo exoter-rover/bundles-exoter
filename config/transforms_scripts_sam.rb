@@ -30,7 +30,9 @@ dynamic_transform "localization_frontend.world_to_navigation_out", "navigation" 
 #    Eigen::Vector3.new( 2.0, 0.0, 0.0 ), "navigation" => "world"
 
 # Transformation from Navigation to Body but transformer expected in the inverse sense
-dynamic_transform "exoter_odometry.pose_samples_out", "body" => "navigation"
+dynamic_transform "sam.sam_pose_samples_out", "sam" => "navigation"
+dynamic_transform "sam.odo_pose_samples_out", "body" => "sam"
+
 
 # Transformation from mast to Pan and Tilt Unit but transformed expected in the inverse sense
 dynamic_transform "ptu_control.mast_to_ptu_out", "ptu" => "mast"
