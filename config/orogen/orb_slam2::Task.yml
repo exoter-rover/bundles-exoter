@@ -1,0 +1,81 @@
+--- name:default
+# the global name that should be used for the internal world frame
+world_frame: navigation
+# the global name that should be used for the internal navigation frame
+navigation_frame: navigation
+# the global name that should be used for the internal body frame
+body_frame: body
+# Time in s between delta_pose_samples readings
+delta_pose_samples_period: 0.08
+
+# resize algorithm which is used to scale the frame before it is written to the output port. 
+resize_algorithm: :INTER_LINEAR
+# Frame of the slam localization (normally sensor frame or body frame)The slam localization target frame is taken from the world frame of the transformer.
+slam_localization_source_frame: 'body'
+
+# Path to the file with the Bag-of-Words vocabulary for for the ORB descriptor.
+orb_vocabulary: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/bundles/exoter/config/data/ORBvoc.txt"
+
+# Set to true if output debug information is desirable.
+output_debug: true
+
+--- name:bumblebee
+# the global name that should be used for the internal sensor frame
+sensor_frame: left_camera
+
+# Path to the file with the camera calibration and ORB features parameters.
+orb_calibration: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/bundles/exoter/config/data/bumblebee_calibartion.txt"
+
+#Period to compute the image processing step in seconds. It cannot be higher than the input port period.
+#In case of zero the period will be set to the input port period.
+desired_period: 0.4 #1.0
+# minimum time, in s, between two sequential samples arrive on left_frame
+left_frame_period: 0.4
+# minimum time, in s, between two sequential samples arrive on right_frame
+right_frame_period: 0.4
+# Minimum system time in seconds between two updates of the status ports
+transformer_status_period: 1.0
+# maximum latency, in seconds, of the stream aligner. The aligner will start
+# dropping samples if the difference between the last output and last input is
+# greater than this
+transformer_max_latency: 1.0
+
+# Calibration parameter for the frame_helper
+calib_parameters:
+  camLeft:
+    fx: 837.98636
+    fy: 838.56569
+    cx: 509.74846
+    cy: 376.99711
+    d0: -0.35914
+    d1: 0.16317
+    d2: 0.00039
+    d3: 0.00041
+    ex: 0.06887
+    ey: 0.08192
+    width: 1024
+    height: 768
+  camRight:
+    fx: 837.40801
+    fy: 838.06473
+    cx: 536.53701
+    cy: 377.66591
+    d0: -0.35499
+    d1: 0.15218
+    d2: 0.00019
+    d3: -0.00016
+    ex: 0.07723
+    ey: 0.08236
+    width: 1024
+    height: 768
+
+#Distance between left and right camera
+  extrinsic:
+    tx: 0.12042814 #baseline in x (meters)
+    ty: 0.00063857 #baseline in y (meters)
+    tz: 0.0003051 #baseline in z (meters)
+    rx: 0.00125 #rotation along x (rad)
+    ry: -0.00333 #rotation along y (rad)
+    rz: 0.00542 #rotation along z (rad)
+
+
