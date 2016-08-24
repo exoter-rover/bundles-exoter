@@ -12,7 +12,7 @@ world_frame: navigation
 delta_pose_samples_period: 0.08
 
 # Frame of the Visual Stereo localization (normally "vsd_slam" frame) The Visual Stereo localization target frame is taken from the world frame of the transformer.
-vsd_slam_localization_source_frame: 'vsd_slam'
+slam_localization_source_frame: 'vsd_slam'
 
 --- name:bumblebee
 # the global name that should be used for the internal sensor frame
