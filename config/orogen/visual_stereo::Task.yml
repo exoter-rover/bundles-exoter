@@ -6,14 +6,14 @@ output_debug: true #false
 draw_hash_uuid_features: true
 image_ouput_type: :INTRA_AND_INTER #:INTRA_MATCHES #:INTER_KEYPOINTS
 minimum_hessian: 1000
-desired_number_features: 5
+desired_number_features: 50
 
 --- name:bumblebee
 #Period to compute the image processing step in seconds. It cannot be higher than the input port period.
 #In case of zero the period will be set to the input port period.
 desired_period: 0.4 #1.0
 #Number of frames to reset the feature hash key and therefore consider to be a different feature.
-frame_window_hash_size: 50
+frame_window_hash_size: 100
 #Distance ratio to compare best good match to the second-best good match between previous to current images.
 inter_ratio_matches: 0.6
 #Distance ratio to compare best good match to the second-best good match between the current image pair and the hash of features
