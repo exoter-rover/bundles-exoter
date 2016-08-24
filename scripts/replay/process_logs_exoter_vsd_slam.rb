@@ -289,6 +289,8 @@ Bundles.run 'exoter_control',
     elsif options[:visual_stereo].casecmp("log").zero?
         # Visual stereo measurement to SLAM
         log_replay.visual_stereo.features_samples_out.connect_to(vsd_slam.visual_features_samples, :type => :buffer, :size => 100)
+        interFrameImage = Vizkit.default_loader.ImageView
+        Vizkit.display log_replay.visual_stereo.port('inter_frame_samples_out'), :widget => interFrameImage
     end
 
 
