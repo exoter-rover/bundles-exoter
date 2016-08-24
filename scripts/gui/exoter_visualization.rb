@@ -19,7 +19,7 @@ op = OptionParser.new do |opt|
         options[:hostname] = host
     end
 
-    opt.on '--tf_mode=ground_truth/exoter_odometry/sam/vsd_slam', String, 'visualization mode' do |mode|
+    opt.on '--tf_mode=ground_truth/exoter_odometry/sam/vsd_slam/orb_slam2', String, 'visualization mode' do |mode|
         options[:mode] = mode
     end
 
@@ -98,7 +98,7 @@ Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", odometryRobotTrajectory)
 #RigidBody of the BodyCenter from localization
 localizationRBS = Vizkit.default_loader.RigidBodyStateVisualization
 localizationRBS.displayCovariance(true)
-localizationRBS.setPluginName("Localization Pose")
+localizationRBS.setPluginName("Robot Pose")
 localizationRBS.setColor(Eigen::Vector3.new(255, 255, 255))#White
 localizationRBS.resetModel(0.4)
 Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", localizationRBS)
@@ -106,7 +106,7 @@ Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", localizationRBS)
 # Odometry robot trajectory
 localizationRobotTrajectory = Vizkit.default_loader.TrajectoryVisualization
 localizationRobotTrajectory.setColor(Eigen::Vector3.new(1, 1, 1))#White line
-localizationRobotTrajectory.setPluginName("Localization Trajectory")
+localizationRobotTrajectory.setPluginName("Robot Trajectory")
 Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", localizationRobotTrajectory)
 
 # Point cloud visualizer
@@ -207,7 +207,7 @@ c0RR.displayCovariance(true)
 Vizkit.vizkit3d_widget.setPluginDataFrame("body", c0RR)
 
 if options[:mode].casecmp("sam").zero?
-    #RigidBody of the BodyCenter from odometry
+    #RigidBody of the BodyCenter from Smoothing and Mapping
     sam_odo_rbs = Vizkit.default_loader.RigidBodyStateVisualization
     sam_odo_rbs.displayCovariance(true)
     sam_odo_rbs.setPluginName("Odometry SAM Pose")
@@ -215,7 +215,7 @@ if options[:mode].casecmp("sam").zero?
     sam_odo_rbs.resetModel(0.2)
     Vizkit.vizkit3d_widget.setPluginDataFrame("sam", sam_odo_rbs)
 
-    # Odometry robot trajectory
+    # SAM robot trajectory
     sam_odo_trajectory = Vizkit.default_loader.TrajectoryVisualization
     sam_odo_trajectory.setColor(Eigen::Vector3.new(1, 0.1, 0))#Red line
     sam_odo_trajectory.setPluginName("Odometry SAM Trajectory")
@@ -224,7 +224,7 @@ end
 
 
 if options[:mode].casecmp("vsd_slam").zero?
-    #RigidBody of the BodyCenter from odometry
+    #RigidBody of the BodyCenter from vsd_slam
     vsd_slam_odo_rbs = Vizkit.default_loader.RigidBodyStateVisualization
     vsd_slam_odo_rbs.displayCovariance(true)
     vsd_slam_odo_rbs.setPluginName("Odometry VSD_SLAM Pose")
@@ -232,7 +232,7 @@ if options[:mode].casecmp("vsd_slam").zero?
     vsd_slam_odo_rbs.resetModel(0.2)
     Vizkit.vizkit3d_widget.setPluginDataFrame("vsd_slam", vsd_slam_odo_rbs)
 
-    # Odometry robot trajectory
+    # vsd_slam robot trajectory
     vsd_slam_odo_trajectory = Vizkit.default_loader.TrajectoryVisualization
     vsd_slam_odo_trajectory.setColor(Eigen::Vector3.new(1, 1, 0))#Yellow line
     vsd_slam_odo_trajectory.setPluginName("Odometry VSD_SLAM Trajectory")
@@ -447,6 +447,24 @@ if options[:mode].casecmp("vsd_slam").zero?
         end
     end
 end
+
+if options[:mode].casecmp("orb_slam2").zero?
+
+    # ORB_SLAM2
+    orb_slam2 = Orocos::Async.proxy 'orb_slam2'
+
+    orb_slam2.on_reachable do
+
+        # ORB_SLAM2 Robot pose
+        Vizkit.display orb_slam2.port('pose_samples_out'), :widget =>localizationRBS
+
+        # Trajectory
+        orb_slam2.port('pose_samples_out').on_data do |localization_rbs,_|
+            localizationRobotTrajectory.updateTrajectory(localization_rbs.position)
+        end
+    end
+end
+
 
 # Enable the GUI when the task is reachable
 read_joint_dispatcher.on_reachable {Vizkit.vizkit3d_widget.setEnabled(true)} if options[:logfile].nil?
