@@ -1,0 +1,32 @@
+--- name:gp_gpy
+# path to be load during initialization time (if required)
+path_to_init: ''
+
+# path to Gaussian Process model.
+gaussian_process_file: ''
+
+# Robot joint names to set as joint position input vector for the Gaussian process.
+gaussian_process_position_joint_names: [left_passive, right_passive, rear_passive,
+                                        fl_steer, fr_steer, rl_steer, rr_steer]
+
+# Robot joint names to set as joint velocity input vector for the Gaussian process.
+gaussian_process_speed_joint_names: [left_passive, right_passive, rear_passive,
+                                        fl_steer, fr_steer, rl_steer, rr_steer,
+                                        fl_translation, fr_translation, ml_translation, mr_translation, rl_translation, rr_translation]
+
+# Frequency in Hertz for smoothing the Gaussian process prediction.
+gaussian_process_predict_frequency: 1.0 #Hertz
+
+# minimum time, in s, between two sequential samples arrive on delta_pose_samples
+delta_pose_samples_period: 0.08
+# minimum time, in s, between two sequential samples arrive on joints_samples
+joints_samples_period: 0.08
+# minimum time, in s, between two sequential samples arrive on orientation_samples
+orientation_samples_period: 0.08
+# minimum time, in s, between two sequential samples arrive on inertial_samples
+inertial_samples_period: 0.08
+# minimum system time in s between two status readings
+stream_aligner_status_period: 1.0
+# maximum latency, in seconds, of the stream aligner. The aligner will start dropping samples if the difference between the last output and last input is greater than this
+aggregator_max_latency: 1.0
+
