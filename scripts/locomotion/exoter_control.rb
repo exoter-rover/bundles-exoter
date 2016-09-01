@@ -9,6 +9,8 @@ include Orocos
 options = {}
 options[:reference] = "none"
 options[:logging] = "nominal"
+options[:scripted] = "no"
+scripting = 0
 
 OptionParser.new do |opt|
     opt.banner = <<-EOD
@@ -21,6 +23,10 @@ OptionParser.new do |opt|
 
     opt.on '-l or --logging=none/minimum/nominal/all', String, 'set the type of log files you want. Nominal as default' do |logging|
         options[:logging] = logging
+    end
+
+    opt.on '-s', String, 'Specifies that the file is launched from within a script and enter termination should be ignored' do 
+        scripting = 1
     end
 
     opt.on '--help', 'this help message' do
@@ -115,8 +121,16 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth' do
         vicon.start
     end
 
-    Readline::readline("Press ENTER to exit\n") do
+    if scripting == 1
+	while 1 do
+		sleep 10
+	end
+    
+    else
+    	Readline::readline("Press ENTER to exit\n") do
+    	end
     end
+
 
 end
 

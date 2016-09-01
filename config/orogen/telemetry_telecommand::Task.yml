@@ -1,0 +1,75 @@
+--- name:default
+# A configuration property (here, a std::string). Its value can be retrieved
+# in the C++ code with # _config_value.get() and _config_value.set(new_value).
+config_value: ''
+# no documentation available for this property
+initial_pose:
+  time:
+    microseconds: 0
+  sourceFrame: ''
+  targetFrame: ''
+  position:
+    data:
+    - -1.97
+    - 1.74
+    - -0.53
+  cov_position:
+    data:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+  orientation:
+    im:
+    - 0.0
+    - 0.0
+    - 0.642788  # sin(YAW/2)
+    re: 0.766044 # cos(YAW/2)
+  cov_orientation:
+    data:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+  velocity:
+    data:
+    - .nan
+    - .nan
+    - .nan
+  cov_velocity:
+    data:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+  angular_velocity:
+    data:
+    - .nan
+    - .nan
+    - .nan
+  cov_angular_velocity:
+    data:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
