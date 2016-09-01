@@ -14,7 +14,7 @@ resize_algorithm: :INTER_LINEAR
 slam_localization_source_frame: 'body'
 
 # Path to the file with the Bag-of-Words vocabulary for for the ORB descriptor.
-orb_vocabulary: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/bundles/exoter/config/data/ORBvoc.txt"
+orb_vocabulary: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/bundles/exoter/data/orb_slam2/ORBvoc.txt"
 
 # Set to true if output debug information is desirable.
 output_debug: true
@@ -24,11 +24,11 @@ output_debug: true
 sensor_frame: left_camera
 
 # Path to the file with the camera calibration and ORB features parameters.
-orb_calibration: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/bundles/exoter/config/data/bumblebee_calibartion.txt"
+orb_calibration: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/bundles/exoter/data/orb_slam2/bumblebee_calibartion.txt"
 
 #Period to compute the image processing step in seconds. It cannot be higher than the input port period.
 #In case of zero the period will be set to the input port period.
-desired_period: 0.4 #1.0
+desired_period: 2.0 #0.4
 # minimum time, in s, between two sequential samples arrive on left_frame
 left_frame_period: 0.4
 # minimum time, in s, between two sequential samples arrive on right_frame
