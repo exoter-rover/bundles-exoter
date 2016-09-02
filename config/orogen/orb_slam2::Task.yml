@@ -8,11 +8,17 @@ body_frame: body
 # Time in s between delta_pose_samples readings
 delta_pose_samples_period: 0.08
 
+# Velocity residual in [m/s] threshold for the odometry estimation.
+velocity_residual_threshold: 0.040
+
 # resize algorithm which is used to scale the frame before it is written to the output port. 
 resize_algorithm: :INTER_LINEAR
-# Frame of the slam localization (normally sensor frame or body frame)The slam localization target frame is taken from the world frame of the transformer.
-slam_localization_source_frame: 'body'
 
+# Frame of the slam localization (normally sensor frame or body frame)The slam localization target frame is taken from the world frame of the transformer.
+pose_samples_out_source_frame: 'body'
+
+#
+keyframe_samples_out_source_frame: ''
 # Path to the file with the Bag-of-Words vocabulary for for the ORB descriptor.
 orb_vocabulary: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/bundles/exoter/data/orb_slam2/ORBvoc.txt"
 
