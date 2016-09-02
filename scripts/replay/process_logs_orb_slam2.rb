@@ -158,7 +158,7 @@ Bundles.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
         gp_odometry = Orocos.name_service.get 'gpy_gp_odometry'
         Orocos.conf.apply(gp_odometry, ['gp_gpy'], :override => true)
         gp_odometry.path_to_init = File.join(Rock::Bundles.current_bundle.path, 'data', 'gaussian_processes')
-        gp_odometry.gaussian_process_file = Bundles.find_file('data/gaussian_processes', 'SparseGP_RBF_xyz_velocities_train_at_500ms.data')
+        gp_odometry.gaussian_process_file = Bundles.find_file('data/gaussian_processes', 'SparseGP_RBF_xyz_velocities_train_at_500ms_normalized.data')
         STDERR.puts "done"
     end
 

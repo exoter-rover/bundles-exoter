@@ -239,6 +239,13 @@ if options[:mode].casecmp("vsd_slam").zero?
     Vizkit.vizkit3d_widget.setPluginDataFrame("vsd_slam", vsd_slam_odo_trajectory)
 end
 
+if options[:mode].casecmp("orb_slam2").zero?
+    #Trajectory of the slam keyframes
+    keyframe_waypoints = Vizkit.default_loader.WaypointVisualization
+    #keyframe_waypoints.setPluginName("SLAM Keyframes")
+    #Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", keyframe_waypoints)
+end
+
 # Joints Dispatcher for the joints of the robot visualization
 read_joint_dispatcher = Orocos::Async.proxy 'read_joint_dispatcher'
 
@@ -462,6 +469,14 @@ if options[:mode].casecmp("orb_slam2").zero?
         orb_slam2.port('pose_samples_out').on_data do |localization_rbs,_|
             localizationRobotTrajectory.updateTrajectory(localization_rbs.position)
         end
+
+        # Optimized slam trajectory
+        Vizkit.display orb_slam2.port('keyframe_trajectory_out'), :widget =>keyframe_waypoints
+
+
+        # Point Cloud
+        Vizkit.display orb_slam2.port('features_map_out'), :widget =>pointCloud
+
     end
 end
 
