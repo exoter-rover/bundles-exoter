@@ -8,13 +8,19 @@ body_frame: body
 # Time in s between delta_pose_samples readings
 delta_pose_samples_period: 0.08
 
+# Velocity residual in [m/s] threshold for the odometry estimation.
+velocity_residual_threshold: 0.040
+
 # resize algorithm which is used to scale the frame before it is written to the output port. 
 resize_algorithm: :INTER_LINEAR
-# Frame of the slam localization (normally sensor frame or body frame)The slam localization target frame is taken from the world frame of the transformer.
-slam_localization_source_frame: 'body'
 
+# Frame of the slam localization (normally sensor frame or body frame)The slam localization target frame is taken from the world frame of the transformer.
+pose_samples_out_source_frame: 'body'
+
+#
+keyframe_samples_out_source_frame: ''
 # Path to the file with the Bag-of-Words vocabulary for for the ORB descriptor.
-orb_vocabulary: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/bundles/exoter/config/data/ORBvoc.txt"
+orb_vocabulary: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/bundles/exoter/data/orb_slam2/ORBvoc.txt"
 
 # Set to true if output debug information is desirable.
 output_debug: true
@@ -24,11 +30,11 @@ output_debug: true
 sensor_frame: left_camera
 
 # Path to the file with the camera calibration and ORB features parameters.
-orb_calibration: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/bundles/exoter/config/data/bumblebee_calibartion.txt"
+orb_calibration: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/bundles/exoter/data/orb_slam2/bumblebee_calibartion.txt"
 
 #Period to compute the image processing step in seconds. It cannot be higher than the input port period.
 #In case of zero the period will be set to the input port period.
-desired_period: 0.4 #1.0
+desired_period: 2.0 #0.4
 # minimum time, in s, between two sequential samples arrive on left_frame
 left_frame_period: 0.4
 # minimum time, in s, between two sequential samples arrive on right_frame

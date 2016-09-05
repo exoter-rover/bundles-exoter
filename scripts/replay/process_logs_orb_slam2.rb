@@ -15,7 +15,7 @@ options[:reference] = "none"
 options[:imu] = "new"
 options[:odometry] = 'none'
 options[:reaction_forces] = false
-options[:gp] = false
+options[:gaussian_process] = "none"
 
 op = OptionParser.new do |opt|
     opt.banner = <<-EOD
@@ -38,6 +38,9 @@ op = OptionParser.new do |opt|
         options[:reaction_forces] = true
     end
 
+    opt.on "-g", "--gaussian_process=none/sklearn/gpy", String, 'Type of the Gaussian process.' do |gp|
+        options[:gaussian_process] = gp
+    end
 
     opt.on '--help', 'this help message' do
         puts opt
@@ -86,6 +89,14 @@ else
     exit 1
 end
 
+if options[:gaussian_process].casecmp("sklearn").zero?
+    puts "[INFO] Selected Sklearn Gaussian process"
+elsif options[:gaussian_process].casecmp("gpy").zero?
+    puts "[INFO] Selected GPy Gaussian process"
+else
+    puts "[INFO] NO Gaussian process selected"
+end
+
 if options[:reaction_forces]
     puts "[INFO] Enhanced 3D Odometry with reaction forces"
 else
@@ -97,8 +108,10 @@ Bundles.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
             'ptu_control::Task' => 'ptu_control',
             'localization_frontend::Task' => 'localization_frontend',
             'threed_odometry::Task' => 'exoter_odometry',
+            'gp_odometry::SklearnTask' => 'sklearn_gp_odometry',
+            'gp_odometry::GpyTask' => 'gpy_gp_odometry',
             'orb_slam2::Task' => 'orb_slam2',
-            :output=>nil do
+            :output => nil do
 
     ## Get the task context ##
     STDERR.print "setting up read_joint_dispatcher..."
@@ -131,6 +144,24 @@ Bundles.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     exoter_odometry.urdf_file = Bundles.find_file('data/odometry', 'exoter_odometry_model_complete.urdf')
 
     STDERR.puts "done"
+
+    if options[:gaussian_process].casecmp("sklearn").zero?
+        STDERR.print "setting up Sklearn gp_odometry..."
+        gp_odometry = Orocos.name_service.get 'sklearn_gp_odometry'
+        Orocos.conf.apply(gp_odometry, ['gp_sklearn'], :override => true)
+        gp_odometry.gaussian_process_x_axis_file = Bundles.find_file('data/gaussian_processes', 'gp_sklearn_x_delta_pose.data')
+        gp_odometry.gaussian_process_y_axis_file = Bundles.find_file('data/gaussian_processes', 'gp_sklearn_y_delta_pose.data')
+        gp_odometry.gaussian_process_z_axis_file = Bundles.find_file('data/gaussian_processes', 'gp_sklearn_z_delta_pose.data')
+        STDERR.puts "done"
+    elsif options[:gaussian_process].casecmp("gpy").zero?
+        STDERR.print "setting up GPy gp_odometry..."
+        gp_odometry = Orocos.name_service.get 'gpy_gp_odometry'
+        Orocos.conf.apply(gp_odometry, ['gp_gpy'], :override => true)
+        gp_odometry.path_to_init = File.join(Rock::Bundles.current_bundle.path, 'data', 'gaussian_processes')
+        gp_odometry.gaussian_process_file = Bundles.find_file('data/gaussian_processes', 'SparseGP_RBF_xyz_velocities_train_at_500ms_normalized.data')
+        STDERR.puts "done"
+    end
+
 
     ## Get the task context ##
     STDERR.print "setting up orb_slam2.."
@@ -165,6 +196,10 @@ Bundles.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     if options[:odometry].casecmp("task").zero?
         # Configure tasks from odometry
         exoter_odometry.configure
+    end
+
+    if options[:gaussian_process].casecmp("none").nonzero?
+        gp_odometry.configure
     end
 
     orb_slam2.configure
@@ -221,17 +256,18 @@ Bundles.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
             localization_frontend.weighting_samples_out.connect_to exoter_odometry.weighting_samples, :type => :buffer, :size => 1000
         end
 
-        if options[:gp]
+        if options[:gaussian_process].casecmp("none").nonzero?
             exoter_odometry.delta_pose_samples_out.connect_to gp_odometry.delta_pose_samples,  :type => :buffer, :size => 200
             localization_frontend.joints_samples_out.connect_to gp_odometry.joints_samples, :type => :buffer, :size => 200
             localization_frontend.orientation_samples_out.connect_to gp_odometry.orientation_samples, :type => :buffer, :size => 200
             gp_odometry.delta_pose_samples_out.connect_to orb_slam2.delta_pose_samples,  :type => :buffer, :size => 1000
         else
+            # SLAM odometry poses
             exoter_odometry.delta_pose_samples_out.connect_to orb_slam2.delta_pose_samples,  :type => :buffer, :size => 999
         end
 
     elsif options[:odometry].casecmp("log").zero?
-        if options[:gp]
+        if options[:gaussian_process].casecmp("none").nonzero?
             log_replay.exoter_odometry.delta_pose_samples_out.connect_to(gp_odometry.delta_pose_samples, :type => :buffer, :size => 1000)
             localization_frontend.joints_samples_out.connect_to gp_odometry.joints_samples, :type => :buffer, :size => 500
             localization_frontend.orientation_samples_out.connect_to gp_odometry.orientation_samples, :type => :buffer, :size =>500
@@ -240,6 +276,10 @@ Bundles.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
             # SLAM odometry poses
             log_replay.exoter_odometry.delta_pose_samples_out.connect_to(orb_slam2.delta_pose_samples, :type => :buffer, :size => 1000)
         end
+    end
+
+    if options[:gaussian_process].casecmp("gpy").zero?
+        localization_frontend.inertial_samples_out.connect_to gp_odometry.inertial_samples, :type => :buffer, :size => 200
     end
 
     log_replay.camera_bb2.left_frame.connect_to orb_slam2.left_frame
@@ -255,6 +295,10 @@ Bundles.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     if options[:odometry].casecmp("task").zero?
         # Start tasks for odometry
         exoter_odometry.start
+    end
+
+    if options[:gaussian_process].casecmp("none").nonzero?
+        gp_odometry.start
     end
 
     orb_slam2.start
