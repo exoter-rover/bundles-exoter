@@ -30,7 +30,7 @@ op = OptionParser.new do |opt|
         options[:imu] = imu
     end
 
-    opt.on "-o", "--odometry=task/log", String, 'select Odometry from a running task or from the log files ' do |odometry|
+    opt.on "-o", "--odometry=none/task/log", String, 'select Odometry from a running task or from the log files ' do |odometry|
         options[:odometry] = odometry
     end
 
@@ -84,8 +84,10 @@ if options[:odometry].casecmp("task").zero?
     puts "[INFO] Odometry task running"
 elsif options[:odometry].casecmp("log").zero?
     puts "[INFO] Odometry from log files"
+elsif options[:odometry].casecmp("none").zero?
+    puts "[INFO] No Odometry selected!"
 else
-    puts "[INFO] No Odometry selected! EXIT"
+    puts "[INFO] Please specify odometry! EXIT"
     exit 1
 end
 
@@ -217,28 +219,25 @@ Bundles.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
         log_replay.gnss_trimble.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 200)
     end
 
-    # Odometry port connections
-    if options[:odometry].casecmp("task").zero?
+    # Localization front-end port connections
+    if options[:imu].casecmp("old").zero?
+        log_replay.stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
+        log_replay.stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
+    end
 
-        if options[:imu].casecmp("old").zero?
-            log_replay.stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
-            log_replay.stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
-        end
+    if options[:imu].casecmp("new").zero?
+        log_replay.imu_stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
+        log_replay.imu_stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
+    end
 
-        if options[:imu].casecmp("new").zero?
-            log_replay.imu_stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
-            log_replay.imu_stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
-        end
+    if options[:imu].casecmp("last").zero?
+        log_replay.imu_stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
+        log_replay.imu_stim300.compensated_sensors_out.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
+    end
 
-        if options[:imu].casecmp("last").zero?
-            log_replay.imu_stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
-            log_replay.imu_stim300.compensated_sensors_out.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
-        end
-
-        if options[:imu].casecmp("ikf").zero?
-            log_replay.ikf_orientation_estimator.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
-            log_replay.imu_stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
-        end
+    if options[:imu].casecmp("ikf").zero?
+        log_replay.ikf_orientation_estimator.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
+        log_replay.imu_stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
     end
 
     #############################

@@ -240,10 +240,19 @@ if options[:mode].casecmp("vsd_slam").zero?
 end
 
 if options[:mode].casecmp("orb_slam2").zero?
+    #RigidBody of the BodyCenter from last Key
+    last_keyframe_rbs = Vizkit.default_loader.RigidBodyStateVisualization
+    last_keyframe_rbs.displayCovariance(true)
+    last_keyframe_rbs.setPluginName("Last KeyFrame Pose")
+    last_keyframe_rbs.setColor(Eigen::Vector3.new(255, 250, 0))#Yellow
+    last_keyframe_rbs.resetModel(0.2)
+    Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", last_keyframe_rbs)
+
     #Trajectory of the slam keyframes
-    keyframe_waypoints = Vizkit.default_loader.WaypointVisualization
-    #keyframe_waypoints.setPluginName("SLAM Keyframes")
-    #Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", keyframe_waypoints)
+    keyframes_waypoints = Vizkit.default_loader.WaypointVisualization
+    Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", keyframes_waypoints)
+    allframes_waypoints = Vizkit.default_loader.WaypointVisualization
+    Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", allframes_waypoints)
 end
 
 # Joints Dispatcher for the joints of the robot visualization
@@ -470,9 +479,14 @@ if options[:mode].casecmp("orb_slam2").zero?
             localizationRobotTrajectory.updateTrajectory(localization_rbs.position)
         end
 
-        # Optimized slam trajectory
-        Vizkit.display orb_slam2.port('keyframe_trajectory_out'), :widget =>keyframe_waypoints
+        # ORB_SLAM2 Keyframe pose
+        Vizkit.display orb_slam2.port('keyframe_pose_samples_out'), :widget =>last_keyframe_rbs
 
+        # Keyframes trajectory
+        Vizkit.display orb_slam2.port('keyframes_trajectory_out'), :widget =>keyframes_waypoints
+
+        # All frames trajectory
+        Vizkit.display orb_slam2.port('allframes_trajectory_out'), :widget =>allframes_waypoints
 
         # Point Cloud
         Vizkit.display orb_slam2.port('features_map_out'), :widget =>pointCloud
