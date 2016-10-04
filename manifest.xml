@@ -1,0 +1,19 @@
+<package>
+  <description brief="ExoTeR Bundle">
+  Bundle for ExoTeR rover related Tests
+  </description>
+  <author>Martin Azkarate/Martin.Azkarate@esa.int</author>
+  <license></license>
+  <url>http://rock-robotics.org</url>
+  <logo>http://</logo>
+
+  <depend package="bundles/rock" />
+  <!--
+   To add any dependencies use the depend tag
+  <depend package="dummy-dependency-0" />
+	...
+  <depend package="dummy-dependency-n-1" />
+  <depend package="dummy-dependency-n" />
+  -->
+  <depend package="bundles/rock" />
+</package>
