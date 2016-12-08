@@ -125,7 +125,6 @@ Bundles.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
         gp_odometry.gaussian_process_z_axis_file = Bundles.find_file('data/gaussian_processes', 'gp_sklearn_z_delta_pose.data')
     elsif options[:gaussian_process].casecmp("gpy").zero?
         Orocos.conf.apply(gp_odometry, ['gp_gpy'], :override => true)
-        gp_odometry.path_to_init = File.join(Rock::Bundles.current_bundle.path, 'data', 'gaussian_processes')
         gp_odometry.gaussian_process_file = Bundles.find_file('data/gaussian_processes', 'SparseGP_RBF_xyz_velocities_train_at_500ms_normalized.data')
     end
 

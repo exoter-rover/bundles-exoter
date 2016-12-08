@@ -1,6 +1,6 @@
 --- name:gp_gpy
 # path to be load during initialization time (if required)
-path_to_init: ''
+path_to_init: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/install/share/gp_odometry"
 
 # path to Gaussian Process model.
 gaussian_process_file: ''
