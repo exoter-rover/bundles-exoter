@@ -3,11 +3,11 @@
 #   | _|\ \ / _ \| |/ -_)   / | _ \ _ \/ / 
 #   |___/_\_\___/|_|\___|_|_\ |___/___/___|
 #                                          
---- name:default
+--- name:bumblebee
 # gaussian kernel for dense stereo pre-processing.
 gaussian_kernel: 0
 # if set to true, the input images are assumed to already be rectified.
-image_rectified: false
+image_rectified: true
 # if set to true, the input images are assumed to be rotated by 180 degrees.
 image_rotated: false
 # down- or upscale input images by this factor.
@@ -53,41 +53,46 @@ sparse_config:
     mserParam: 3.0
     starParam: 9.0
     fastParam: 12.0
-  descriptorType: :DESCRIPTOR_SURF
-  detectorType: :DETECTOR_SURF
+  descriptorType: :DESCRIPTOR_PSURF
+  detectorType: :DETECTOR_MSER
   filterType: :FILTER_STEREO
 # calibration parameters for stereo camera setup
 stereoCameraCalibration:
   camLeft:
-    fx: 831.42246   #837.98636
-    fy: 833.90106   #838.56569
-    cx: 494.93633   #509.74846
-    cy: 386.63250   #376.99711
-    d0: -0.34823   #-0.35914
-    d1: 0.13711    #0.16317
-    d2: -0.00036   #0.00039
-    d3: 0.00104    #0.00041
+    fx: 837.98636
+    fy: 838.56569
+    cx: 509.74846
+    cy: 376.99711
+    d0: -0.35914
+    d1: 0.16317
+    d2: 0.00039
+    d3: 0.00041
+    ex: 0.06887
+    ey: 0.08192
     width: 1024
     height: 768
   camRight:
-    fx: 831.23635   #837.40801
-    fy: 834.08181   #838.06473
-    cx: 526.15871   #536.53701
-    cy: 387.19807   #377.66591
-    d0: -0.34695   #-0.35499
-    d1: 0.12772    #0.15218
-    d2: -0.00039   #0.00019
-    d3: 0.00004    #-0.00016
+    fx: 837.40801
+    fy: 838.06473
+    cx: 536.53701
+    cy: 377.66591
+    d0: -0.35499
+    d1: 0.15218
+    d2: 0.00019
+    d3: -0.00016
+    ex: 0.07723
+    ey: 0.08236
     width: 1024
     height: 768
+
 #Distance between left and right camera
   extrinsic:
-    tx: -120.65738   #120.42814 #0.12042814 #baseline in x (meters)
-    ty: 1.49097      #0.63857 #0.00063857 #baseline in y (meters)
-    tz: 2.87028      #0.3051 #0.0003051 #baseline in z (meters)
-    rx: 0.00000      #0.00125 #rotation along x (rad)
-    ry: -0.00227     #-0.00333 #rotation along y (rad)
-    rz: -0.00531     #0.00542 #rotation along z (rad)
+    tx: 0.12042814 #baseline in x (meters)
+    ty: 0.00063857 #baseline in y (meters)
+    tz: 0.0003051 #baseline in z (meters)
+    rx: 0.00125 #rotation along x (rad)
+    ry: -0.00333 #rotation along y (rad)
+    rz: 0.00542 #rotation along z (rad)
 
 
 #    _  _ ___  ___ ___   ___ ___ ___ 
