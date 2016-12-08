@@ -126,6 +126,7 @@ Bundles.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     elsif options[:gaussian_process].casecmp("gpy").zero?
         Orocos.conf.apply(gp_odometry, ['gp_gpy'], :override => true)
         gp_odometry.gaussian_process_file = Bundles.find_file('data/gaussian_processes', 'SparseGP_RBF_xyz_velocities_train_at_500ms_normalized.data')
+        #gp_odometry.gaussian_process_file = Bundles.find_file('data/gaussian_processes', 'GP_RBF_xyz_velocities_train_at_1s_normalized.data')
     end
 
     # logs files
