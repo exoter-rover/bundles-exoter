@@ -94,99 +94,6 @@ stereoCameraCalibration:
     ry: -0.00333 #rotation along y (rad)
     rz: 0.00542 #rotation along z (rad)
 
-
-#    _  _ ___  ___ ___   ___ ___ ___ 
-#   | || |   \| _ \ _ \ | _ ) _ )_  )
-#   | __ | |) |  _/   / | _ \ _ \/ / 
-#   |_||_|___/|_| |_|_\ |___/___/___|
-#                                    
---- name:locCam
-# gaussian kernel for dense stereo pre-processing.
-gaussian_kernel: 0
-# if set to true, the input images are assumed to already be rectified.
-image_rectified: false
-# if set to true, the input images are assumed to be rotated by 180 degrees.
-image_rotated: false
-# down- or upscale input images by this factor.
-image_scaling_factor: 1.0
-# configuration values for libElas
-libElas_conf:
-  disp_min: 5
-  disp_max: 350
-  support_threshold: 0.8500000238418579
-  support_texture: 10
-  candidate_stepsize: 5
-  incon_window_size: 5
-  incon_threshold: 5
-  incon_min_support: 5
-  add_corners: false
-  grid_size: 20
-  beta: 0.019999999552965164
-  gamma: 3.0
-  sigma: 1.0
-  sradius: 2.0
-  match_texture: 1
-  lr_threshold: 2
-  speckle_sim_threshold: 1.0
-  speckle_size: 200
-  ipol_gap_width: 3
-  filter_median: false
-  filter_adaptive_mean: true
-  postprocess_only_left: true
-  subsampling: false
-# configuration for sparse features.
-sparse_config:
-  debugImage: true
-  targetNumFeatures: 100
-  maxStereoYDeviation: 5
-  knn: 1
-  distanceFactor: 2
-  isometryFilterMaxSteps: 1000
-  isometryFilterThreshold: 0.1
-  adaptiveDetectorParam: false
-  detectorConfig:
-    SURFparam: 170
-    goodParam: 0.10000000149011612
-    mserParam: 3.0
-    starParam: 9.0
-    fastParam: 12.0
-  descriptorType: :DESCRIPTOR_SURF
-  detectorType: :DETECTOR_SURF
-  filterType: :FILTER_STEREO
-
-# calibration parameters for stereo camera setup
-stereoCameraCalibration:
-  camLeft:
-    fx: 846.05099
-    fy: 848.13761
-    cx: 528.68513
-    cy: 403.67772
-    d0: -0.32760
-    d1: 0.11873
-    d2: 0.00027
-    d3: 0.00034
-    width: 1024
-    height: 768
-  camRight:
-    fx: 848.07570
-    fy: 848.48201
-    cx: 509.17747
-    cy: 400.73848
-    d0: -0.33204
-    d1: 0.13558
-    d2: 0.00096
-    d3: 0.00135
-    width: 1024
-    height: 768
-#Distance between left and right camera
-  extrinsic:
-    tx: -118.64490 #baseline in x (meters)
-    ty: -0.17054 #baseline in y (meters)
-    tz: -11.69914 #baseline in z (meters)
-    rx: 0.00336 #rotation along x (rad)
-    ry: 0.00187 #rotation along y (rad)
-    rz: -0.00300 #rotation along z (rad)
-
 #    ___           ___            
 #   | _ \__ _ _ _ / __|__ _ _ __  
 #   |  _/ _` | ' \ (__/ _` | '  \ 
@@ -274,9 +181,9 @@ stereoCameraCalibration:
     ex: 0.0
     ey: 0.0
   extrinsic:
-    tx: -253.39977     
-    ty: -1.13082 
-    tz: 2.82068
+    tx: -0.25339977     
+    ty: -0.00113082 
+    tz: 0.00282068
     rx: -0.00364     
     ry: -0.00017  
     rz: 0.00048
