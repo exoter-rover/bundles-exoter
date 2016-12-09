@@ -42,7 +42,7 @@ sparse_config:
   debugImage: true
   targetNumFeatures: 100
   maxStereoYDeviation: 5
-  knn: 1
+  knn: 2
   distanceFactor: 2
   isometryFilterMaxSteps: 1000
   isometryFilterThreshold: 0.1
