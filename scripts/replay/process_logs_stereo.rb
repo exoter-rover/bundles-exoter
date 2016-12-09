@@ -9,6 +9,7 @@ require 'optparse'
 
 include Orocos
 
+Orocos::CORBA::max_message_size = 100000000000
 Bundles.initialize
 
 Orocos::Process.run 'stereo::Task' => 'stereo' do
