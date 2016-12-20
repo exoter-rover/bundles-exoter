@@ -14,25 +14,25 @@ image_rotated: false
 image_scaling_factor: 1.0
 # configuration values for libElas
 libElas_conf:
-  disp_min: 0
-  disp_max: 350
-  support_threshold: 0.8500000238418579
+  disp_min: 5
+  disp_max: 400
+  support_threshold: 0.9
   support_texture: 10
-  candidate_stepsize: 5
+  candidate_stepsize: 3
   incon_window_size: 5
   incon_threshold: 5
   incon_min_support: 5
-  add_corners: true
+  add_corners: false
   grid_size: 20
-  beta: 0.019999999552965164
-  gamma: 3.0
-  sigma: 1.0
+  beta: 0.03
+  gamma: 15
+  sigma: 3.0
   sradius: 2.0
   match_texture: 1
-  lr_threshold: 2
-  speckle_sim_threshold: 1.0
-  speckle_size: 200
-  ipol_gap_width: 3
+  lr_threshold: 1
+  speckle_sim_threshold: 2.0
+  speckle_size: 350
+  ipol_gap_width: 0
   filter_median: false
   filter_adaptive_mean: true
   postprocess_only_left: true
