@@ -21,7 +21,7 @@ pose_samples_out_source_frame: 'body'
 keyframe_samples_out_source_frame: 'last_kf'
 
 # Path to the file with the Bag-of-Words vocabulary for for the ORB descriptor.
-orb_vocabulary: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/bundles/exoter/data/orb_slam2/ORBvoc.txt"
+orb_vocabulary: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/install/share/orb_slam2/ORBvoc.txt"
 
 # Set to true if output debug information is desirable.
 output_debug: true
@@ -31,11 +31,11 @@ output_debug: true
 sensor_frame: left_camera
 
 # Path to the file with the camera calibration and ORB features parameters.
-orb_calibration: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/bundles/exoter/data/orb_slam2/bumblebee_calibartion.txt"
+orb_calibration: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/bundles/exoter/data/orb_slam2/bumblebee_calibration.txt"
 
 #Period to compute the image processing step in seconds. It cannot be higher than the input port period.
 #In case of zero the period will be set to the input port period.
-desired_period: 1.0 #adaptation #0.4 #original@2.5fps #1.0 #adaptation #2.0 #original@0.5fps
+desired_period: 0.4 #original@2.5fps #1.0 #adaptation #2.0 #original@0.5fps
 # minimum time, in s, between two sequential samples arrive on left_frame
 left_frame_period: 0.4
 # minimum time, in s, between two sequential samples arrive on right_frame
