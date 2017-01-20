@@ -1,32 +1,106 @@
 --- name:default
-
-sensor_point_cloud_height: 144
-sensor_point_cloud_width: 176
-
- # resulting ply file
+# resulting ply file
 output_ply: 'point_cloud_scene.ply'
 
-# the global name that should be used for the internal body frame
-body_frame: body
 # the global name that should be used for the internal world frame
-navigation_frame: navigation
+world_frame: world
 
-# Time in s between point_cloud_samples readings
-point_cloud_samples_period: 0.5
 # list of static transformations
 static_transformations: []
+
 # Minimum system time in seconds between two updates of the status ports
-transformer_status_period: 0.5
-# Maximum time in seconds the transformer will wait until it starts dropping samples
-transformer_max_latency: 1.0
+transformer_status_period: 1.0
+
+downsample_size:
+    data:
+    - 0.01
+    - 0.01
+    - 0.01
+
+bfilter_config:
+  filter_on: false
 
 outlierfilter_config:
   type: NONE
 
+sensor_conditional_removal_config:
+    filter_on: false
+
+map_conditional_removal_config:
+    filter_on: false
+
+#tsdf_config:
+#  size:
+#    data:
+#    - 10.0
+#    - 10.0
+#    - 10.0
+#  resolution:
+#    data:
+#    - 0.05
+#    - 0.05
+#    - 0.05
+#  integrate_color: true
+#  mesh_min_weight: 2
+#
+#number_cells:
+#    data:
+#    - 1000
+#    - 1000
+#
+#resolution:
+#    data:
+#    - 0.01
+#    - 0.01
+#    - 0.05
+
+--- name:exoter_tof
+sensor_point_cloud_height: 144
+sensor_point_cloud_width: 176
+
+# the global name that should be used for the internal sensor frame
+sensor_frame: tof_camera
+
+# Time in s between point_cloud_samples readings
+point_cloud_samples_period: 0.5
+
+# Maximum time in seconds the transformer will wait until it starts dropping samples
+transformer_max_latency: 1.0
+
+--- name:exoter_bb2
+sensor_point_cloud_height: 1024
+sensor_point_cloud_width: 768
+
+# Desirable input point cloud period in seconds.''
+input_point_cloud_period: 5.0
+
+sensor_conditional_removal_config:
+    filter_on: true
+    keep_organized: true
+    gt_boundary:
+        data:
+        - -0.3
+        - -.inf
+        - -.inf
+    lt_boundary:
+        data:
+        - .inf
+        - .inf
+        - 3.00
+
+# the global name that should be used for the internal sensor frame
+sensor_frame: left_camera
+
+# Time in s between point_cloud_samples readings
+point_cloud_samples_period: 0.4
+
+# Maximum time in seconds the transformer will wait until it starts dropping samples
+transformer_max_latency: 0.6
+
 --- name:bilateral
 # Configuration parameters for the bilateral filter.
 bfilter_config:
-  filterOn: true
+  filter_on: true
   spatial_width: 2.0 #size of the window bilateral filter
   range_sigma: 0.02 #the standard deviation of the Gaussian for the intensity difference
 
@@ -35,13 +109,30 @@ bfilter_config:
 # Configuration parameters for Radius Outlier Removal filter.
 outlierfilter_config:
   type: STATISTICAL
-  parameter_one: 30 #the number of nearest neighbors to use for mean distance estimation (nr_k)
-  parameter_two: 1.0 #the standard deviation multiplier for the distance threshold calculation.(stddev_null)
+  parameter_one: 20 #the number of nearest neighbors to use for mean distance estimation (nr_k)
+  parameter_two: 1.00 #the standard deviation multiplier for the distance threshold calculation.(stddev_null)
 
 --- name:radius
 # Configuration parameters for Radius Outlier Removal filter.
 outlierfilter_config:
   type: RADIUS
-  parameter_one: 0.2 #Get the radius of the sphere that will determine which points are neighbors.
-  parameter_two: 40 #number of neighbors that need to be present in order to be classified as an inlier
+  parameter_one: 0.20 #Get the radius of the sphere that will determine which points are neighbors.
+  parameter_two: 20 #number of neighbors that need to be present in order to be classified as an inlier
+
+--- name:arl_map
+# Configuration parameters for the conditional removal filter applied to map
+map_conditional_removal_config:
+    filter_on: true
+    keep_organized: false
+    gt_boundary:
+        data:
+        - 0.00
+        - 0.00
+        - -0.30
+    lt_boundary:
+        data:
+        - 10.0
+        - 10.0
+        - 2.00
+
 

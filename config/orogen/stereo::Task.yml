@@ -12,6 +12,8 @@ image_rectified: true
 image_rotated: false
 # down- or upscale input images by this factor.
 image_scaling_factor: 1.0
+#True for Organized output point cloud. False otherwise.
+organized_output_point_cloud: true
 # configuration values for libElas
 libElas_conf:
   disp_min: 5
