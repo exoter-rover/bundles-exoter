@@ -1,7 +1,7 @@
 --- name:default
 # A configuration property (here, a std::string). Its value can be retrieved
 # in the C++ code with # _config_value.get() and _config_value.set(new_value).
-config_value: ''
+activeMQ_brokerURI: ''
 # no documentation available for this property
 initial_pose:
   time:
