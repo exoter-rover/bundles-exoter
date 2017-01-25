@@ -23,6 +23,12 @@ keyframe_samples_out_source_frame: 'last_kf'
 # Path to the file with the Bag-of-Words vocabulary for for the ORB descriptor.
 orb_vocabulary: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/install/share/orb_slam2/ORBvoc.txt"
 
+# PCL Point clouds needs to be organized. 
+point_cloud_size: [1014, 768]
+
+# resulting ply file
+output_ply: 'point_cloud_scene.ply'
+
 # Set to true if output debug information is desirable.
 output_debug: true
 
@@ -84,5 +90,33 @@ calib_parameters:
     rx: 0.00125 #rotation along x (rad)
     ry: -0.00333 #rotation along y (rad)
     rz: 0.00542 #rotation along z (rad)
+
+sensor_conditional_removal_config:
+    filter_on: true
+    keep_organized: true
+    gt_boundary:
+        data:
+        - -0.3
+        - -.inf
+        - -.inf
+    lt_boundary:
+        data:
+        - .inf
+        - .inf
+        - 3.00
+
+--- name:statistical
+# Configuration parameters for Radius Outlier Removal filter.
+outlierfilter_config:
+  type: STATISTICAL
+  parameter_one: 20 #the number of nearest neighbors to use for mean distance estimation (nr_k)
+  parameter_two: 1.00 #the standard deviation multiplier for the distance threshold calculation.(stddev_null)
+
+--- name:radius
+# Configuration parameters for Radius Outlier Removal filter.
+outlierfilter_config:
+  type: RADIUS
+  parameter_one: 0.20 #Get the radius of the sphere that will determine which points are neighbors.
+  parameter_two: 20 #number of neighbors that need to be present in order to be classified as an inlier
 
 
