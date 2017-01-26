@@ -95,7 +95,7 @@ sensor_frame: left_camera
 point_cloud_samples_period: 0.4
 
 # Maximum time in seconds the transformer will wait until it starts dropping samples
-transformer_max_latency: 0.6
+transformer_max_latency: 1.0
 
 --- name:bilateral
 # Configuration parameters for the bilateral filter.
