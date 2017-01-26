@@ -78,7 +78,7 @@ Bundles.run 'exoter_control',
             'localization_frontend::Task' => 'localization_frontend',
             'stereo::Task' => 'stereo',
             'camera_bb2::Task' => 'camera_bb2',
-            'pituki::Task' => 'pituki',
+            'pituki::Task' => 'stereo_filtered',
             :gdb => false,
             :output => nil do
 
@@ -96,7 +96,7 @@ Bundles.run 'exoter_control',
     stereo = TaskContext.get 'stereo'
 
     # Get the task names from pituki
-    pituki = TaskContext.get 'pituki'
+    stereo_filtered = TaskContext.get 'stereo_filtered'
 
     # Set configuration files for control
     Orocos.conf.apply(read_joint_dispatcher, ['reading'], :override => true)
@@ -113,7 +113,7 @@ Bundles.run 'exoter_control',
     Orocos.conf.apply(stereo, ['bumblebee'], :override => true)
 
     # Set configuration files for pituki
-    Orocos.conf.apply(pituki, ['default', 'exoter_bb2', 'statistical', 'arl_map'], :override => true)
+    Orocos.conf.apply(stereo_filtered, ['default', 'exoter_bb2', 'statistical', 'arl_map'], :override => true)
 
     # logs files
     log_replay = Orocos::Log::Replay.open( logfiles_path )
@@ -122,12 +122,12 @@ Bundles.run 'exoter_control',
     ## TRANSFORMER ##
     #################
     Bundles.transformer.setup(localization_frontend)
-    Bundles.transformer.setup(pituki)
+    Bundles.transformer.setup(stereo_filtered)
 
     ###################
     ## LOG THE PORTS ##
     ###################
-    #Bundles.log_all
+    stereo_filtered.log_all_ports
 
     # Configure tasks from control
     read_joint_dispatcher.configure
@@ -142,7 +142,7 @@ Bundles.run 'exoter_control',
         camera_bb2.configure
     end
     stereo.configure
-    pituki.configure
+    stereo_filtered.configure
 
 
     ###########################
@@ -193,7 +193,7 @@ Bundles.run 'exoter_control',
     read_joint_dispatcher.ptu_samples.connect_to ptu_control.ptu_samples, :type => :buffer, :size => 200
 
     #Stereo dense output to pi
-    stereo.point_cloud.connect_to pituki.point_cloud_samples, :type => :buffer, :size => 200
+    stereo.point_cloud.connect_to stereo_filtered.point_cloud_samples, :type => :buffer, :size => 200
 
     # Start tasks from control
     read_joint_dispatcher.start
@@ -207,7 +207,7 @@ Bundles.run 'exoter_control',
         camera_bb2.start
     end
     stereo.start
-    pituki.start
+    stereo_filtered.start
 
     # open the log replay widget
     control = Vizkit.control log_replay
