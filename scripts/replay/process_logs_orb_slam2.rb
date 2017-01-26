@@ -58,8 +58,8 @@ if !logfiles_path
 end
 
 Orocos::CORBA::max_message_size = 100000000000
-Bundles.initialize
-Bundles.transformer.load_conf(Bundles.find_file('config', 'transforms_scripts_orb_slam2.rb'))
+Bundles::initialize
+Bundles::transformer::load_conf(Bundles::find_file('config', 'transforms_scripts_orb_slam2.rb'))
 
 # Configuration values
 if options[:reference].casecmp("vicon").zero?
@@ -106,13 +106,14 @@ else
 end
 
 
-Bundles.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
+Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
             'ptu_control::Task' => 'ptu_control',
             'localization_frontend::Task' => 'localization_frontend',
             'threed_odometry::Task' => 'exoter_odometry',
             'gp_odometry::SklearnTask' => 'sklearn_gp_odometry',
             'gp_odometry::GpyTask' => 'gpy_gp_odometry',
             'orb_slam2::Task' => 'orb_slam2',
+            #:gdb => ['orb_slam2'],
             :output => nil do
 
     ## Get the task context ##
@@ -178,8 +179,8 @@ Bundles.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     #################
     ## TRANSFORMER ##
     #################
-    Bundles.transformer.setup(localization_frontend)
-    Bundles.transformer.setup(orb_slam2)
+    Bundles::transformer::setup(localization_frontend)
+    Bundles::transformer::setup(orb_slam2)
     if options[:odometry].casecmp("task").zero?
         Bundles.transformer.setup(exoter_odometry)
     end
@@ -187,7 +188,7 @@ Bundles.run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     ###################
     ## LOG THE PORTS ##
     ###################
-    Bundles.log_all
+    Bundles::log_all
 
     ###############
     ## CONFIGURE ##
