@@ -250,9 +250,18 @@ if options[:mode].casecmp("orb_slam2").zero?
 
     #Trajectory of the slam keyframes
     keyframes_waypoints = Vizkit.default_loader.WaypointVisualization
+    keyframes_waypoints.setPluginName("KFs Trajectory")
     Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", keyframes_waypoints)
+
     allframes_waypoints = Vizkit.default_loader.WaypointVisualization
+    allframes_waypoints.setPluginName("Camera frames Trajectory")
     Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", allframes_waypoints)
+
+    #Point cloud visualization
+    orb_point_cloud = Vizkit.default_loader.PCLPointCloudVisualization
+    orb_point_cloud.setPluginName("ORB Dense Point Cloud")
+    Vizkit.vizkit3d_widget.setPluginDataFrame("last_kf", orb_point_cloud)
+
 end
 
 # Joints Dispatcher for the joints of the robot visualization
@@ -491,6 +500,10 @@ if options[:mode].casecmp("orb_slam2").zero?
         # Point Cloud
         Vizkit.display orb_slam2.port('features_map_out'), :widget =>pointCloud
 
+        # Dense Point Cloud
+        orb_slam2.port('point_cloud_samples_out').on_data do |point_cloud_item,_|
+            orb_point_cloud.updateData(point_cloud_item.data)
+        end
     end
 end
 
