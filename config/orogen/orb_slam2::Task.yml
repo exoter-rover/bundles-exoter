@@ -23,9 +23,6 @@ keyframe_samples_out_source_frame: 'last_kf'
 # Path to the file with the Bag-of-Words vocabulary for for the ORB descriptor.
 orb_vocabulary: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/install/share/orb_slam2/ORBvoc.txt"
 
-# resulting ply file
-output_ply: 'point_cloud_scene.ply'
-
 # Set to true if output debug information is desirable.
 output_debug: true
 
@@ -87,4 +84,15 @@ calib_parameters:
     rx: 0.00125 #rotation along x (rad)
     ry: -0.00333 #rotation along y (rad)
     rz: 0.00542 #rotation along z (rad)
+
+--- name:arl_dense_map
+# Point cloud resolution of the combined point clouds.'
+map_point_cloud_resolution:
+    data:
+    - 0.01
+    - 0.01
+    - 0.01
+
+# resulting ply file
+output_ply: 'arl_map_point_cloud.ply'
 
