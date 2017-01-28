@@ -16,6 +16,7 @@ options[:imu] = "new"
 options[:odometry] = 'none'
 options[:reaction_forces] = false
 options[:gaussian_process] = "none"
+options[:point_cloud] = "none"
 
 op = OptionParser.new do |opt|
     opt.banner = <<-EOD
@@ -40,6 +41,10 @@ op = OptionParser.new do |opt|
 
     opt.on "-g", "--gaussian_process=none/sklearn/gpy", String, 'Type of the Gaussian process.' do |gp|
         options[:gaussian_process] = gp
+    end
+
+    opt.on "--point_cloud=none/stereo/tof", String, 'Log point cloud to use for dense map reconstruction.' do |point_cloud|
+        options[:point_cloud] = point_cloud
     end
 
     opt.on '--help', 'this help message' do
@@ -105,6 +110,13 @@ else
     puts "[INFO] 3D Odometry without reaction forces enhancement"
 end
 
+if options[:point_cloud].casecmp("stereo").zero?
+    puts "[INFO] Selected Stereo point clouds logs"
+elsif options[:point_cloud].casecmp("tof").zero?
+    puts "[INFO] Selected TOF point cloud logs"
+else
+    puts "[INFO] NO point clouds selected"
+end
 
 Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
             'ptu_control::Task' => 'ptu_control',
@@ -170,7 +182,7 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     ## Get the task context ##
     STDERR.print "setting up orb_slam2.."
     orb_slam2 = TaskContext.get 'orb_slam2'
-    Orocos.conf.apply(orb_slam2, ['default', 'bumblebee'], :override => true)
+    Orocos.conf.apply(orb_slam2, ['default', 'bumblebee', 'arl_dense_map'], :override => true)
     STDERR.puts "done"
 
     # logs files
@@ -242,6 +254,16 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
         log_replay.imu_stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
     end
 
+    if options[:point_cloud].casecmp("stereo").zero?
+        log_replay.stereo_filtered.point_cloud_samples_out.connect_to orb_slam2.point_cloud_samples, :type => :buffer, :size => 200
+    elsif  options[:point_cloud].casecmp("tof").zero?
+        log_replay.camera_tof.pointcloud.connect_to orb_slam2.point_cloud_samples, :type => :buffer, :size => 200
+    end
+
+    log_replay.camera_bb2.left_frame.connect_to orb_slam2.left_frame
+    log_replay.camera_bb2.right_frame.connect_to orb_slam2.right_frame
+
+
     #############################
     ## TASKS PORTS CONNECTIONS ##
     #############################
@@ -282,9 +304,6 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     if options[:gaussian_process].casecmp("gpy").zero?
         localization_frontend.inertial_samples_out.connect_to gp_odometry.inertial_samples, :type => :buffer, :size => 200
     end
-
-    log_replay.camera_bb2.left_frame.connect_to orb_slam2.left_frame
-    log_replay.camera_bb2.right_frame.connect_to orb_slam2.right_frame
 
     ###########
     ## START ##
