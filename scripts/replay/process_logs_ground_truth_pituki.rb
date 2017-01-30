@@ -13,6 +13,7 @@ options = {}
 options[:reference] = "none"
 options[:imu] = "new"
 options[:camera_bb2] = 'none'
+options[:map] = 'none'
 
 op = OptionParser.new do |opt|
     opt.banner = <<-EOD
@@ -29,6 +30,10 @@ op = OptionParser.new do |opt|
 
     opt.on "-c", "--camera_bb2=task/log", String, 'set the type of camera_bb2: task to run the task log for taking the images from an existing log' do |camera|
         options[:camera_bb2] = camera
+    end
+
+    opt.on "-m", "--map=arl/decos", String, 'set the type of map: arl to build the ARL map, decos to build the Decos terrain' do |map|
+        options[:map] = map
     end
 
     opt.on '--help', 'this help message' do
@@ -74,6 +79,15 @@ else
     exit 1
 end
 
+if options[:map].casecmp("arl").zero?
+    puts "[INFO] ARL boundaries and resolution selected"
+elsif options[:map].casecmp("decos").zero?
+    puts "[INFO] Decos Terrain boundaries and resolution selected"
+else
+    puts "[INFO] Please specify map type! EXIT"
+    exit 1
+end
+
 Bundles.run 'exoter_control',
             'localization_frontend::Task' => 'localization_frontend',
             'stereo::Task' => 'stereo',
@@ -113,7 +127,11 @@ Bundles.run 'exoter_control',
     Orocos.conf.apply(stereo, ['bumblebee'], :override => true)
 
     # Set configuration files for pituki
-    Orocos.conf.apply(pituki, ['default', 'exoter_bb2', 'statistical', 'arl_map'], :override => true)
+    if options[:map].casecmp("arl").zero?
+        Orocos.conf.apply(pituki, ['default', 'exoter_bb2', 'statistical', 'arl_map'], :override => true)
+    elsif options[:map].casecmp("decos").zero?
+        Orocos.conf.apply(pituki, ['default', 'exoter_bb2', 'statistical', 'decos_map'], :override => true)
+    end
 
     # logs files
     log_replay = Orocos::Log::Replay.open( logfiles_path )

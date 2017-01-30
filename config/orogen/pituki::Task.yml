@@ -1,6 +1,4 @@
 --- name:default
-# resulting ply file
-output_ply: 'point_cloud_scene.ply'
 
 # the global name that should be used for the internal world frame
 world_frame: world
@@ -10,12 +8,6 @@ static_transformations: []
 
 # Minimum system time in seconds between two updates of the status ports
 transformer_status_period: 1.0
-
-downsample_size:
-    data:
-    - 0.01
-    - 0.01
-    - 0.01
 
 bfilter_config:
   filter_on: false
@@ -135,4 +127,36 @@ map_conditional_removal_config:
         - 10.0
         - 2.00
 
+downsample_size:
+    data:
+    - 0.01
+    - 0.01
+    - 0.01
 
+# resulting ply file
+output_ply: 'arl_map_point_cloud.ply'
+
+--- name:decos_map
+# Configuration parameters for the conditional removal filter applied to map
+map_conditional_removal_config:
+    filter_on: true
+    keep_organized: false
+    gt_boundary:
+        data:
+        - -.inf
+        - -.inf
+        - -.inf
+    lt_boundary:
+        data:
+        - .inf
+        - .inf
+        - .inf
+
+downsample_size:
+    data:
+    - 0.02
+    - 0.02
+    - 0.02
+
+# resulting ply file
+output_ply: 'decos_map_point_cloud.ply'
