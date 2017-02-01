@@ -17,6 +17,7 @@ options[:odometry] = 'none'
 options[:reaction_forces] = false
 options[:gaussian_process] = "none"
 options[:point_cloud] = "none"
+options[:map] = 'none'
 
 op = OptionParser.new do |opt|
     opt.banner = <<-EOD
@@ -45,6 +46,10 @@ op = OptionParser.new do |opt|
 
     opt.on "--point_cloud=none/stereo/tof", String, 'Log point cloud to use for dense map reconstruction.' do |point_cloud|
         options[:point_cloud] = point_cloud
+    end
+
+    opt.on "-m", "--map=arl/decos", String, 'set the type of map: arl to build the ARL map, decos to build the Decos terrain' do |map|
+        options[:map] = map
     end
 
     opt.on '--help', 'this help message' do
@@ -118,6 +123,15 @@ else
     puts "[INFO] NO point clouds selected"
 end
 
+if options[:map].casecmp("arl").zero?
+    puts "[INFO] ARL boundaries and resolution selected"
+elsif options[:map].casecmp("decos").zero?
+    puts "[INFO] Decos Terrain boundaries and resolution selected"
+else
+    puts "[INFO] Please specify map type! EXIT"
+    exit 1
+end
+
 Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
             'ptu_control::Task' => 'ptu_control',
             'localization_frontend::Task' => 'localization_frontend',
@@ -125,6 +139,7 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
             'gp_odometry::SklearnTask' => 'sklearn_gp_odometry',
             'gp_odometry::GpyTask' => 'gpy_gp_odometry',
             'orb_slam2::Task' => 'orb_slam2',
+            'projection::ColorizePointcloud' => 'colorize_pointcloud',
             #:gdb => ['orb_slam2'],
             :output => nil do
 
@@ -172,17 +187,25 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
         STDERR.print "setting up GPy gp_odometry..."
         gp_odometry = Orocos.name_service.get 'gpy_gp_odometry'
         Orocos.conf.apply(gp_odometry, ['gp_gpy'], :override => true)
-        gp_odometry.path_to_init = File.join(Rock::Bundles.current_bundle.path, 'data', 'gaussian_processes')
-        gp_odometry.gaussian_process_file = Bundles.find_file('data/gaussian_processes', 'SparseGP_RBF_xyz_velocities_train_at_500ms_normalized.data')
-        #gp_odometry.gaussian_process_file = Bundles.find_file('data/gaussian_processes', 'SparseGP_RBF_xyz_velocities_train_at_1s_unnormalized.data')
+        #gp_odometry.gaussian_process_file = Bundles.find_file('data/gaussian_processes', 'SparseGP_RBF_xyz_velocities_train_at_500ms_normalized.data')
+        gp_odometry.gaussian_process_file = Bundles.find_file('data/gaussian_processes', 'SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized.data')
         STDERR.puts "done"
     end
 
+    # Get the tof colorize point cloud 
+    if options[:point_cloud].casecmp("tof").zero?
+        colorize_pointcloud = Orocos.name_service.get 'colorize_pointcloud'
+        Orocos.conf.apply(colorize_pointcloud, ['default'], :override => true)
+    end
 
     ## Get the task context ##
     STDERR.print "setting up orb_slam2.."
     orb_slam2 = TaskContext.get 'orb_slam2'
-    Orocos.conf.apply(orb_slam2, ['default', 'bumblebee', 'arl_dense_map'], :override => true)
+    if options[:map].casecmp("arl").zero?
+        Orocos.conf.apply(orb_slam2, ['default', 'bumblebee', 'arl_map'], :override => true)
+    elsif options[:map].casecmp("decos").zero?
+        Orocos.conf.apply(orb_slam2, ['default', 'bumblebee', 'decos_map'], :override => true)
+    end
     STDERR.puts "done"
 
     # logs files
@@ -195,6 +218,9 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     Bundles::transformer::setup(orb_slam2)
     if options[:odometry].casecmp("task").zero?
         Bundles.transformer.setup(exoter_odometry)
+    end
+    if options[:point_cloud].casecmp("tof").zero?
+        Bundles::transformer::setup(colorize_pointcloud)
     end
 
     ###################
@@ -219,6 +245,10 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     end
 
     orb_slam2.configure
+
+    if options[:point_cloud].casecmp("tof").zero?
+        colorize_pointcloud.configure
+    end
 
     ###########################
     ## LOG PORTS CONNECTIONS ##
@@ -257,12 +287,12 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     if options[:point_cloud].casecmp("stereo").zero?
         log_replay.stereo_filtered.point_cloud_samples_out.connect_to orb_slam2.point_cloud_samples, :type => :buffer, :size => 200
     elsif  options[:point_cloud].casecmp("tof").zero?
-        log_replay.camera_tof.pointcloud.connect_to orb_slam2.point_cloud_samples, :type => :buffer, :size => 200
+        log_replay.camera_tof.pointcloud.connect_to colorize_pointcloud.points, :type => :buffer, :size => 200
+        log_replay.camera_bb2.left_frame.connect_to colorize_pointcloud.camera, :type => :buffer, :size => 200
     end
 
     log_replay.camera_bb2.left_frame.connect_to orb_slam2.left_frame
     log_replay.camera_bb2.right_frame.connect_to orb_slam2.right_frame
-
 
     #############################
     ## TASKS PORTS CONNECTIONS ##
@@ -305,6 +335,10 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
         localization_frontend.inertial_samples_out.connect_to gp_odometry.inertial_samples, :type => :buffer, :size => 200
     end
 
+    if options[:point_cloud].casecmp("tof").zero?
+        colorize_pointcloud.colored_points.connect_to orb_slam2.point_cloud_samples, :type => :buffer, :size => 200
+    end
+
     ###########
     ## START ##
     ###########
@@ -322,6 +356,10 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     end
 
     orb_slam2.start
+
+    if options[:point_cloud].casecmp("tof").zero?
+        colorize_pointcloud.start
+    end
 
     # open the log replay widget
     control = Vizkit.control log_replay
