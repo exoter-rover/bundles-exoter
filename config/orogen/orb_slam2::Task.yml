@@ -1,15 +1,25 @@
 --- name:default
 # the global name that should be used for the internal world frame
+#world_frame: world
 world_frame: navigation
+
 # the global name that should be used for the internal navigation frame
 navigation_frame: navigation
+
 # the global name that should be used for the internal body frame
 body_frame: body
+
 # Time in s between delta_pose_samples readings
 delta_pose_samples_period: 0.08
 
-# Velocity residual in [m/s] threshold for the odometry estimation.
-velocity_residual_threshold: 0.012
+# Minimum (vector[0]) and Maximum (vector[1]) expected GP residual.
+gaussian_process_residual_boundary:
+    data:
+    - 0.001 #Minimum 1mm/s
+    - 0.060 #Maximum 6cm/s
+
+# Unit error (0 - 1) for odometry velocity estimation [m/s].
+error_residual_threshold: 0.25 #25.0% is equivalent to 2.0% of distance traverse at 12.5 Hz (frequency of the odometry)
 
 # resize algorithm which is used to scale the frame before it is written to the output port. 
 resize_algorithm: :INTER_LINEAR
@@ -23,6 +33,13 @@ keyframe_samples_out_source_frame: 'last_kf'
 # Path to the file with the Bag-of-Words vocabulary for for the ORB descriptor.
 orb_vocabulary: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/install/share/orb_slam2/ORBvoc.txt"
 
+# Configuration parameters for the conditional removal filter applied to map
+map_conditional_removal_config:
+    filter_on: false
+
+# minimum time, in s, between two sequential samples arrive on point_cloud_samples
+point_cloud_samples_period: 0.4 #it needs to be changed in the running script
+
 # Set to true if output debug information is desirable.
 output_debug: true
 
@@ -33,15 +50,18 @@ sensor_frame: left_camera
 # Path to the file with the camera calibration and ORB features parameters.
 orb_calibration: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/bundles/exoter/data/orb_slam2/bumblebee_calibration.txt"
 
-#Period to compute the image processing step in seconds. It cannot be higher than the input port period.
-#In case of zero the period will be set to the input port period.
-desired_period: 0.4 #original@2.5fps #1.0 #adaptation #2.0 #original@0.5fps
+# Minimum period to adaptively compute the image processing step in seconds. It cannot be smaller than the input port period.
+minimum_frame_period: 1.2
+
 # minimum time, in s, between two sequential samples arrive on left_frame
 left_frame_period: 0.4
+
 # minimum time, in s, between two sequential samples arrive on right_frame
 right_frame_period: 0.4
+
 # Minimum system time in seconds between two updates of the status ports
 transformer_status_period: 1.0
+
 # maximum latency, in seconds, of the stream aligner. The aligner will start
 # dropping samples if the difference between the last output and last input is
 # greater than this
@@ -85,7 +105,7 @@ calib_parameters:
     ry: -0.00333 #rotation along y (rad)
     rz: 0.00542 #rotation along z (rad)
 
---- name:arl_dense_map
+--- name:arl_map
 # Point cloud resolution of the combined point clouds.'
 map_point_cloud_resolution:
     data:
@@ -96,3 +116,44 @@ map_point_cloud_resolution:
 # resulting ply file
 output_ply: 'arl_map_point_cloud.ply'
 
+# Configuration parameters for the conditional removal filter applied to map
+map_conditional_removal_config:
+    filter_on: true
+    keep_organized: false
+    gt_boundary:
+        data:
+        - 0.00
+        - 0.00
+        - -0.30
+    lt_boundary:
+        data:
+        - 10.0
+        - 10.0
+        - 2.00
+
+
+--- name:decos_map
+# Point cloud resolution of the combined point clouds.'
+map_point_cloud_resolution:
+    data:
+    - 0.02
+    - 0.02
+    - 0.02
+
+# resulting ply file
+output_ply: 'decos_map_point_cloud.ply'
+
+# Configuration parameters for the conditional removal filter applied to map
+map_conditional_removal_config:
+    filter_on: true
+    keep_organized: false
+    gt_boundary:
+        data:
+        - -.inf
+        - -.inf
+        - -.inf
+    lt_boundary:
+        data:
+        - .inf
+        - .inf
+        - .inf
