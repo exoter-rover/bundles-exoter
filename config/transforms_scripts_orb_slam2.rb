@@ -31,9 +31,11 @@ dynamic_transform "localization_frontend.world_to_navigation_out", "navigation" 
 
 # Transformation from Navigation to Body but transformer expected in the inverse sense
 dynamic_transform "orb_slam2.pose_samples_out", "body" => "navigation"
+#dynamic_transform "orb_slam2.pose_samples_out", "body" => "world"
 
 # Transformation from Navigation to Body but transformer expected in the inverse sense
 dynamic_transform "orb_slam2.keyframe_pose_samples_out", "last_kf" => "navigation"
+#dynamic_transform "orb_slam2.keyframe_pose_samples_out", "last_kf" => "world"
 
 # Transformation from mast to Pan and Tilt Unit but transformed expected in the inverse sense
 dynamic_transform "ptu_control.mast_to_ptu_out", "ptu" => "mast"
