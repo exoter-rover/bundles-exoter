@@ -15,8 +15,20 @@ delta_pose_samples_period: 0.08
 # Minimum (vector[0]) and Maximum (vector[1]) expected GP residual.
 gaussian_process_residual_boundary:
     data:
-    - 0.001 #Minimum 1mm/s
-    - 0.060 #Maximum 6cm/s
+    - 0.00001 #Minimum 1mm/s
+    - 0.0150 #Maximum as 25% * 6cm/s
+
+# Minimum (vector[0]) and Maximum (vector[1]) for inliers matches ratio of the adaptive keyframe criteria (normally 0.30 - 0.75).
+inliers_matches_ratio_boundary:
+    data:
+    - 0.30
+    - 0.75
+
+# Minimum (vector[0]) and Maximum (vector[1]) for map/vo matches ratio of the adaptive keyframe criteria (normally 0.1 - 0.35).
+map_matches_ratio_boundary:
+    data:
+    - 0.10
+    - 0.35
 
 # Unit error (0 - 1) for odometry velocity estimation [m/s].
 error_residual_threshold: 0.25 #25.0% is equivalent to 2.0% of distance traverse at 12.5 Hz (frequency of the odometry)
@@ -51,7 +63,7 @@ sensor_frame: left_camera
 orb_calibration: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/bundles/exoter/data/orb_slam2/bumblebee_calibration.txt"
 
 # Minimum period to adaptively compute the image processing step in seconds. It cannot be smaller than the input port period.
-minimum_frame_period: 1.2
+minimum_frame_period: 2.8 # better multiple of left_frame_period (n * 0.4)
 
 # minimum time, in s, between two sequential samples arrive on left_frame
 left_frame_period: 0.4
