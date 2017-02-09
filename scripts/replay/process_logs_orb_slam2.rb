@@ -13,6 +13,7 @@ include Orocos
 options = {}
 options[:reference] = "none"
 options[:imu] = "new"
+options[:camera_bb2] = 'none'
 options[:odometry] = 'none'
 options[:reaction_forces] = false
 options[:gaussian_process] = "none"
@@ -30,6 +31,10 @@ op = OptionParser.new do |opt|
 
     opt.on "-i", "--imu=old/new/last/ikf", String, 'chose imu component version or ikf orientation component. Please set the type' do |imu|
         options[:imu] = imu
+    end
+
+    opt.on "-c", "--camera_bb2=task/log", String, 'set the type of camera_bb2: task to run the task log for taking the images from an existing log' do |camera|
+        options[:camera_bb2] = camera
     end
 
     opt.on "-o", "--odometry=none/task/log", String, 'select Odometry from a running task or from the log files ' do |odometry|
@@ -90,6 +95,16 @@ else
     puts "[INFO] IKF orientation from logs"
 end
 
+if options[:camera_bb2].casecmp("task").zero?
+    puts "[INFO] Running task camera_bb2"
+elsif options[:camera_bb2].casecmp("log").zero?
+    puts "[INFO] camera_bb2 taken from logs"
+else
+    puts "[INFO] Please specify camera_bb2! EXIT"
+    exit 1
+end
+
+
 if options[:odometry].casecmp("task").zero?
     puts "[INFO] Odometry task running"
 elsif options[:odometry].casecmp("log").zero?
@@ -139,6 +154,7 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
             'gp_odometry::SklearnTask' => 'sklearn_gp_odometry',
             'gp_odometry::GpyTask' => 'gpy_gp_odometry',
             'orb_slam2::Task' => 'orb_slam2',
+            'camera_bb2::Task' => 'camera_bb2',
             #:gdb => ['orb_slam2'],
             :output => nil do
 
@@ -166,6 +182,10 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     end
     STDERR.puts "done"
 
+    if options[:camera_bb2].casecmp("task").zero?
+        camera_bb2 = Orocos.name_service.get 'camera_bb2'
+        Orocos.conf.apply(camera_bb2, ['default'], :override => true)
+    end
     ## Get the task context ##
     STDERR.print "setting up exoter_odometry..."
     exoter_odometry = Orocos.name_service.get 'exoter_odometry'
@@ -223,6 +243,8 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     ## LOG THE PORTS ##
     ###################
     Bundles::log_all
+    #localization_frontend.log_all_ports
+    #orb_slam2.log_all_ports
 
     ###############
     ## CONFIGURE ##
@@ -230,6 +252,10 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     read_joint_dispatcher.configure
     ptu_control.configure
     localization_frontend.configure
+
+    if options[:camera_bb2].casecmp("task").zero?
+        camera_bb2.configure
+    end
 
     if options[:odometry].casecmp("task").zero?
         # Configure tasks from odometry
@@ -245,45 +271,52 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     ###########################
     ## LOG PORTS CONNECTIONS ##
     ###########################
-    log_replay.platform_driver.joints_readings.connect_to(read_joint_dispatcher.joints_readings, :type => :buffer, :size => 200)
+    log_replay.platform_driver.joints_readings.connect_to(read_joint_dispatcher.joints_readings, :type => :buffer, :size => 100)
 
     if options[:reference].casecmp("vicon").zero?
-        log_replay.vicon.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 200)
+        log_replay.vicon.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 100)
     end
 
     if options[:reference].casecmp("gnss").zero?
-        log_replay.gnss_trimble.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 200)
+        log_replay.gnss_trimble.pose_samples.connect_to(localization_frontend.pose_reference_samples, :type => :buffer, :size => 100)
     end
 
     # Localization front-end port connections
     if options[:imu].casecmp("old").zero?
-        log_replay.stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
-        log_replay.stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
+        log_replay.stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 100)
+        log_replay.stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 100)
     end
 
     if options[:imu].casecmp("new").zero?
-        log_replay.imu_stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
-        log_replay.imu_stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
+        log_replay.imu_stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 100)
+        log_replay.imu_stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 100)
     end
 
     if options[:imu].casecmp("last").zero?
-        log_replay.imu_stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
-        log_replay.imu_stim300.compensated_sensors_out.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
+        log_replay.imu_stim300.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 100)
+        log_replay.imu_stim300.compensated_sensors_out.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 100)
     end
 
     if options[:imu].casecmp("ikf").zero?
-        log_replay.ikf_orientation_estimator.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 200)
-        log_replay.imu_stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 200)
+        log_replay.ikf_orientation_estimator.orientation_samples_out.connect_to(localization_frontend.orientation_samples, :type => :buffer, :size => 100)
+        log_replay.imu_stim300.calibrated_sensors.connect_to(localization_frontend.inertial_samples, :type => :buffer, :size => 100)
     end
 
     if options[:point_cloud].casecmp("stereo").zero?
-        log_replay.stereo_filtered.point_cloud_samples_out.connect_to orb_slam2.point_cloud_samples, :type => :buffer, :size => 200
+        log_replay.stereo_filtered.point_cloud_samples_out.connect_to orb_slam2.point_cloud_samples
     elsif  options[:point_cloud].casecmp("tof").zero?
-        log_replay.colorize_pointcloud.colored_points.connect_to orb_slam2.point_cloud_samples, :type => :buffer, :size => 200
+        log_replay.colorize_pointcloud.colored_points.connect_to orb_slam2.point_cloud_samples
     end
 
-    log_replay.camera_bb2.left_frame.connect_to orb_slam2.left_frame
-    log_replay.camera_bb2.right_frame.connect_to orb_slam2.right_frame
+    if options[:camera_bb2].casecmp("task").zero?
+        log_replay.camera_firewire.frame.connect_to camera_bb2.frame_in
+
+        camera_bb2.left_frame.connect_to orb_slam2.left_frame
+        camera_bb2.right_frame.connect_to orb_slam2.right_frame
+    elsif options[:camera_bb2].casecmp("log").zero?
+        log_replay.camera_bb2.left_frame.connect_to orb_slam2.left_frame
+        log_replay.camera_bb2.right_frame.connect_to orb_slam2.right_frame
+    end
 
     #############################
     ## TASKS PORTS CONNECTIONS ##
@@ -293,37 +326,37 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     read_joint_dispatcher.ptu_samples.connect_to ptu_control.ptu_samples
 
     if options[:odometry].casecmp("task").zero?
-        localization_frontend.joints_samples_out.connect_to exoter_odometry.joints_samples,  :type => :buffer, :size => 1000
-        localization_frontend.orientation_samples_out.connect_to exoter_odometry.orientation_samples,  :type => :buffer, :size => 1000
+        localization_frontend.joints_samples_out.connect_to exoter_odometry.joints_samples,  :type => :buffer, :size => 100
+        localization_frontend.orientation_samples_out.connect_to exoter_odometry.orientation_samples,  :type => :buffer, :size => 100
 
         if options[:reaction_forces]
-            localization_frontend.weighting_samples_out.connect_to exoter_odometry.weighting_samples, :type => :buffer, :size => 1000
+            localization_frontend.weighting_samples_out.connect_to exoter_odometry.weighting_samples, :type => :buffer, :size => 100
         end
 
         if options[:gaussian_process].casecmp("none").nonzero?
-            exoter_odometry.delta_pose_samples_out.connect_to gp_odometry.delta_pose_samples,  :type => :buffer, :size => 200
-            localization_frontend.joints_samples_out.connect_to gp_odometry.joints_samples, :type => :buffer, :size => 200
-            localization_frontend.orientation_samples_out.connect_to gp_odometry.orientation_samples, :type => :buffer, :size => 200
-            gp_odometry.delta_pose_samples_out.connect_to orb_slam2.delta_pose_samples,  :type => :buffer, :size => 1000
+            exoter_odometry.delta_pose_samples_out.connect_to gp_odometry.delta_pose_samples,  :type => :buffer, :size => 100
+            localization_frontend.joints_samples_out.connect_to gp_odometry.joints_samples, :type => :buffer, :size => 100
+            localization_frontend.orientation_samples_out.connect_to gp_odometry.orientation_samples, :type => :buffer, :size => 100
+            gp_odometry.delta_pose_samples_out.connect_to orb_slam2.delta_pose_samples,  :type => :buffer, :size => 100
         else
             # SLAM odometry poses
-            exoter_odometry.delta_pose_samples_out.connect_to orb_slam2.delta_pose_samples,  :type => :buffer, :size => 999
+            exoter_odometry.delta_pose_samples_out.connect_to orb_slam2.delta_pose_samples,  :type => :buffer, :size => 100
         end
 
     elsif options[:odometry].casecmp("log").zero?
         if options[:gaussian_process].casecmp("none").nonzero?
-            log_replay.exoter_odometry.delta_pose_samples_out.connect_to(gp_odometry.delta_pose_samples, :type => :buffer, :size => 1000)
-            localization_frontend.joints_samples_out.connect_to gp_odometry.joints_samples, :type => :buffer, :size => 500
-            localization_frontend.orientation_samples_out.connect_to gp_odometry.orientation_samples, :type => :buffer, :size =>500
-            gp_odometry.delta_pose_samples_out.connect_to orb_slam2.delta_pose_samples,  :type => :buffer, :size => 1000
+            log_replay.exoter_odometry.delta_pose_samples_out.connect_to(gp_odometry.delta_pose_samples, :type => :buffer, :size => 100)
+            localization_frontend.joints_samples_out.connect_to gp_odometry.joints_samples, :type => :buffer, :size => 100
+            localization_frontend.orientation_samples_out.connect_to gp_odometry.orientation_samples, :type => :buffer, :size => 100
+            gp_odometry.delta_pose_samples_out.connect_to orb_slam2.delta_pose_samples,  :type => :buffer, :size => 100
         else
             # SLAM odometry poses
-            log_replay.exoter_odometry.delta_pose_samples_out.connect_to(orb_slam2.delta_pose_samples, :type => :buffer, :size => 1000)
+            log_replay.exoter_odometry.delta_pose_samples_out.connect_to(orb_slam2.delta_pose_samples, :type => :buffer, :size => 100)
         end
     end
 
     if options[:gaussian_process].casecmp("gpy").zero?
-        localization_frontend.inertial_samples_out.connect_to gp_odometry.inertial_samples, :type => :buffer, :size => 200
+        localization_frontend.inertial_samples_out.connect_to gp_odometry.inertial_samples, :type => :buffer, :size => 100
     end
 
     ###########
@@ -332,6 +365,10 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     read_joint_dispatcher.start
     ptu_control.start
     localization_frontend.start
+
+    if options[:camera_bb2].casecmp("task").zero?
+        camera_bb2.start
+    end
 
     if options[:odometry].casecmp("task").zero?
         # Start tasks for odometry
