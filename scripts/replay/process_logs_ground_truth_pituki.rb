@@ -192,15 +192,15 @@ Bundles.run 'exoter_control',
     end
 
     if options[:camera_bb2].casecmp("task").zero?
-        log_replay.camera_firewire.frame.connect_to(camera_bb2.frame_in, :type => :buffer, :size => 200)
+        log_replay.camera_firewire.frame.connect_to camera_bb2.frame_in#, :type => :buffer, :size => 5
 
         # task
-        camera_bb2.left_frame.connect_to(stereo.left_frame, :type => :buffer, :size => 200)
-        camera_bb2.right_frame.connect_to(stereo.right_frame, :type => :buffer, :size => 200)
+        camera_bb2.left_frame.connect_to stereo.left_frame#, :type => :buffer, :size => 5
+        camera_bb2.right_frame.connect_to stereo.right_frame#, :type => :buffer, :size => 5
     elsif options[:camera_bb2].casecmp("log").zero?
         # logs files
-        log_replay.camera_bb2.left_frame.connect_to(stereo.left_frame, :type => :buffer, :size => 200)
-        log_replay.camera_bb2.right_frame.connect_to(stereo.right_frame, :type => :buffer, :size => 200)
+        log_replay.camera_bb2.left_frame.connect_to stereo.left_frame#, :type => :buffer, :size => 5
+        log_replay.camera_bb2.right_frame.connect_to stereo.right_frame#, :type => :buffer, :size => 5
     end
 
     #############################

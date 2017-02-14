@@ -64,7 +64,7 @@ sensor_point_cloud_height: 1024
 sensor_point_cloud_width: 768
 
 # Desirable input point cloud period in seconds.''
-input_point_cloud_period: 5.0
+input_point_cloud_period: 1.0
 
 sensor_conditional_removal_config:
     filter_on: true
