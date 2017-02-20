@@ -207,7 +207,11 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
         gp_odometry = Orocos.name_service.get 'gpy_gp_odometry'
         Orocos.conf.apply(gp_odometry, ['gp_gpy'], :override => true)
         #gp_odometry.gaussian_process_file = Bundles.find_file('data/gaussian_processes', 'SparseGP_RBF_xyz_velocities_train_at_500ms_normalized.data')
-        gp_odometry.gaussian_process_file = Bundles.find_file('data/gaussian_processes', 'SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized.data')
+        if options[:map].casecmp("arl").zero?
+            gp_odometry.gaussian_process_file = Bundles.find_file('data/gaussian_processes', 'SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized_exoter_odometry_arl_residuals.data')
+        elsif options[:map].casecmp("decos").zero?
+            gp_odometry.gaussian_process_file = Bundles.find_file('data/gaussian_processes', 'SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized_exoter_odometry_decos_residuals.data')
+        end
         STDERR.puts "done"
     end
 
@@ -309,13 +313,13 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     end
 
     if options[:camera_bb2].casecmp("task").zero?
-        log_replay.camera_firewire.frame.connect_to camera_bb2.frame_in
+        log_replay.camera_firewire.frame.connect_to camera_bb2.frame_in, :type => :buffer, :size => 5
 
-        camera_bb2.left_frame.connect_to orb_slam2.left_frame
-        camera_bb2.right_frame.connect_to orb_slam2.right_frame
+        camera_bb2.left_frame.connect_to orb_slam2.left_frame#, :type => :buffer, :size => 5
+        camera_bb2.right_frame.connect_to orb_slam2.right_frame#, :type => :buffer, :size => 5
     elsif options[:camera_bb2].casecmp("log").zero?
-        log_replay.camera_bb2.left_frame.connect_to orb_slam2.left_frame
-        log_replay.camera_bb2.right_frame.connect_to orb_slam2.right_frame
+        log_replay.camera_bb2.left_frame.connect_to orb_slam2.left_frame#, :type => :buffer, :size => 5
+        log_replay.camera_bb2.right_frame.connect_to orb_slam2.right_frame#, :type => :buffer, :size => 5
     end
 
     #############################
