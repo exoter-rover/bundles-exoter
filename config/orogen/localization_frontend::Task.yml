@@ -1,0 +1,282 @@
+--- name:default
+# path to the rover urdf file
+urdf_file: '../../../../bundles/exoter/data/odometry/exoter_odometry_model_complete.urdf'
+
+# Output frequency of the proprioceptive sensors (joints, inertial sensors and orientation).
+proprioceptive_output_frequency: 12.5
+
+# from frame for the transformer
+orientation_source_frame: "body"
+# to frame for the transformer
+orientation_target_frame: "navigation"
+
+# from frame for the transformer
+navigation_source_frame: "navigation"
+# to frame for the transformer
+navigation_target_frame: "world"
+
+# from frame for the transformer
+reference_source_frame: "body"
+# to frame for the transformer
+reference_target_frame: "navigation"
+
+# from frame for the transformer
+delta_reference_source_frame: "body"
+# to frame for the transformer
+delta_reference_target_frame: "body_k-1"
+
+# from frame for the transformer
+world_source_frame: "world"
+# to frame for the transformer
+world_target_frame: "world_osg"
+
+# Effective wheel radius average for odometry
+wheel_radius_joint_names: [fl_wheel]
+
+passive_offset_joint_name: "left_bogie"
+
+# Value to fix some imu  log test that did not estimate the uncertainty correctly.
+attitude_covariance_adjustment: 1.0 #10000000000.00
+
+# Locomotion joints searching by names.
+#joint_names: [left_passive, right_passive, rear_passive, fl_walking, fr_walking, ml_walking, mr_walking, rl_walking, rr_walking, fl_steer, fr_steer, rl_steer, rr_steer, fl_drive, fr_drive, ml_drive, mr_drive, rl_drive, rr_drive]
+all_joint_names: [left_passive, fl_mimic, fl_walking, fl_steer, fl_drive, fl_contact, fl_translation, fl_slipx, fl_slipy, fl_slipz,
+                            ml_mimic, ml_walking, ml_drive, ml_contact, ml_translation, ml_slipx, ml_slipy, ml_slipz,
+                      rear_passive, rl_mimic, rl_walking, rl_steer, rl_drive, rl_contact, rl_translation, rl_slipx, rl_slipy, rl_slipz,
+                            rr_mimic, rr_walking, rr_steer, rr_drive, rr_contact, rr_translation, rr_slipx, rr_slipy, rr_slipz,
+                      right_passive, fr_mimic, fr_walking, fr_steer, fr_drive, fr_contact, fr_translation, fr_slipx, fr_slipy, fr_slipz,
+                            mr_mimic, mr_walking, mr_drive, mr_contact, mr_translation, mr_slipx, mr_slipy, mr_slipz]
+
+contact_point_segments: [fl_segment_slipz, fr_segment_slipz, ml_segment_slipz, mr_segment_slipz, rl_segment_slipz, rr_segment_slipz]
+
+contact_angle_segments: [fl_ground, fr_ground, ml_ground, mr_ground, rl_ground, rr_ground]
+
+slip_joint_names: [fl_slipx, fr_slipx, ml_slipx, mr_slipx, rl_slipx, rr_slipx,
+              fl_slipy, fr_slipy, ml_slipy, mr_slipy, rl_slipy, rr_slipy,
+              fl_slipz, fr_slipz, ml_slipz, mr_slipz, rl_slipz, rr_slipz]
+
+contact_joint_names: [fl_contact, fr_contact, ml_contact, mr_contact, rl_contact, rr_contact]
+
+zero_position_joint_names: [fl_drive, fr_drive, ml_drive, mr_drive, rl_drive, rr_drive, fl_translation, fr_translation, ml_translation, mr_translation, rl_translation, rr_translation]
+
+zero_speed_joint_names: [fl_drive, fr_drive, ml_drive, mr_drive, rl_drive, rr_drive]
+
+mimic_joint_names:
+  names: [fl_mimic, fr_mimic, ml_mimic, mr_mimic, rl_mimic, rr_mimic]
+  elements: [left_passive, right_passive, left_passive, right_passive, rear_passive, rear_passive]
+
+translation_joint_names:
+  names: [fl_translation, fr_translation, ml_translation, mr_translation, rl_translation, rr_translation]
+  elements: [fl_drive, fr_drive, ml_drive, mr_drive, rl_drive, rr_drive]
+
+# Joints in which the IIR wants to be apply. These joints names MUST be also contained in the joint_names. Maximum number of three joints. In case more joints are required you need to change the code due to template classes. IIR_FILTER_VECTOR_SIZE
+filter_joint_names: [left_passive, right_passive, rear_passive]
+
+# Camera intrinsic parameters.
+left_camera_parameters:
+    fx: 837.98636
+    fy: 838.56569
+    cx: 509.74846
+    cy: 376.99711
+    d0: -0.35914
+    d1: 0.16317
+    d2: 0.00039
+    d3: 0.00041
+    width: 1024
+    height: 768
+# Camera intrinsic parameters.
+right_camera_parameters:
+    fx: 837.40801
+    fy: 838.06473
+    cx: 536.53701
+    cy: 377.66591
+    d0: -0.35499
+    d1: 0.15218
+    d2: 0.00019
+    d3: -0.00016
+    width: 1024
+    height: 768
+
+# the global name that should be used for the internal body frame
+body_frame: body
+# the global name that should be used for the internal imu frame
+imu_frame: imu
+# the global name that should be used for the internal laser frame
+laser_frame: tof_camera
+
+# Time in s between joints_samples readings
+joints_samples_period: 0.08
+# Time in s between inertial_samples readings
+inertial_samples_period: 0.008
+# Time in s between orientation_samples readings
+orientation_samples_period: 0.008
+# Time in s between left_frame readings
+left_frame_period: 0.4
+# Time in s between right_frame readings
+right_frame_period: 0.4
+# Time in s between point_cloud_samples readings
+point_cloud_samples_period: 0.5
+# Time in s between pose_reference_samples readings
+pose_reference_samples_period: 0.01 #0.01 for vicon 0.1 for gnss
+# Minimum system time in seconds between two updates of the status ports
+transformer_status_period: 0.08
+# Maximum time in seconds the transformer will wait until it starts dropping samples
+transformer_max_latency: 1.0
+# Set to true if output debug information is desirable.
+output_debug: false
+
+# list of static transformations
+static_transformations: []
+
+# no documentation available for this property
+#metadata:
+#  metadata: []
+#  properties: []
+#  input_ports: []
+#  output_ports: []
+#
+--- name:bessel50
+#Configuration values to run Infinite Impulse Response (IIR).
+filter_config:
+  filterOn: true  #True or false
+  feedForwardCoeff:
+    data:
+    - 0.00796458
+    - 0.06371664
+    - 0.22300822
+    - 0.44601645
+    - 0.55752056
+    - 0.44601645
+    - 0.22300822
+    - 0.06371664
+    - 0.00796458
+  feedBackCoeff:
+    data:
+    - 1.00000000e+00
+    - 2.25372213e-01
+    - 6.59616658e-01
+    - 4.22917994e-02
+    - 1.09027593e-01
+    - -2.00686265e-03
+    - 4.77799850e-03
+    - -1.74151766e-04
+    - 2.70798275e-05
+
+--- name:bessel12
+#Configuration values to run Infinite Impulse Response (IIR).
+filter_config:
+  filterOn: true  #True or false
+  feedForwardCoeff:
+    data:
+    - 5.86418841e-07
+    - 4.69135073e-06
+    - 1.64197275e-05
+    - 3.28394551e-05
+    - 4.10493189e-05
+    - 3.28394551e-05
+    - 1.64197275e-05
+    - 4.69135073e-06
+    - 5.86418841e-07
+  feedBackCoeff:
+    data:
+    - 1.0
+    - -5.86387295
+    - 15.2039213
+    - -22.74976354
+    - 21.47240826
+    - -13.08310578
+    - 5.02268683
+    - -1.11027129
+    - 0.1081473
+
+--- name:cheby15
+#Configuration values to run Infinite Impulse Response (IIR).
+filter_config:
+  filterOn: true  #True or false
+  feedForwardCoeff:
+    data:
+    - 0.00337555
+    - -0.00257566
+    - 0.00573734
+    - 0.00068761
+    - 0.00068761
+    - 0.00573734
+    - -0.00257566
+    - 0.00337555
+  feedBackCoeff:
+    data:
+    - 1.0
+    - -4.19451974
+    - 7.9299096
+    - -8.62533663
+    - 5.79110338
+    - -2.38816083
+    - 0.5583857
+    - -0.05693179
+
+--- name:hamming1hzsampling25hz
+#Configuration values for the Finite Impulse Response (FIR). Wp = 1.0hz/12.5 (nyquist_rate).
+filter_config:
+  filterOn: true  #True or false
+  feedForwardCoeff:
+    data:
+    - -2.41106328e-06
+    - 7.67247122e-04
+    - 2.36425900e-03
+    - 5.55539414e-03
+    - 1.09866446e-02
+    - 1.90153872e-02
+    - 2.95840347e-02
+    - 4.21643238e-02
+    - 5.57884001e-02
+    - 6.91660102e-02
+    - 8.08698070e-02
+    - 8.95565965e-02
+    - 9.41843067e-02
+    - 9.41843067e-02
+    - 8.95565965e-02
+    - 8.08698070e-02
+    - 6.91660102e-02
+    - 5.57884001e-02
+    - 4.21643238e-02
+    - 2.95840347e-02
+    - 1.90153872e-02
+    - 1.09866446e-02
+    - 5.55539414e-03
+    - 2.36425900e-03
+    - 7.67247122e-04
+    - -2.41106328e-06
+
+--- name:hamming1hzsampling12hz
+#Configuration values for the Finite Impulse Response (FIR). Wp = 1.0hz/6.25 (nyquist_rate).
+filter_config:
+  filterOn: true  #True or false
+  feedForwardCoeff:
+    data:
+    - 2.55462975e-10
+    - -1.25434931e-03
+    - -3.48982195e-03
+    - -6.81653325e-03
+    - -9.90524645e-03
+    - -9.88463443e-03
+    - -3.12431128e-03
+    - 1.32868891e-02
+    - 3.99432385e-02
+    - 7.41325533e-02
+    - 1.10005131e-01
+    - 1.40001589e-01
+    - 1.57105495e-01
+    - 1.57105495e-01
+    - 1.40001589e-01
+    - 1.10005131e-01
+    - 7.41325533e-02
+    - 3.99432385e-02
+    - 1.32868891e-02
+    - -3.12431128e-03
+    - -9.88463443e-03
+    - -9.90524645e-03
+    - -6.81653325e-03
+    - -3.48982195e-03
+    - -1.25434931e-03
+    - 2.55462975e-10
+

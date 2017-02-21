@@ -81,7 +81,8 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     # setup waypoint_navigation 
     puts "Setting up waypoint_navigation"
     waypoint_navigation = Orocos.name_service.get 'waypoint_navigation'
-    Orocos.conf.apply(waypoint_navigation, ['default','exoter'], :override => true)
+    Orocos.conf.apply(waypoint_navigation, ['default'], :override => true)
+    #waypoint_navigation.apply_conf_file("config/orogen/waypoint_navigation::Task.yml",["exoter"])
     waypoint_navigation.configure
     puts "done"
 
@@ -141,7 +142,7 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     trav.traversability_map_id = "trav_map"
     trav.traversability_map_scalex =  0.03
     trav.traversability_map_scaley =  0.03
-    trav.filename = "/home/exoter/rock/planning/orogen/traversability_explorer/data/costmap_january.txt"
+    trav.filename = "/home/exoter/rock/planning/orogen/traversability_explorer/data/costMap2016.txt"
     trav.robot_fov_a = 2.5
     trav.robot_fov_b = 3.5
     trav.robot_fov_l = 3.0
@@ -151,7 +152,7 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     # setup goal generator 
     puts "Setting up goal generator"
     goal = Orocos.name_service.get 'goal_set'
-    Orocos.conf.apply(goal, ['default','prl2'], :override => true)
+    Orocos.conf.apply(goal, ['default','prl'], :override => true)
     goal.goal_index = 6
     goal.configure
     puts "done"
@@ -162,6 +163,11 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     refiner.configure
     puts "done"
 
+    # setup pose estimation 
+    puts "Setting up pose estimation"
+    pose_est = Orocos.name_service.get 'pose_est'
+    pose_est.configure
+    puts "done"
     # Log all ports
     Orocos.log_all_ports
 
@@ -202,9 +208,6 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     # Connect ports: command_arbiter to locomotion_control
     command_arbiter.motion_command.connect_to locomotion_control.motion_command
 
-    # Connect ports: vicon to waypoint_navigation
-    vicon.pose_samples.connect_to waypoint_navigation.pose
-
     # Connect ports: traversability explorer to	planner
     trav.traversability_map.connect_to	planner.traversability_map
 
@@ -214,11 +217,19 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     # Connect ports: trajectory refiner to 	waypoint_navigation
     refiner.waypoints_out.connect_to            waypoint_navigation.trajectory
 
-    # Connect ports: Vicon 		to 	traversability explorer
-    vicon.pose_samples.connect_to               trav.robot_pose        
+    # CHANGELOG: Vicon connected to pose fusion component only
+    # Connect ports: Vicon 		to 	simple pose / pose_est
+    vicon.pose_samples.connect_to               pose_est.gps_pose
+    imu_stim300.orientation_samples_out.connect_to pose_est.imu_pose
 
-    # Connect ports: Vicon 		to 	path planner
-    vicon.pose_samples.connect_to               planner.start_pose_samples
+    # Connect ports: pose_est 		to 	traversability explorer
+    pose_est.pose.connect_to                    trav.robot_pose        
+
+    # Connect ports: pose_est 		to 	path planner
+    pose_est.pose.connect_to                    planner.start_pose_samples
+
+    # Connect ports: pose_est           to      waypoint_navigation
+    pose_est.pose.connect_to                    waypoint_navigation.pose
 
     # Connect ports: Goal Generator	to 	path planner
     goal.goal_pose.connect_to                   planner.goal_pose_samples
@@ -235,7 +246,7 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     locomotion_control.start
     ptu_control.start
     vicon.start
-    #imu_stim300.starti
+    imu_stim300.start
     joystick.start
     waypoint_navigation.start
     command_arbiter.start
@@ -244,6 +255,7 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     motion_translator.start
     trav.start
     goal.start
+    pose_est.start
 
    #Readline::readline("Press ENTER to generate the trajectory.")
    #goal.trigger

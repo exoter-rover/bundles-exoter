@@ -6,12 +6,40 @@ require 'readline'
 
 include Orocos
 
+options = {}
+options[:reference] = "none"
+options[:logging] = "nominal"
+options[:scripted] = "no"
+scripting = 0
+
+OptionParser.new do |opt|
+    opt.banner = <<-EOD
+    usage: exoter_start_all.rb [options] 
+    EOD
+
+    opt.on '-r or --reference=none/vicon/gnss', String, 'set the type of reference system available' do |reference|
+        options[:reference] = reference
+    end
+
+    opt.on '-l or --logging=none/minimum/nominal/all', String, 'set the type of log files you want. Nominal as default' do |logging|
+        options[:logging] = logging
+    end
+
+    opt.on '-s', String, 'Specifies that the file is launched from within a script and enter termination should be ignored' do 
+        scripting = 1
+    end
+
+    opt.on '--help', 'this help message' do
+        puts opt
+       exit 0
+    end
+end.parse!(ARGV)
+
 ## Initialize orocos ##
 Bundles.initialize
 
 ## Transformation for the transformer
 Bundles.transformer.load_conf(Bundles.find_file('config', 'transforms_scripts.rb'))
-
 
 Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_proprioceptive', 'exoter_localization' do
 
@@ -50,13 +78,32 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     ptu_control.configure
     puts "done"
 
-    # setup vicon
-    puts "Setting up vicon"
-    vicon = Orocos.name_service.get 'vicon'
-    Orocos.conf.apply(vicon, ['default', 'exoter'], :override => true)
-    vicon.configure
+    if options[:reference].casecmp("vicon").zero?
+        puts "[INFO] Vicon Ground Truth system available"
+        # setup exoter ptu_control
+        puts "Setting up vicon"
+        vicon = Orocos.name_service.get 'vicon'
+        Orocos.conf.apply(vicon, ['default', 'exoter'], :override => true)
+        vicon.configure
+        puts "done"
+    else
+        puts "[INFO] No Ground Truth system available"
+    end
+
+    # setup motion_translator
+    puts "Setting up motion_translator"
+    motion_translator = Orocos.name_service.get 'motion_translator'
+    Orocos.conf.apply(motion_translator, ['default'], :override => true)
+    motion_translator.configure
     puts "done"
-    
+
+    # setup motion_translator
+    puts "Setting up joystick"
+    joystick = Orocos.name_service.get 'joystick'
+    Orocos.conf.apply(joystick, ['default'], :override => true)
+    joystick.configure
+    puts "done"
+
     # Localization
     puts "Setting up localization_frontend"
     localization_frontend = Orocos.name_service.get 'localization_frontend'
@@ -82,23 +129,6 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     imu_stim300.configure
     puts "done"
 
-    # setup waypoint_navigation 
-    puts "Setting up waypoint_navigation"
-    waypoint_navigation = Orocos.name_service.get 'waypoint_navigation'
-    Orocos.conf.apply(waypoint_navigation, ['default'], :override => true)
-    #waypoint_navigation.apply_conf_file("config/orogen/waypoint_navigation::Task.yml",["exoter"])
-    waypoint_navigation.configure
-    puts "done"
-
-    # add the trajectory generation component
-    puts "Setting up the trajectory generation"
-    trajectoryGen = Orocos.name_service.get 'trajectoryGen'
-    Orocos.conf.apply(trajectoryGen, ['demoloop'], :override => true)
-    trajectoryGen.configure
-    puts "done"
-
-
-
     # Log all ports
     Orocos.log_all_ports
 
@@ -108,6 +138,12 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
 
     # Connect ports: read_joint_dispatcher to locomotion_control
     read_joint_dispatcher.motors_samples.connect_to locomotion_control.joints_readings
+
+    # Connect ports: joystick to motion_translator
+    joystick.raw_command.connect_to motion_translator.raw_command
+
+    # Connect ports: motion_translator to locomotion_control
+    motion_translator.motion_command.connect_to locomotion_control.motion_command
 
     # Connect ports: locomotion_control to command_joint_dispatcher
     locomotion_control.joints_commands.connect_to command_joint_dispatcher.joints_commands
@@ -120,17 +156,7 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
 
     # Connect ports: ptu_control to command_joint_dispatcher
     ptu_control.ptu_commands_out.connect_to command_joint_dispatcher.ptu_commands
-
-    # Connect ports: waypoint_navigation to locomotion_control
-    waypoint_navigation.motion_command.connect_to locomotion_control.motion_command
-
-    # Connect ports: trajectoryGen to waypoint_navigation
-    trajectoryGen.trajectory.connect_to  waypoint_navigation.trajectory
-    
-    # Connect ports: ptu_control to waypoint_navigation
-    vicon.pose_samples.connect_to waypoint_navigation.pose
     #puts "done"
-
     puts "Connecting localization ports"
     read_joint_dispatcher.joints_samples.connect_to localization_frontend.joints_samples
     #read_joint_dispatcher.ptu_samples.connect_to localization_frontend.ptu_samples
@@ -147,38 +173,25 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     command_joint_dispatcher.start
     locomotion_control.start
     ptu_control.start
-    vicon.start
+    motion_translator.start
+    joystick.start
     localization_frontend.start
     exoter_odometry.start
     imu_stim300.start
-    waypoint_navigation.start
-    trajectoryGen.start
-
-    Readline::readline("Press ENTER to generate the trajectory.")
-
-    trajectoryGen.trigger
-
-    #trajectory_writer = waypoint_navigation.trajectory.writer
-    #trajectory = trajectory_writer.new_sample
-    #waypoint1 = Types::Base::Waypoint.new
-    #waypoint2 = Types::Base::Waypoint.new
-    #waypoint3 = Types::Base::Waypoint.new
-    #trajectory = [waypoint1, waypoint2, waypoint3]
-    
-    #position1 = Types::Base::Vector3d.new
-    #position1 = [1.00,6.00,0.00]
-    #heading1 = 0.00
-    #position2 = Types::Base::Vector3d.new(5.0,6.0,0.0)
-    #heading2 = -90.00
-    #position3 = Types::Base::Vector3d.new(5.0,3.0,0.0)
-    #heading3 = -90.00
-    #trajectory = [Types::Base::Waypoint.new(:position => position1, :heading => heading1, :tol_position => 1.00, :tol_heading => 1.00)]
-		  #Types::Base::Waypoint.new(:position => position2, :heading => heading2, :tol_position => 1.00, :tol_heading => 1.00),
-                  #Types::Base::Waypoint.new(:position => position3, :heading => heading3, :tol_position => 1.00, :tol_heading => 1.00)]
-    #trajectory_writer.write(trajectory)
-
-    Readline::readline("Press ENTER to exit\n") do
+    if options[:reference].casecmp("vicon").zero?
+        vicon.start
     end
+
+    if scripting == 1
+	while 1 do
+		sleep 10
+	end
+    
+    else
+    	Readline::readline("Press ENTER to exit\n") do
+    	end
+    end
+
 
 end
 

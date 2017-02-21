@@ -1,0 +1,52 @@
+--- name:default
+# Rotation offset accounting for eventual imu/body mismatch [yaw, pitch, roll] RADIANS
+body_rotation_offset:
+  data:
+  - 0.0
+  - 0.0
+  - 0.0
+# Translation vector from camera frame to pan tilt unit frame
+camera_to_ptu:
+  data:
+  - 0.0
+  - 0.0
+  - 0.02
+# A configuration property (here, a std::string). Its value can be retrieved
+# in the C++ code with # _config_value.get() and _config_value.set(new_value).
+config_value: ''
+# K points for statistical pc filter
+k_points: 20
+# Leaf size of pc voxel filter
+leaf_size: 0.015
+# Resolution of each cell in meters
+local_map_resolution: 0.03
+# Square size f the local map in meters
+local_map_size: 5.0
+# Maximum vertex where a local point cloud is supposed to be valid within the rover frame
+pointcloud_cut_max:
+  data:
+  - 4.0
+  - 3.0
+  - 1.5
+  - 0.0
+# Minimum vertex where a local point cloud is supposed to be valid within the rover frame
+pointcloud_cut_min:
+  data:
+  - -0.0
+  - -3.0
+  - -1.5
+  - 0.0
+# Rotation offset of the pan tilt unit (or the mounted camera) [yaw, pitch, roll] RADIANS
+ptu_rotation_offset:
+  data:
+  - 0.0
+  - -0.07
+  - 0.0
+# Translation vector from pan tilt unit to desired rover point
+ptu_to_center:
+  data:
+  - -0.12
+  - 0.09
+  - 0.9
+# How many normal cell a slope map cell will contain
+slope_map_scale: 8

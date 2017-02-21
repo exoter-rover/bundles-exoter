@@ -136,15 +136,12 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     puts "done"
 
     # setup the traversability explorer
-    puts "Setting up the traversability explorer"
-    trav = Orocos.name_service.get 'traversability'
+    puts "Setting up the traversability loader"
+    trav = Orocos.name_service.get 'traversability_loader'
     trav.traversability_map_id = "trav_map"
     trav.traversability_map_scalex =  0.03
     trav.traversability_map_scaley =  0.03
-    trav.filename = "/home/exoter/rock/planning/orogen/traversability_explorer/data/costmap_january.txt"
-    trav.robot_fov_a = 2.5
-    trav.robot_fov_b = 3.5
-    trav.robot_fov_l = 3.0
+    trav.filename = "/home/exoter/rock/planning/orogen/traversability_loader/data/costmap_february.txt"
     trav.configure
     puts "done"
 
@@ -159,6 +156,7 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     # setup trajectory resampling 
     puts "Setting up trajectory resampling"
     refiner = Orocos.name_service.get 'trajectory_refiner'
+    Orocos.conf.apply(refiner, ['default'])
     refiner.configure
     puts "done"
 
@@ -214,9 +212,6 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     # Connect ports: trajectory refiner to 	waypoint_navigation
     refiner.waypoints_out.connect_to            waypoint_navigation.trajectory
 
-    # Connect ports: Vicon 		to 	traversability explorer
-    vicon.pose_samples.connect_to               trav.robot_pose        
-
     # Connect ports: Vicon 		to 	path planner
     vicon.pose_samples.connect_to               planner.start_pose_samples
 
@@ -235,7 +230,7 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     locomotion_control.start
     ptu_control.start
     vicon.start
-    #imu_stim300.starti
+    #imu_stim300.start
     joystick.start
     waypoint_navigation.start
     command_arbiter.start
@@ -245,10 +240,10 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     trav.start
     goal.start
 
-   #Readline::readline("Press ENTER to generate the trajectory.")
-   #goal.trigger
+   Readline::readline("Press ENTER to trigger the map.")
+   trav.trigger
 
-    Readline::readline("Press ENTER to exit\n") do
-    end
+   Readline::readline("Press ENTER to exit\n") do
+   end
 
 end

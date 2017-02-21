@@ -1,0 +1,222 @@
+--- name:default
+# the network host of the vicon tracking system
+#host: '131.176.25.20' # IP address of the Vicon pc on the PRL at ESTEC
+host: '192.168.200.101' # IP address of The Beast PC on the PRL at ESTEC
+# the network port to use for the vicon tracking system
+port: 801
+# from frame for the transformer
+source_frame: "body" # transformer names. No transformation convention
+# to frame for the transformer
+target_frame: "world_osg" # transformer names. No transformation convention
+
+# do not send samples when the segment is occluded
+drop_occluded: false
+# invalidate sample when the segment is occluded
+invalidate_occluded: true
+
+# Direction of the x axis e.g. 1=Forward, -1=Backward ...
+xdir: 1
+# Direction of the y axis e.g. ... 2=Left, -2=Right ...
+ydir: 2
+# Direction of the z axis e.g. ... 3=Up, -3=Down
+zdir: 3
+
+# Number of samples to compute the online data stream covariance. Set to 0 in case no uncertainty wants to be computed.
+uncertainty_samples: 75
+
+# no documentation available for this property
+#metadata:
+#  metadata: []
+#  properties: []
+#  input_ports: []
+#  output_ports: []
+
+--- name:exoter
+# the segment of the subject that is tracked
+segment: 'exoter'
+# the subject that is being tracked
+subject: 'exoter'
+# from frame for the transformer
+source_frame: "body" # transformer names. No transformation convention
+# to frame for the transformer
+target_frame: "lab" # transformer names. No transformation convention
+
+# transformation between segment cs (vicon data) and a chosen body fixed reference cs
+# Assuming the translation is before the rotation in the task. Tselected_marker_to_body_vicon
+body_reference:
+  time:
+    microseconds: 0
+  sourceFrame: 'body_vicon'
+  targetFrame: 'selected_marker'
+  position:
+    data:
+    - 0.00 #0.234 #0.16879
+    - 0.00 #0.16879 #-0.09
+    - 0.00 #-0.09 #0.234
+  cov_position:
+    data:
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+  orientation:
+    im:
+    - 0.00 #0.49004229064263805
+    - 0.00 #-0.49004229064263816
+    - 0.00 #-0.5097632326695547
+    re: 1.00 #0.5097632326695547
+  cov_orientation:
+    data:
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+
+## Orientation is -90.0deg along Z axis and (90.0-2.26)deg along Y axis.
+## The 2.26 deg comes from the different in height between front and back markers
+# transformation between segment cs (vicon data) and a chosen body fixed reference cs
+
+--- name:rock_test
+# the segment of the subject that is tracked
+segment: 'body'
+# the subject that is being tracked
+subject: 'rock_test'
+
+--- name:imu_test
+# the segment of the subject that is tracked
+segment: 'body'
+# the subject that is being tracked
+subject: 'imu_test'
+
+# transformation between segment cs (vicon data) and a chosen body fixed reference cs
+body_reference:
+  time:
+    microseconds: 0
+  sourceFrame: ''
+  targetFrame: ''
+  position:
+    data:
+    - 0.00
+    - 0.00
+    - 0.00
+  cov_position:
+    data:
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+  orientation:
+    im:
+    - 0.7071067811865475
+    - 0.00
+    - 0.7071067811865475
+    re: 0.00
+  cov_orientation:
+    data:
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+  velocity:
+    data:
+    - 0.00
+    - 0.00
+    - 0.00
+  cov_velocity:
+    data:
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+  angular_velocity:
+    data:
+    - 0.00
+    - 0.00
+    - 0.00
+  cov_angular_velocity:
+    data:
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+    - 0.00
+
+--- name:chessboard
+# the segment of the subject that is tracked
+segment: 'body'
+# the subject that is being tracked
+subject: 'chessboard'
+
+# transformation between segment cs (vicon data) and a chosen body fixed reference cs
+# Assuming the translation is before the rotation in the task. Tselected_marker_to_body_vicon
+body_reference:
+  time:
+    microseconds: 0
+  sourceFrame: 'body_vicon'
+  targetFrame: 'selected_marker'
+  position:
+    data:
+    - 0.0
+    - 0.0
+    - 0.0
+  orientation:
+    im:
+    - 0.00
+    - 0.7071067811865475
+    - 0.00
+    re: 0.7071067811865476
+
+--- name:exoter_ptu
+# the segment of the subject that is tracked
+segment: 'body'
+# the subject that is being tracked
+subject: 'exoter_ptu'
+
+# transformation between segment cs (vicon data) and a chosen body fixed reference cs
+# Assuming the translation is before the rotation in the task. Tselected_marker_to_body_vicon
+body_reference:
+  time:
+    microseconds: 0
+  sourceFrame: 'body_vicon'
+  targetFrame: 'selected_marker'
+  position:
+    data:
+    - -0.014
+    - 0.023
+    - -0.0625
+  orientation:
+    im:
+    - 0.00
+    - 0.7071067811865475
+    - 0.7071067811865475
+    re: 0.00
+

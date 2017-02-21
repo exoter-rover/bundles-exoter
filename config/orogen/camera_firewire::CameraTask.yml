@@ -1,0 +1,369 @@
+#    ___            _    _     _               ___ 
+#   | _ )_  _ _ __ | |__| |___| |__  ___ ___  |_  )
+#   | _ \ || | '  \| '_ \ / -_) '_ \/ -_) -_)  / / 
+#   |___/\_,_|_|_|_|_.__/_\___|_.__/\___\___| /___|
+#                                                                                 
+--- name:exoter_bb2
+# count of frames if grab mode is MultiFrame
+acquisition_frame_count: 200
+# horizontal binning. 1=no binning.
+binning_x: 1
+# vertical binning. 1=no binning.
+binning_y: 1
+# parameter for undistort
+calibration_parameters:
+  fx: 0.0
+  fy: 0.0
+  cx: 0.0
+  cy: 0.0
+  d0: 0.0
+  d1: 0.0
+  d2: 0.0
+  d3: 0.0
+  width: 0
+  height: 0
+# output format of the camera --> not the output port! see below
+camera_format: :MODE_BAYER_GBRG
+# unique camerea id
+camera_id: '49712223537684762'
+# bit depth per channel
+channel_data_depth: 16
+# if the queue is empty because retrieve was called too rarely clear buffer
+clear_buffer_if_frame_drop: false
+# no data are written to frame_raw if set to true
+disable_frame_raw: true
+# exposure value if exposure mode is not auto
+exposure: 10
+# exposure mode (auto, manual, external, none)
+exposure_mode: auto
+# frames per second
+fps: 3.75
+# size of the frame buffer
+frame_buffer_size: 10
+# External trigger event, allowed values:  EdgeRising, EdgeFalling, EdgeAny, LevelHigh, LevelLow, none
+frame_start_trigger_event: EdgeRising
+# gain value
+gain: 16
+# gain mode
+gain_mode_auto: false
+# turns gamma on or off
+gamma: false
+# grab mode (Stop, SingleFrame, MultiFrame, Continuously)
+grab_mode: :Continuously
+# hdr kneepoint1 voltage level 1 [0..255]
+hdr_voltage_1: 0
+# hdr kneepoint1 voltage level 2 [0..255]
+hdr_voltage_2: 0
+# hdr kneepoint2 voltage level 1 [0..255]
+hdr_voltage_3: 0
+# hdr kneepoint2 voltage level 2 [0..255]
+hdr_voltage_4: 0
+# height of the camera frame
+height: 768
+# interval for logging a statistic about valid and invalid frames per second (0= logging of) -> it is saved as frame attrib StatFrameRate
+log_interval_in_sec: 5
+# opening mode (Master, Monitor, MasterMulticast)
+mode: Master
+# the offset to be used on the left margin in case of scaling
+offset_x: 0
+# the offset to be used on the left margin in case of scaling
+offset_y: 0
+# The camera_format is converted into this format before it is written to the output port 
+output_format: :MODE_UNDEFINED
+# In Bytes. Size of image data packet. This size includes the GVSP, UDP, and IP headers. (0 == max possible)
+package_size: 0
+# start of region readout, in pixels; left edge.
+region_x: 0
+# start of region readout, in pixels; top edge.
+region_y: 0
+# resize algorithm which is used to scale the frame before it is written to the output port. 
+resize_algorithm: :INTER_LINEAR
+# scale factor for the x direction which is used to scale the image before it is written to the output_port. 
+scale_x: 1.0
+# scale factor for the y direction which is used to scale the image before it is written to the output_port. 
+scale_y: 1.0
+# sync out1 mode (GPO, AcquisitionTriggerReady, FrameTriggerReady, FrameTrigger, Exposing, FrameReadout, Acquiring, SyncIn1, SyncIn2, Strobe1)
+sync_out1_mode: FrameTrigger
+# sync out2 mode (GPO, AcquisitionTriggerReady, FrameTriggerReady, FrameTrigger, Exposing, FrameReadout, Acquiring, SyncIn1, SyncIn2, Strobe1)
+sync_out2_mode: FrameTrigger
+# time interval in micro seconds which is used to synchronize camera time with system time. 0 == no synchronization
+synchronize_time_interval: 0
+# trigger mode of the camera, allowed values: freerun, fixed, sync_in1, none
+trigger_mode: fixed
+# true => undistort the image before it is writen to the output port
+undistort: false
+# How fast the Auto white balance will update.
+whitebalance_auto_rate: 100
+# Sets a range of scene color changes in which the automatic whitebalance will not respond.
+whitebalance_auto_threshold: 5
+# Blue gain expressed as a percentage of the camera default setting.
+whitebalance_blue: 580
+# whitebalance mode (auto, manual, auto_once, none)
+whitebalance_mode: auto
+# Red gain expressed as a percentage of the camera default setting.
+whitebalance_red: 650
+# width of the camera frame
+width: 1024
+
+#    ___            _    _     _               ___ 
+#   | _ )_  _ _ __ | |__| |___| |__  ___ ___  |_  )
+#   | _ \ || | '  \| '_ \ / -_) '_ \/ -_) -_)  / / 
+#   |___/\_,_|_|_|_|_.__/_\___|_.__/\___\___| /___|
+#                                                                                 
+--- name:hdpr_bb2
+# count of frames if grab mode is MultiFrame
+acquisition_frame_count: 200
+# horizontal binning. 1=no binning.
+binning_x: 1
+# vertical binning. 1=no binning.
+binning_y: 1
+# parameter for undistort
+calibration_parameters:
+  fx: 0.0
+  fy: 0.0
+  cx: 0.0
+  cy: 0.0
+  d0: 0.0
+  d1: 0.0
+  d2: 0.0
+  d3: 0.0
+  width: 0
+  height: 0
+# output format of the camera --> not the output port! see below
+camera_format: :MODE_BAYER_GBRG
+# unique camerea id
+camera_id: '49712223536067003'
+# bit depth per channel
+channel_data_depth: 16
+# if the queue is empty because retrieve was called too rarely clear buffer
+clear_buffer_if_frame_drop: false
+# no data are written to frame_raw if set to true
+disable_frame_raw: true
+# exposure value if exposure mode is not auto
+exposure: 10
+# exposure mode (auto, manual, external, none)
+exposure_mode: auto
+# frames per second - When running a stereo camera (BB2, BB3) the value set for framerate should be doubled due to the fact that each frame contains two images
+fps: 7.5
+# size of the frame buffer
+frame_buffer_size: 60
+# External trigger event, allowed values:  EdgeRising, EdgeFalling, EdgeAny, LevelHigh, LevelLow, none
+frame_start_trigger_event: EdgeRising
+# gain value
+gain: 16
+# gain mode
+gain_mode_auto: false
+# turns gamma on or off
+gamma: false
+# grab mode (Stop, SingleFrame, MultiFrame, Continuously)
+grab_mode: :Continuously
+# hdr kneepoint1 voltage level 1 [0..255]
+hdr_voltage_1: 0
+# hdr kneepoint1 voltage level 2 [0..255]
+hdr_voltage_2: 0
+# hdr kneepoint2 voltage level 1 [0..255]
+hdr_voltage_3: 0
+# hdr kneepoint2 voltage level 2 [0..255]
+hdr_voltage_4: 0
+# height of the camera frame
+height: 768
+# interval for logging a statistic about valid and invalid frames per second (0= logging of) -> it is saved as frame attrib StatFrameRate
+log_interval_in_sec: 5
+# opening mode (Master, Monitor, MasterMulticast)
+mode: Master
+# the offset to be used on the left margin in case of scaling
+offset_x: 0
+# the offset to be used on the left margin in case of scaling
+offset_y: 0
+# The camera_format is converted into this format before it is written to the output port 
+output_format: :MODE_UNDEFINED
+# In Bytes. Size of image data packet. This size includes the GVSP, UDP, and IP headers. (0 == max possible)
+package_size: 0
+# start of region readout, in pixels; left edge.
+region_x: 0
+# start of region readout, in pixels; top edge.
+region_y: 0
+# resize algorithm which is used to scale the frame before it is written to the output port. 
+resize_algorithm: :INTER_LINEAR
+# scale factor for the x direction which is used to scale the image before it is written to the output_port. 
+scale_x: 1.0
+# scale factor for the y direction which is used to scale the image before it is written to the output_port. 
+scale_y: 1.0
+# sync out1 mode (GPO, AcquisitionTriggerReady, FrameTriggerReady, FrameTrigger, Exposing, FrameReadout, Acquiring, SyncIn1, SyncIn2, Strobe1)
+sync_out1_mode: FrameTrigger
+# sync out2 mode (GPO, AcquisitionTriggerReady, FrameTriggerReady, FrameTrigger, Exposing, FrameReadout, Acquiring, SyncIn1, SyncIn2, Strobe1)
+sync_out2_mode: FrameTrigger
+# time interval in micro seconds which is used to synchronize camera time with system time. 0 == no synchronization
+synchronize_time_interval: 0
+# trigger mode of the camera, allowed values: freerun, fixed, sync_in1, none
+trigger_mode: fixed
+# true => undistort the image before it is writen to the output port
+undistort: false
+# How fast the Auto white balance will update.
+whitebalance_auto_rate: 100
+# Sets a range of scene color changes in which the automatic whitebalance will not respond.
+whitebalance_auto_threshold: 5
+# Blue gain expressed as a percentage of the camera default setting.
+whitebalance_blue: 580
+# whitebalance mode (auto, manual, auto_once, none)
+whitebalance_mode: auto
+# Red gain expressed as a percentage of the camera default setting.
+whitebalance_red: 650
+# width of the camera frame
+width: 1024
+
+#  ___            _    _     _               ____
+# | _ )_  _ _ __ | |__| |___| |__  ___ ___  |__ /
+# | _ \ || | '  \| '_ \ / -_) '_ \/ -_) -_)  |_ \
+# |___/\_,_|_|_|_|_.__/_\___|_.__/\___\___| |___/
+#                                                
+--- name:bb3
+# count of frames if grab mode is MultiFrame
+acquisition_frame_count: 200
+# horizontal binning. 1=no binning.
+binning_x: 1
+# vertical binning. 1=no binning.
+binning_y: 1
+# parameter for undistort
+calibration_parameters:
+  fx: 0.0
+  fy: 0.0
+  cx: 0.0
+  cy: 0.0
+  d0: 0.0
+  d1: 0.0
+  d2: 0.0
+  d3: 0.0
+  width: 0
+  height: 0
+# output format of the camera --> not the output port! see below
+camera_format: :MODE_BAYER_GRBG
+# unique camerea id
+camera_id: '49712223537771570'
+# bit depth per channel
+channel_data_depth: 24
+# if the queue is empty because retrieve was called too rarely clear buffer
+clear_buffer_if_frame_drop: false
+# no data are written to frame_raw if set to true
+disable_frame_raw: true
+# exposure value if exposure mode is not auto
+exposure: 10
+# exposure mode (auto, manual, external, none)
+exposure_mode: auto
+# frames per second
+fps: 11.25 # 3.75*3 (3 images with 1280*960 resolution each time)
+# size of the frame buffer
+frame_buffer_size: 60
+# External trigger event, allowed values:  EdgeRising, EdgeFalling, EdgeAny, LevelHigh, LevelLow, none
+frame_start_trigger_event: EdgeRising
+# gain value
+gain: 16
+# gain mode
+gain_mode_auto: false
+# turns gamma on or off
+gamma: false
+# grab mode (Stop, SingleFrame, MultiFrame, Continuously)
+grab_mode: :Continuously
+# hdr kneepoint1 voltage level 1 [0..255]
+hdr_voltage_1: 0
+# hdr kneepoint1 voltage level 2 [0..255]
+hdr_voltage_2: 0
+# hdr kneepoint2 voltage level 1 [0..255]
+hdr_voltage_3: 0
+# hdr kneepoint2 voltage level 2 [0..255]
+hdr_voltage_4: 0
+# height of the camera frame
+height: 960
+# Bus speed, legacy mode allows up to 400, mode B allows up to 800
+isochronous_speed: 800
+# interval for logging a statistic about valid and invalid frames per second (0= logging of) -> it is saved as frame attrib StatFrameRate
+log_interval_in_sec: 5
+# opening mode (Master, Monitor, MasterMulticast)
+mode: Master
+# the offset to be used on the left margin in case of scaling
+offset_x: 0
+# the offset to be used on the left margin in case of scaling
+offset_y: 0
+# Operation mode can be legacy (A) or B, allowing speeds up to 800MBit/s
+operation_mode: 'B'
+# The camera_format is converted into this format before it is written to the output port 
+output_format: :MODE_UNDEFINED
+# In Bytes. Size of image data packet. This size includes the GVSP, UDP, and IP headers. (0 == max possible)
+package_size: 0
+# start of region readout, in pixels; left edge.
+region_x: 0
+# start of region readout, in pixels; top edge.
+region_y: 0
+# resize algorithm which is used to scale the frame before it is written to the output port. 
+resize_algorithm: :INTER_LINEAR
+# scale factor for the x direction which is used to scale the image before it is written to the output_port. 
+scale_x: 1.0
+# scale factor for the y direction which is used to scale the image before it is written to the output_port. 
+scale_y: 1.0
+# sync out1 mode (GPO, AcquisitionTriggerReady, FrameTriggerReady, FrameTrigger, Exposing, FrameReadout, Acquiring, SyncIn1, SyncIn2, Strobe1)
+sync_out1_mode: FrameTrigger
+# sync out2 mode (GPO, AcquisitionTriggerReady, FrameTriggerReady, FrameTrigger, Exposing, FrameReadout, Acquiring, SyncIn1, SyncIn2, Strobe1)
+sync_out2_mode: FrameTrigger
+# time interval in micro seconds which is used to synchronize camera time with system time. 0 == no synchronization
+synchronize_time_interval: 0
+# trigger mode of the camera, allowed values: freerun, fixed, sync_in1, none
+trigger_mode: fixed
+# true => undistort the image before it is writen to the output port
+undistort: false
+# How fast the Auto white balance will update.
+whitebalance_auto_rate: 100
+# Sets a range of scene color changes in which the automatic whitebalance will not respond.
+whitebalance_auto_threshold: 5
+# Blue gain expressed as a percentage of the camera default setting.
+whitebalance_blue: 580
+# whitebalance mode (auto, manual, auto_once, none)
+whitebalance_mode: auto
+# Red gain expressed as a percentage of the camera default setting.
+whitebalance_red: 650
+# width of the camera frame
+width: 1280
+
+#     ___                _                        ___   _         __ _    
+#    / __|_ _ __ _ _____| |_  ___ _ __  ___ _ _  |_  ) | |   ___ / _| |_  
+#   | (_ | '_/ _` (_-<_-< ' \/ _ \ '_ \/ -_) '_|  / /  | |__/ -_)  _|  _| 
+#    \___|_| \__,_/__/__/_||_\___/ .__/\___|_|   /___| |____\___|_|  \__| 
+#                                |_|                                      
+--- name:pan_cam_left
+# output format of the camera --> not the output port! see below
+camera_format: :MODE_RGB
+# unique camerea id
+camera_id: '49712223535938046'
+# bit depth per channel
+channel_data_depth: 8
+# height of the camera frame
+height: 960
+# width of the camera frame
+width: 1280
+
+#     ___                _                        ___   ___ _      _   _    
+#    / __|_ _ __ _ _____| |_  ___ _ __  ___ _ _  |_  ) | _ (_)__ _| |_| |_  
+#   | (_ | '_/ _` (_-<_-< ' \/ _ \ '_ \/ -_) '_|  / /  |   / / _` | ' \  _| 
+#    \___|_| \__,_/__/__/_||_\___/ .__/\___|_|   /___| |_|_\_\__, |_||_\__| 
+#                                |_|                         |___/          
+--- name:pan_cam_right
+# output format of the camera --> not the output port! see below
+camera_format: :MODE_RGB
+# unique camerea id
+camera_id: '49712223535938026'
+# bit depth per channel
+channel_data_depth: 8
+# height of the camera frame
+height: 960
+# width of the camera frame
+width: 1280
+
+--- name:loc_cam_front
+# unique camerea id
+camera_id: '49712223532727488'
+
+--- name:loc_cam_rear
+# unique camerea id
+camera_id: '49712223536067003'
+
+# Text to ASCII Art Generator online tool -> Just try it!
+#http://patorjk.com/software/taag/#p=display&h=2&v=2&c=bash&w=%20&f=Small&t=Grasshoper%202%20Left

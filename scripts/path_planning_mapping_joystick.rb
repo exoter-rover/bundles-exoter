@@ -9,7 +9,35 @@ include Orocos
 ## Initialize orocos ##
 Bundles.initialize
 
-Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_proprioceptive', 'exoter_slam' do
+Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_proprioceptive', 'exoter_slam', 'exoter_mast_bb2', 'exoter_autonomy' do
+
+    # Camera firewire
+    puts "Setting up camera firewire"
+    camera_firewire = TaskContext.get 'camera_firewire_mast'
+    Orocos.conf.apply(camera_firewire, ['exoter_bb2'], :override => true)
+    camera_firewire.configure
+    puts "done"
+
+    # Camera bb2
+    puts "Setting up bb2"
+    camera_bb2 = TaskContext.get 'camera_bb2_mast'
+    Orocos.conf.apply(camera_bb2, ['exoter_bb2'], :override => true)
+    camera_bb2.configure
+    puts "done"
+
+    # Stereo
+    puts "Setting up bb2 stereo"
+    stereo = TaskContext.get 'stereo_mast'
+    Orocos.conf.apply(stereo, ['exoter_bb2'], :override => true)
+    stereo.configure
+    puts "done"
+
+    # Autonomy
+    puts "Setting cartographer"
+    cartographer = TaskContext.get 'cartographer'
+    Orocos.conf.apply(cartographer, ['default'], :override => true)
+    cartographer.configure
+    puts "done"
 
     # setup platform_driver
     puts "Setting up platform_driver"
@@ -163,9 +191,21 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     puts "done"
 
     # Log all ports
-    Orocos.log_all_ports
+    #Orocos.log_all_ports
 
     puts "Connecting ports"
+
+    # Connect the ports
+    camera_firewire.frame.connect_to camera_bb2.frame_in
+    camera_bb2.left_frame.connect_to stereo.left_frame
+    camera_bb2.right_frame.connect_to stereo.right_frame
+
+    # Connect autonomy tasks
+    stereo.distance_frame.connect_to 			cartographer.distance_image
+    imu_stim300.orientation_samples_out.connect_to	cartographer.pose_imu
+    vicon.pose_samples.connect_to               	cartographer.pose_vicon        
+    ptu_control.mast_to_ptu_out.connect_to 		cartographer.pose_ptu
+
     # Connect ports: platform_driver to read_joint_dispatcher
     platform_driver.joints_readings.connect_to read_joint_dispatcher.joints_readings
 
@@ -206,7 +246,8 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     vicon.pose_samples.connect_to waypoint_navigation.pose
 
     # Connect ports: traversability explorer to	planner
-    trav.traversability_map.connect_to	planner.traversability_map
+    #trav.traversability_map.connect_to	planner.traversability_map
+    cartographer.traversability_map.connect_to	planner.traversability_map
 
     # Connect ports: planner 		to	trajectory refiner
     planner.waypoints.connect_to                refiner.waypoints_in
@@ -235,7 +276,7 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     locomotion_control.start
     ptu_control.start
     vicon.start
-    #imu_stim300.starti
+    imu_stim300.start
     joystick.start
     waypoint_navigation.start
     command_arbiter.start
@@ -244,6 +285,12 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     motion_translator.start
     trav.start
     goal.start
+
+
+    camera_firewire.start
+    camera_bb2.start
+    stereo.start
+    cartographer.start
 
    #Readline::readline("Press ENTER to generate the trajectory.")
    #goal.trigger

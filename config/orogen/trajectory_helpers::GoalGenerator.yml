@@ -1,0 +1,19 @@
+--- name:default
+# Goal heading of the robot in degrees
+goal_heading: 0.0
+# (X,Y) goal position of the robot
+goal_index: 0
+# Deadband of joystick displacement when calculating the heading.
+joystick_deadband: 0.75
+
+--- name:prl 
+# Lists containing x-coordinates of available waypoints
+xpos: [1.000, 2.093, 3.936, 5.602, 7.834, 2.150, 3.906, 5.843, 7.567, 0.705, 4.283, 5.741, 7.483, 1.014, 2.950, 4.300, 5.806, 7.227, 1.208, 2.914, 4.405, 7.051]
+# Lists containing y-coordinates of available waypoints
+ypos: [5.500, 7.419, 7.199, 7.409, 7.899, 5.739, 5.781, 5.952, 5.951, 4.224, 4.015, 3.961, 3.926, 2.683, 2.549, 2.388, 2.396, 2.404, 0.978, 1.386, 1.069, 1.132]
+
+--- name:prl2
+# Lists containing x-coordinates of available waypoints
+xpos: [0.750, 0.892, 2.466, 4.399, 5.858, 0.830, 3.012, 3.806, 5.585, 7.850, 0.723, 2.609, 4.375, 5.632, 0.901, 2.917, 4.696, 6.581, 0.866, 2.964, 6.949]
+# Lists containing y-coordinates of available waypoints
+ypos: [5.500, 7.549, 7.785, 7.879, 7.121, 6.314, 6.480, 5.923, 5.875, 5.840, 4.642, 5.010, 4.441, 4.512, 2.970, 2.686, 2.982, 3.646, 0.563, 1.097, 1.381]

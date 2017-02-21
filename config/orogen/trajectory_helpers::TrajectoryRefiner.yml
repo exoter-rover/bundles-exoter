@@ -1,0 +1,5 @@
+--- name:default
+# Goal heading tolerance in degrees
+goal_heading_tol: 2.0
+# Goal position tolerance in meters
+goal_position_tol: 0.05

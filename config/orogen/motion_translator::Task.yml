@@ -1,0 +1,15 @@
+--- name:default
+# Minimum translation speed preventing automatic mode switch
+minSpeedPointTurn: 0.001
+# Maximum PTU pan angle in degrees
+ptuMaxPanAngle: 2.75010971105
+# Maximum speed at which to move the PTU axis
+ptuMaxSpeed: 0.2
+# Maximum PTU tilt angle in degrees
+ptuMaxTiltAngle: 0.7879634254
+# Minimum PTU pan angle in degrees
+ptuMinPanAngle: -2.757507351
+# Minimum PTU tilt angle in degrees
+ptuMinTiltAngle: -0.52688923589
+# Ratio step value
+speedRatioStep: 0.005

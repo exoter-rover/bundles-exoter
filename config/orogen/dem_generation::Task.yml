@@ -1,0 +1,62 @@
+--- name:exoter_bb2
+# no documentation available for this property
+cameraCalibration:
+    fx: 840.919396
+    fy: 843.876013
+    cx: 517.845770
+    cy: 379.251908
+    d0: -0.348848
+    d1: 0.139364
+    d2: -0.000173
+    d3: -0.000284
+    width: 1024
+    height: 768
+    ex: 0.0
+    ey: 0.0
+# A configuration property (here, a std::string). Its value can be retrieved
+# in the C++ code with # _config_value.get() and _config_value.set(new_value).
+camera_name: 'FLOC'
+# no documentation available for this property
+save_directory: '/home/exoter/Desktop/Images/'
+
+--- name:hdpr_bb2
+# no documentation available for this property
+cameraCalibration:
+    fx: 837.253850
+    fy: 838.490409
+    cx: 500.836269
+    cy: 396.129781
+    d0: -0.350699
+    d1: 0.143871
+    d2: 0.000772
+    d3: 0.000436
+    width: 1024
+    height: 768
+    ex: 0.0
+    ey: 0.0
+# A configuration property (here, a std::string). Its value can be retrieved
+# in the C++ code with # _config_value.get() and _config_value.set(new_value).
+camera_name: 'RLOC'
+# no documentation available for this property
+save_directory: '/home/exoter/Desktop/Images/'
+
+--- name:bb3
+# no documentation available for this property
+cameraCalibration:
+    fx: 1624.646083
+    fy: 1629.037008
+    cx: 633.800760
+    cy: 489.614872
+    d0: -0.604146
+    d1: 0.401654
+    d2: -0.001994
+    d3: 0.003990
+    width: 1280
+    height: 960
+    ex: 0.0
+    ey: 0.0
+# A configuration property (here, a std::string). Its value can be retrieved
+# in the C++ code with # _config_value.get() and _config_value.set(new_value).
+camera_name: 'PANCAM'
+# no documentation available for this property
+save_directory: '/home/exoter/Desktop/Images/'

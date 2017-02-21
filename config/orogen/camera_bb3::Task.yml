@@ -1,0 +1,47 @@
+--- name:default
+# Intrinsic camera calibration parametersfor a full parameter list have a look at frame_helper
+calibration_parameters_center:
+  fx: 0.0
+  fy: 0.0
+  cx: 0.0
+  cy: 0.0
+  d0: 0.0
+  d1: 0.0
+  d2: 0.0
+  d3: 0.0
+  width: 1280
+  height: 960
+  ex: 0.0
+  ey: 0.0
+# Intrinsic camera calibration parametersfor a full parameter list have a look at frame_helper
+calibration_parameters_left:
+  fx: 0.0
+  fy: 0.0
+  cx: 0.0
+  cy: 0.0
+  d0: 0.0
+  d1: 0.0
+  d2: 0.0
+  d3: 0.0
+  width: 1280
+  height: 960
+  ex: 0.0
+  ey: 0.0
+# Intrinsic camera calibration parametersfor a full parameter list have a look at frame_helper
+calibration_parameters_right:
+  fx: 0.0
+  fy: 0.0
+  cx: 0.0
+  cy: 0.0
+  d0: 0.0
+  d1: 0.0
+  d2: 0.0
+  d3: 0.0
+  width: 1280
+  height: 960
+  ex: 0.0
+  ey: 0.0
+# The frames coming from the input port are converted into this format before they are written to the output port. Used for De-Bayering here.
+output_format: :MODE_RGB
+# output the camera images undistorted/rectified
+undistort: false
