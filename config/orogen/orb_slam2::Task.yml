@@ -66,7 +66,7 @@ sensor_frame: left_camera
 orb_calibration: "<%= ENV['AUTOPROJ_CURRENT_ROOT'] %>/bundles/exoter/data/orb_slam2/bumblebee_calibration.txt"
 
 # Minimum period to adaptively compute the image processing step in seconds. It cannot be smaller than the input port period.
-minimum_frame_period: 2.8 # better multiple of left_frame_period (n * 0.4)
+minimum_frame_period: 2.0 # better multiple of left_frame_period (n * 0.4)
 
 # minimum time, in s, between two sequential samples arrive on left_frame
 left_frame_period: 0.4
