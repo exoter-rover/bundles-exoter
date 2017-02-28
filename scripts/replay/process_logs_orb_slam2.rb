@@ -315,11 +315,11 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     if options[:camera_bb2].casecmp("task").zero?
         log_replay.camera_firewire.frame.connect_to camera_bb2.frame_in, :type => :buffer, :size => 5
 
-        camera_bb2.left_frame.connect_to orb_slam2.left_frame#, :type => :buffer, :size => 5
-        camera_bb2.right_frame.connect_to orb_slam2.right_frame#, :type => :buffer, :size => 5
+        camera_bb2.left_frame.connect_to orb_slam2.left_frame, :type => :buffer, :size => 5
+        camera_bb2.right_frame.connect_to orb_slam2.right_frame, :type => :buffer, :size => 5
     elsif options[:camera_bb2].casecmp("log").zero?
-        log_replay.camera_bb2.left_frame.connect_to orb_slam2.left_frame#, :type => :buffer, :size => 5
-        log_replay.camera_bb2.right_frame.connect_to orb_slam2.right_frame#, :type => :buffer, :size => 5
+        log_replay.camera_bb2.left_frame.connect_to orb_slam2.left_frame, :type => :buffer, :size => 5
+        log_replay.camera_bb2.right_frame.connect_to orb_slam2.right_frame, :type => :buffer, :size => 5
     end
 
     #############################
