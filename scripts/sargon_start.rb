@@ -7,8 +7,9 @@ require 'readline'
 include Orocos
 
 options = {}
+options[:joystick] = "no"
 options[:camera] = "no"
-options[:logging] = "nominal"
+options[:logging] = "none"
 options[:scripted] = "no"
 scripting = 0
 
@@ -17,11 +18,15 @@ OptionParser.new do |opt|
     usage: sargon_start.rb [options] 
     EOD
 
-    opt.on '-c or --camera=yes/no', String, 'set the camera on or off' do |camera|
-	options[:camera] = camera
+    opt.on '-j or --joystick=yes/no', String, 'specify if a joystick is present and shall be used' do |camera|
+        options[:joystick] = joystick
     end
 
-    opt.on '-l or --logging=none/minimum/nominal/all', String, 'set the type of log files you want. Nominal as default' do |logging|
+    opt.on '-c or --camera=yes/no', String, 'set the camera on or off' do |camera|
+        options[:camera] = camera
+    end
+
+    opt.on '-l or --logging=none/all', String, 'set the log files you want. None as default' do |logging|
         options[:logging] = logging
     end
 
@@ -41,7 +46,7 @@ Bundles.initialize
 ## Transformation for the transformer
 Bundles.transformer.load_conf(Bundles.find_file('config', 'transforms_scripts.rb'))
 
-Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_localization' do
+Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_exteroceptive', 'exoter_localization' do
 
     # setup platform_driver
     puts "Setting up platform_driver"
@@ -71,26 +76,23 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_localizat
     locomotion_control.configure
     puts "done"
 
-    # setup exoter ptu_control
-    #puts "Setting up ptu_control"
-    #ptu_control = Orocos.name_service.get 'ptu_control'
-    #Orocos.conf.apply(ptu_control, ['default'], :override => true)
-    #ptu_control.configure
-    #puts "done"
+    if options[:joystick].casecmp("yes").zero?
+        # setup motion_translator
+        puts "Setting up motion_translator"
+        motion_translator = Orocos.name_service.get 'motion_translator'
+        Orocos.conf.apply(motion_translator, ['default'], :override => true)
+        motion_translator.configure
+        puts "done"
 
-    # setup motion_translator
-    puts "Setting up motion_translator"
-    motion_translator = Orocos.name_service.get 'motion_translator'
-    Orocos.conf.apply(motion_translator, ['default'], :override => true)
-    motion_translator.configure
-    puts "done"
-
-    # setup joystick
-    puts "Setting up joystick"
-    joystick = Orocos.name_service.get 'joystick'
-    Orocos.conf.apply(joystick, ['default'], :override => true)
-    joystick.configure
-    puts "done"
+        # setup joystick
+        puts "Setting up joystick"
+        joystick = Orocos.name_service.get 'joystick'
+        Orocos.conf.apply(joystick, ['default'], :override => true)
+        joystick.configure
+        puts "done"
+    else
+        puts "No joystick"
+    end
 
     # Localization
     puts "Setting up localization_frontend"
@@ -120,21 +122,26 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_localizat
     # setup camera (optional)
     if options[:camera].casecmp("yes").zero?
         puts "Setting up camera_firewire"
-	camera_firewire = Orocos.name_service.get 'camera_firewire_mast'
-	Orocos.conf_apply(camera_firewire, ['exoter_bb2'], :override => true)
-	camera_firewire.configure
-	puts "done"
-	puts "Setting up camera_bb2"
-	camera_bb2 = Orocos.name_service.get 'camera_bb2_front'
-	Orocos.conf.apply(camera_bb2, ['exoter_bb2'], :override => true)
-	camera_bb2.configure
-	puts "done"
+        camera_firewire = Orocos.name_service.get 'camera_firewire_front'
+        Orocos.conf.apply(camera_firewire, ['exoter_bb2'], :override => true)
+        camera_firewire.configure
+        puts "done"
+        puts "Setting up camera_bb2"
+        camera_bb2 = Orocos.name_service.get 'camera_bb2_front'
+        Orocos.conf.apply(camera_bb2, ['exoter_bb2'], :override => true)
+        camera_bb2.configure
+        puts "done"
     else
         puts "No cameras"
     end
 
     # Log all ports
-    Orocos.log_all_ports
+    if options[:logging].casecmp("all").zero?
+        puts "Logging all ports"
+        Orocos.log_all
+    else
+        puts "NO Logging"
+    end
 
     puts "Connecting ports"
     # Connect ports: platform_driver to read_joint_dispatcher
@@ -143,11 +150,13 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_localizat
     # Connect ports: read_joint_dispatcher to locomotion_control
     read_joint_dispatcher.motors_samples.connect_to locomotion_control.joints_readings
 
-    # Connect ports: joystick to motion_translator
-    joystick.raw_command.connect_to motion_translator.raw_command
+    if options[:joystick].casecmp("yes").zero?
+        # Connect ports: joystick to motion_translator
+        joystick.raw_command.connect_to motion_translator.raw_command
 
-    # Connect ports: motion_translator to locomotion_control
-    motion_translator.motion_command.connect_to locomotion_control.motion_command
+        # Connect ports: motion_translator to locomotion_control
+        motion_translator.motion_command.connect_to locomotion_control.motion_command
+    end
 
     # Connect ports: locomotion_control to command_joint_dispatcher
     locomotion_control.joints_commands.connect_to command_joint_dispatcher.joints_commands
@@ -155,26 +164,18 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_localizat
     # Connect ports: command_joint_dispatcher to platform_driver
     command_joint_dispatcher.motors_commands.connect_to platform_driver.joints_commands
 
-    # Connect ports: read_joint_dispatcher to ptu_control
-    #read_joint_dispatcher.ptu_samples.connect_to ptu_control.ptu_samples
-
-    # Connect ports: ptu_control to command_joint_dispatcher
-    #ptu_control.ptu_commands_out.connect_to command_joint_dispatcher.ptu_commands
-    #puts "done"
-
     # Connect camera ports
     if options[:camera].casecmp("yes").zero?
-	    camera_firewire.frame.connect_to camera_bb2.frame_in
+        camera_firewire.frame.connect_to camera_bb2.frame_in
     end
 
     puts "Connecting localization ports"
-    read_joint_dispatcher.joints_samples.connect_to localization_frontend.joints_samples
-    #read_joint_dispatcher.ptu_samples.connect_to localization_frontend.ptu_samples
-    imu_stim300.orientation_samples_out.connect_to localization_frontend.orientation_samples
-    imu_stim300.compensated_sensors_out.connect_to localization_frontend.inertial_samples
-    localization_frontend.joints_samples_out.connect_to exoter_odometry.joints_samples
-    localization_frontend.orientation_samples_out.connect_to exoter_odometry.orientation_samples
-    localization_frontend.weighting_samples_out.connect_to exoter_odometry.weighting_samples, :type => :buffer, :size => 200
+    read_joint_dispatcher.joints_samples.connect_to localization_frontend.joints_samples, :type => :buffer, :size => 10
+    imu_stim300.orientation_samples_out.connect_to localization_frontend.orientation_samples, :type => :buffer, :size => 10
+    imu_stim300.compensated_sensors_out.connect_to localization_frontend.inertial_samples, :type => :buffer, :size => 10
+    localization_frontend.joints_samples_out.connect_to exoter_odometry.joints_samples, :type => :buffer, :size => 10
+    localization_frontend.orientation_samples_out.connect_to exoter_odometry.orientation_samples, :type => :buffer, :size => 10
+    localization_frontend.weighting_samples_out.connect_to exoter_odometry.weighting_samples, :type => :buffer, :size => 10
     puts "done"
 
     # Start the tasks
@@ -182,27 +183,26 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_localizat
     read_joint_dispatcher.start
     command_joint_dispatcher.start
     locomotion_control.start
-    #ptu_control.start
-    motion_translator.start
-    joystick.start
+    if options[:joystick].casecmp("yes").zero?
+        motion_translator.start
+        joystick.start
+    end
     localization_frontend.start
     exoter_odometry.start
     imu_stim300.start
+
     if options[:camera].casecmp("yes").zero?
-	    camera_bb2.start
-	    camera_firewire_mast.start
+        camera_bb2.start
+        camera_firewire.start
     end
 
     if scripting == 1
-	while 1 do
-		sleep 10
-	end
-    
+        while true do
+            sleep 10
+        end
     else
-    	Readline::readline("Press ENTER to exit\n") do
-    	end
+        Readline::readline("Press ENTER to exit\n") do
+        end
     end
-
-
 end
 
