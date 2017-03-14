@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'vizkit'
+#require 'vizkit'
 require 'rock/bundle'
 require 'readline'
 
@@ -46,7 +46,7 @@ Bundles.initialize
 ## Transformation for the transformer
 Bundles.transformer.load_conf(Bundles.find_file('config', 'transforms_scripts.rb'))
 
-Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_exteroceptive', 'exoter_localization' do
+Orocos::Process.run 'sargon_setup' do
 
     # setup platform_driver
     puts "Setting up platform_driver"
@@ -54,6 +54,9 @@ Orocos::Process.run 'exoter_control', 'exoter_proprioceptive', 'exoter_exterocep
     Orocos.conf.apply(platform_driver, ['default'], :override => true)
     platform_driver.configure
     puts "done"
+
+    Readline::readline("Press ENTER to continue\n") do
+    end
 
     # setup read dispatcher
     puts "Setting up reading joint_dispatcher"
