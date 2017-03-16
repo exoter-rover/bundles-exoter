@@ -18,7 +18,7 @@ OptionParser.new do |opt|
     usage: sargon_start.rb [options] 
     EOD
 
-    opt.on '-j or --joystick=yes/no', String, 'specify if a joystick is present and shall be used' do |camera|
+    opt.on '-j or --joystick=yes/no', String, 'specify if a joystick is present and shall be used' do |joystick|
         options[:joystick] = joystick
     end
 
@@ -55,9 +55,6 @@ Orocos::Process.run 'sargon_setup' do
     platform_driver.configure
     puts "done"
 
-    Readline::readline("Press ENTER to continue\n") do
-    end
-
     # setup read dispatcher
     puts "Setting up reading joint_dispatcher"
     read_joint_dispatcher = Orocos.name_service.get 'read_joint_dispatcher'
@@ -77,6 +74,13 @@ Orocos::Process.run 'sargon_setup' do
     locomotion_control = Orocos.name_service.get 'locomotion_control'
     Orocos.conf.apply(locomotion_control, ['default'], :override => true)
     locomotion_control.configure
+    puts "done"
+
+    # setup exoter ptu_control
+    puts "Setting up ptu_control"
+    ptu_control = Orocos.name_service.get 'ptu_control'
+    Orocos.conf.apply(ptu_control, ['default'], :override => true)
+    ptu_control.configure
     puts "done"
 
     if options[:joystick].casecmp("yes").zero?
@@ -171,6 +175,8 @@ Orocos::Process.run 'sargon_setup' do
     if options[:camera].casecmp("yes").zero?
         camera_firewire.frame.connect_to camera_bb2.frame_in
     end
+    # Connect ports: ptu_control to command_joint_dispatcher
+    ptu_control.ptu_commands_out.connect_to command_joint_dispatcher.ptu_commands
 
     puts "Connecting localization ports"
     read_joint_dispatcher.joints_samples.connect_to localization_frontend.joints_samples, :type => :buffer, :size => 10
@@ -186,6 +192,7 @@ Orocos::Process.run 'sargon_setup' do
     read_joint_dispatcher.start
     command_joint_dispatcher.start
     locomotion_control.start
+    ptu_control.start
     if options[:joystick].casecmp("yes").zero?
         motion_translator.start
         joystick.start
