@@ -10,33 +10,10 @@ orientation_source_frame: "body"
 # to frame for the transformer
 orientation_target_frame: "navigation"
 
-# from frame for the transformer
-navigation_source_frame: "navigation"
-# to frame for the transformer
-navigation_target_frame: "world"
-
-# from frame for the transformer
-reference_source_frame: "body"
-# to frame for the transformer
-reference_target_frame: "navigation"
-
-# from frame for the transformer
-delta_reference_source_frame: "body"
-# to frame for the transformer
-delta_reference_target_frame: "body_k-1"
-
-# from frame for the transformer
-world_source_frame: "world"
-# to frame for the transformer
-world_target_frame: "world_osg"
-
 # Effective wheel radius average for odometry
 wheel_radius_joint_names: [fl_wheel]
 
 passive_offset_joint_name: "left_bogie"
-
-# Value to fix some imu  log test that did not estimate the uncertainty correctly.
-attitude_covariance_adjustment: 1.0 #10000000000.00
 
 # Locomotion joints searching by names.
 #joint_names: [left_passive, right_passive, rear_passive, fl_walking, fr_walking, ml_walking, mr_walking, rl_walking, rr_walking, fl_steer, fr_steer, rl_steer, rr_steer, fl_drive, fr_drive, ml_drive, mr_drive, rl_drive, rr_drive]
@@ -72,180 +49,45 @@ translation_joint_names:
 # Joints in which the IIR wants to be apply. These joints names MUST be also contained in the joint_names. Maximum number of three joints. In case more joints are required you need to change the code due to template classes. IIR_FILTER_VECTOR_SIZE
 filter_joint_names: [left_passive, right_passive, rear_passive]
 
-# Camera intrinsic parameters.
-left_camera_parameters:
-    fx: 837.98636
-    fy: 838.56569
-    cx: 509.74846
-    cy: 376.99711
-    d0: -0.35914
-    d1: 0.16317
-    d2: 0.00039
-    d3: 0.00041
-    width: 1024
-    height: 768
-# Camera intrinsic parameters.
-right_camera_parameters:
-    fx: 837.40801
-    fy: 838.06473
-    cx: 536.53701
-    cy: 377.66591
-    d0: -0.35499
-    d1: 0.15218
-    d2: 0.00019
-    d3: -0.00016
-    width: 1024
-    height: 768
-
-# the global name that should be used for the internal body frame
-body_frame: body
-# the global name that should be used for the internal imu frame
-imu_frame: imu
-# the global name that should be used for the internal laser frame
-laser_frame: tof_camera
-
 # Time in s between joints_samples readings
 joints_samples_period: 0.08
 # Time in s between inertial_samples readings
 inertial_samples_period: 0.008
 # Time in s between orientation_samples readings
 orientation_samples_period: 0.008
-# Time in s between left_frame readings
-left_frame_period: 0.4
-# Time in s between right_frame readings
-right_frame_period: 0.4
-# Time in s between point_cloud_samples readings
-point_cloud_samples_period: 0.5
-# Time in s between pose_reference_samples readings
-pose_reference_samples_period: 0.01 #0.01 for vicon 0.1 for gnss
 # Minimum system time in seconds between two updates of the status ports
-transformer_status_period: 0.08
+stream_aligner_status_period: 1.0
 # Maximum time in seconds the transformer will wait until it starts dropping samples
-transformer_max_latency: 1.0
-# Set to true if output debug information is desirable.
-output_debug: false
+aggregator_max_latency: 1.0
 
-# list of static transformations
-static_transformations: []
-
-# no documentation available for this property
-#metadata:
-#  metadata: []
-#  properties: []
-#  input_ports: []
-#  output_ports: []
-#
---- name:bessel50
-#Configuration values to run Infinite Impulse Response (IIR).
-filter_config:
-  filterOn: true  #True or false
-  feedForwardCoeff:
+#T_body_to_imu which transform samples from imu-frame to body-frame.
+body_to_imu_transformation:
+  time:
+    microseconds: 0
+  sourceFrame: 'imu'
+  targetFrame: 'body'
+  position:
     data:
-    - 0.00796458
-    - 0.06371664
-    - 0.22300822
-    - 0.44601645
-    - 0.55752056
-    - 0.44601645
-    - 0.22300822
-    - 0.06371664
-    - 0.00796458
-  feedBackCoeff:
+    - 0.00417
+    - -0.0399
+    - 0.0052
+  cov_position:
     data:
-    - 1.00000000e+00
-    - 2.25372213e-01
-    - 6.59616658e-01
-    - 4.22917994e-02
-    - 1.09027593e-01
-    - -2.00686265e-03
-    - 4.77799850e-03
-    - -1.74151766e-04
-    - 2.70798275e-05
-
---- name:bessel12
-#Configuration values to run Infinite Impulse Response (IIR).
-filter_config:
-  filterOn: true  #True or false
-  feedForwardCoeff:
-    data:
-    - 5.86418841e-07
-    - 4.69135073e-06
-    - 1.64197275e-05
-    - 3.28394551e-05
-    - 4.10493189e-05
-    - 3.28394551e-05
-    - 1.64197275e-05
-    - 4.69135073e-06
-    - 5.86418841e-07
-  feedBackCoeff:
-    data:
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+    - .nan
+  orientation:
+    im:
+    - 0.0
+    - 0.0
     - 1.0
-    - -5.86387295
-    - 15.2039213
-    - -22.74976354
-    - 21.47240826
-    - -13.08310578
-    - 5.02268683
-    - -1.11027129
-    - 0.1081473
-
---- name:cheby15
-#Configuration values to run Infinite Impulse Response (IIR).
-filter_config:
-  filterOn: true  #True or false
-  feedForwardCoeff:
-    data:
-    - 0.00337555
-    - -0.00257566
-    - 0.00573734
-    - 0.00068761
-    - 0.00068761
-    - 0.00573734
-    - -0.00257566
-    - 0.00337555
-  feedBackCoeff:
-    data:
-    - 1.0
-    - -4.19451974
-    - 7.9299096
-    - -8.62533663
-    - 5.79110338
-    - -2.38816083
-    - 0.5583857
-    - -0.05693179
-
---- name:hamming1hzsampling25hz
-#Configuration values for the Finite Impulse Response (FIR). Wp = 1.0hz/12.5 (nyquist_rate).
-filter_config:
-  filterOn: true  #True or false
-  feedForwardCoeff:
-    data:
-    - -2.41106328e-06
-    - 7.67247122e-04
-    - 2.36425900e-03
-    - 5.55539414e-03
-    - 1.09866446e-02
-    - 1.90153872e-02
-    - 2.95840347e-02
-    - 4.21643238e-02
-    - 5.57884001e-02
-    - 6.91660102e-02
-    - 8.08698070e-02
-    - 8.95565965e-02
-    - 9.41843067e-02
-    - 9.41843067e-02
-    - 8.95565965e-02
-    - 8.08698070e-02
-    - 6.91660102e-02
-    - 5.57884001e-02
-    - 4.21643238e-02
-    - 2.95840347e-02
-    - 1.90153872e-02
-    - 1.09866446e-02
-    - 5.55539414e-03
-    - 2.36425900e-03
-    - 7.67247122e-04
-    - -2.41106328e-06
+    re: 0.0
 
 --- name:hamming1hzsampling12hz
 #Configuration values for the Finite Impulse Response (FIR). Wp = 1.0hz/6.25 (nyquist_rate).
