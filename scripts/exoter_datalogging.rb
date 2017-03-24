@@ -109,13 +109,13 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_propriocepti
     puts "done"
 
     # Camera firewire
-    camera_firewire = TaskContext.get 'camera_firewire'
-    Orocos.conf.apply(camera_firewire, ['default'], :override => true)
+    camera_firewire = TaskContext.get 'camera_firewire_front'
+    Orocos.conf.apply(camera_firewire, ['exoter_bb2'], :override => true)
     camera_firewire.configure
 
     # Camera bb2
-    camera_bb2 = TaskContext.get 'camera_bb2'
-    Orocos.conf.apply(camera_bb2, ['default'], :override => true)
+    camera_bb2 = TaskContext.get 'camera_bb2_front'
+    Orocos.conf.apply(camera_bb2, ['exoter_bb2'], :override => true)
     camera_bb2.configure
 
     # Stereo

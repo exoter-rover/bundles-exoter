@@ -23,7 +23,7 @@ calibration_parameters:
   width: 0
   height: 0
 # output format of the camera --> not the output port! see below
-camera_format: :MODE_BAYER_GBRG
+camera_format: :MODE_BAYER_GRBG
 # unique camerea id
 camera_id: '49712223537684762'
 # bit depth per channel

@@ -29,7 +29,7 @@ color_interval: 1
 # Maximal integration time for auto exposure
 max_int_time: 0
 # Type of interface of the camera sensor. So far Swiss Ranger Cameras are available with USB or Ethernet interfaces for data connection. Possible values: USB, ETHERNET
-interface: USB
+interface: ETHERNET
 # IP address used by the camera sensor. Property only valid for Ethernet type of interface.
 ip_address: 192.168.1.34
 #
