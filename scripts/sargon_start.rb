@@ -184,7 +184,7 @@ Orocos::Process.run 'sargon_setup' do
     imu_stim300.compensated_sensors_out.connect_to localization_frontend.inertial_samples, :type => :buffer, :size => 10
     localization_frontend.joints_samples_out.connect_to exoter_odometry.joints_samples, :type => :buffer, :size => 10
     localization_frontend.orientation_samples_out.connect_to exoter_odometry.orientation_samples, :type => :buffer, :size => 10
-    localization_frontend.weighting_samples_out.connect_to exoter_odometry.weighting_samples, :type => :buffer, :size => 10
+    #localization_frontend.weighting_samples_out.connect_to exoter_odometry.weighting_samples, :type => :buffer, :size => 10
     puts "done"
 
     # Start the tasks
