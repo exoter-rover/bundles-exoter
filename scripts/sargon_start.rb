@@ -157,12 +157,18 @@ Orocos::Process.run 'sargon_setup' do
     # Connect ports: read_joint_dispatcher to locomotion_control
     read_joint_dispatcher.motors_samples.connect_to locomotion_control.joints_readings
 
+    # Connect ports: read_joint_dispatcher to ptu_control
+    read_joint_dispatcher.ptu_samples.connect_to ptu_control.ptu_samples
+
     if options[:joystick].casecmp("yes").zero?
         # Connect ports: joystick to motion_translator
         joystick.raw_command.connect_to motion_translator.raw_command
 
         # Connect ports: motion_translator to locomotion_control
         motion_translator.motion_command.connect_to locomotion_control.motion_command
+
+        # Connect ports: motion_translator to locomotion_control
+        motion_translator.ptu_command.connect_to ptu_control.ptu_joints_commands
     end
 
     # Connect ports: locomotion_control to command_joint_dispatcher
