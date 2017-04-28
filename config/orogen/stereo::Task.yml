@@ -13,7 +13,7 @@ image_rotated: false
 # down- or upscale input images by this factor.
 image_scaling_factor: 1.0
 # frame mode format of the output sync frames
-output_format_sync: :MODE_RGB
+#output_format_sync: :MODE_RGB # FIXME: Not in master branch. What does it do?
 # configuration values for libElas
 libElas_conf:
   disp_min: 0
@@ -106,7 +106,7 @@ image_rotated: false
 # down- or upscale input images by this factor.
 image_scaling_factor: 1.0
 # frame mode format of the output sync frames
-output_format_sync: :MODE_RGB
+#output_format_sync: :MODE_RGB # FIXME: Not in master branch. What does it do?
 # configuration values for libElas
 libElas_conf:
   disp_min: 5
@@ -199,7 +199,7 @@ image_rotated: false
 # down- or upscale input images by this factor.
 image_scaling_factor: 1.0
 # frame mode format of the output sync frames
-output_format_sync: :MODE_RGB
+#output_format_sync: :MODE_RGB # FIXME: Not in master branch. What does it do?
 # configuration values for libElas
 libElas_conf:
   disp_min: 5
