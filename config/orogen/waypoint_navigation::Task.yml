@@ -1,34 +1,34 @@
 --- name:default
 # Configuration of Path Tracker parameters, namely distances, velocities and turn radius
-ptConfig:
-  minTurnRadius: 0.6
-  translationalVelocity: 0.05
-  rotationalVelocity: 0.15
-  corridor: 0.2
-  maxDisalignment: 0.15
-  lookaheadDistance: 0.6
-  backwards: false
+#ptConfig: # FIXME: Not part of master anymore
+#  minTurnRadius: 0.6
+#  translationalVelocity: 0.05
+#  rotationalVelocity: 0.15
+#  corridor: 0.2
+#  maxDisalignment: 0.15
+#  lookaheadDistance: 0.6
+#  backwards: false
 
-pdConfig:
-    P: 0.5
-    D: 0.08 #0.375
-    saturation: 0.3491
+#pdConfig: # FIXME
+#    P: 0.5
+#    D: 0.08 #0.375
+#    saturation: 0.3491
 
 # Default goal heading tolerance (deg).
-tolHeading: 3
+#tolHeading: 3 # FIXME
 # Default distance from the goal position tolerance (m).
-tolPos:     0.075
-repeatCommand: false
+#tolPos:     0.075
+#repeatCommand: false
 
 --- name:exoter
 # Configuration of Path Tracker parameters, namely distances, velocities and turn radius
-ptConfig:
-  minTurnRadius: 0.6
-  translationalVelocity: 0.05
-  rotationalVelocity: 0.20
-  corridor: 0.2
-  maxDisalignment: 0.15
-  lookaheadDistance: 0.6
-  backwards: false
+#ptConfig: # FIXME
+#  minTurnRadius: 0.6
+#  translationalVelocity: 0.05
+#  rotationalVelocity: 0.20
+#  corridor: 0.2
+#  maxDisalignment: 0.15
+#  lookaheadDistance: 0.6
+#  backwards: false
 
-repeatCommand: true
+#repeatCommand: true

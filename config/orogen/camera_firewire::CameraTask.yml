@@ -285,7 +285,7 @@ offset_x: 0
 # the offset to be used on the left margin in case of scaling
 offset_y: 0
 # Operation mode can be legacy (A) or B, allowing speeds up to 800MBit/s
-operation_mode: 'B'
+operation_mode: 66
 # The camera_format is converted into this format before it is written to the output port 
 output_format: :MODE_UNDEFINED
 # In Bytes. Size of image data packet. This size includes the GVSP, UDP, and IP headers. (0 == max possible)

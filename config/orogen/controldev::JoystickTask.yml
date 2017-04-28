@@ -41,5 +41,7 @@ axisScale:
 - 1.0
 - 1.0
 - 1.0
+- 1.0
+- 1.0
 # Path to the joystick device
 device: /dev/input/js0

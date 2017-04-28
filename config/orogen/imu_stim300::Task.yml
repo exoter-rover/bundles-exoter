@@ -9,13 +9,13 @@ filter_configuration:
   initial_alignment_samples: 750 #20 minute(s) initial alignment. IMU rate is 125Hz
   correction_frequency: 1.0
 
-init_heading: 0.0
+#init_heading: 0.0 # FIXME: Not in master. Needed?
 # set to true to take the estimated bias values of the sensors through config values.
-use_input_bias: false
+#use_input_bias: false
 # 3 values of estimated bias. Axis order is X, Y, Z
-biasacc: []
+#biasacc: []
 # 3 values of estimated bias. Axis order is X, Y, Z
-biasgyro: []
+#biasgyro: []
 
 
 --- name:exoter
@@ -25,7 +25,7 @@ revision: :REV_D
 timeout: 0.01 #in seconds
 use_filter: true
 
-init_heading: -30.0
+#init_heading: -30.0 # FIXME
 
 --- name:SEROM
 # Localization properties related to the geographic place (i.e.: latitude, longitude, magnetic declination).
