@@ -11,9 +11,6 @@ camera_to_ptu:
   - 0.0
   - 0.0
   - 0.02
-# A configuration property (here, a std::string). Its value can be retrieved
-# in the C++ code with # _config_value.get() and _config_value.set(new_value).
-config_value: ''
 # K points for statistical pc filter
 k_points: 20
 # Leaf size of pc voxel filter
