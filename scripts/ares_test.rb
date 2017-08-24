@@ -10,8 +10,6 @@ include Orocos
 Bundles.initialize
 
 Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_slam' do
-
-
     ## SETUP ##
 
     # setup vicon #TODO / use GPS instead
@@ -36,6 +34,11 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_slam' do
     #path_planning.globalCostFile = "../terrainData/prl/prl_globalCostMap2.txt"
     #path_planning.riskFile = "../terrainData/prl/prl_riskMap.txt"
     #path_planning.soilsFile = "../terrainData/prl/soilList.txt"
+    ares_planner.elevationFile = "/home/exoter/rock_master/planning/orogen/path_planning/terrainData/prl/prl_elevationMap.txt"
+    ares_planner.costFile = "/home/exoter/rock_master/planning/orogen/path_planning/terrainData/prl/prl_costMapLander.txt"
+    ares_planner.globalCostFile = "/home/exoter/rock_master/planning/orogen/path_planning/terrainData/prl/prl_globalCostMap2.txt"
+    ares_planner.riskFile = "/home/exoter/rock_master/planning/orogen/path_planning/terrainData/prl/prl_riskMap.txt"
+    ares_planner.soilsFile = "/home/exoter/rock_master/planning/orogen/path_planning/terrainData/prl/soilList.txt"
     ares_planner.configure
     puts "done"
 
