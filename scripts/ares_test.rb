@@ -14,8 +14,22 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_slam' do
 
     ## SETUP ##
 
+    # setup vicon #TODO / use GPS instead
+    puts "Setting up vicon"
+    vicon = Orocos.name_service.get 'vicon'
+    Orocos.conf.apply(vicon, ['default', 'exoter'], :override => true)
+    vicon.configure
+    puts "done"
+
+    # setup waypoint_navigation
+    puts "Setting up waypoint_navigation"
+    waypoint_navigation = Orocos.name_service.get 'waypoint_navigation'
+    Orocos.conf.apply(waypoint_navigation, ['default'], :override => true)
+    waypoint_navigation.configure
+    puts "done"
+
     # setup path_planning
-    puts "Setting up path_planning"
+    puts "Setting up path_planning: ares_planner"
     ares_planner = Orocos.name_service.get 'ares_planner'
     #path_planning.elevationFile = "../terrainData/prl/prl_elevationMap.txt"
     #path_planning.costFile = "../terrainData/prl/prl_costMapLander.txt"
@@ -89,49 +103,51 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_slam' do
 
 
     ## PORT CONNECTIONS ##
+    # Read: Output.connect_to Input
 
     puts "Connecting ports"
     #Orocos.log_all_ports
 
-    # Connecting platform_driver outputs
+    vicon.pose_samples.connect_to                         ares_planner.pose
+    vicon.pose_samples.connect_to                         waypoint_navigation.pose
+
+    ares_planner.trajectory.connect_to                    waypoint_navigation.trajectory
+    ares_planner.locomotionMode.connect_to                locomotion_switcher.locomotionMode
+
+    waypoint_navigation.motion_command.connect_to         locomotion_switcher.motion_command
+
     platform_driver.joints_readings.connect_to            read_joint_dispatcher.joints_readings
 
-    # Connecting read_joint_dispatcher outputs
     read_joint_dispatcher.motors_samples.connect_to       locomotion_control.joints_readings
     read_joint_dispatcher.motors_samples.connect_to       locomotion_switcher.motors_readings
     read_joint_dispatcher.joints_samples.connect_to       wheel_walking_control.joint_readings
-    read_joint_dispatcher.ptu_samples.connect_to          ptu_control.ptu_samples 
+    read_joint_dispatcher.ptu_samples.connect_to          ptu_control.ptu_samples
 
-    # Connecting command_joint_dispatcher outputs
     command_joint_dispatcher.motors_commands.connect_to   platform_driver.joints_commands
 
-    # Connecting ptu_control outputs
     ptu_control.ptu_commands_out.connect_to               command_joint_dispatcher.ptu_commands
 
-    # Connecting locomotion_control outputs
     locomotion_control.joints_commands.connect_to         locomotion_switcher.lc_joints_commands
 
-    # Connecting wheel_walking_control outputs
     wheel_walking_control.joint_commands.connect_to       locomotion_switcher.ww_joints_commands
 
-    # Connecting locomotion_switcher outputs
     locomotion_switcher.joints_commands.connect_to        command_joint_dispatcher.joints_commands
     locomotion_switcher.ww_joystick_command.connect_to    wheel_walking_control.joystick_commands
     locomotion_switcher.kill_switch.connect_to            wheel_walking_control.kill_switch
     locomotion_switcher.resetDepJoints.connect_to         wheel_walking_control.resetDepJoints
     locomotion_switcher.lc_motion_command.connect_to      locomotion_control.motion_command
 
-    # Connecting joystick outputs
     joystick.raw_command.connect_to                       motion_translator.raw_command
 
-    # Connecting motion_translator outputs
     motion_translator.ptu_command.connect_to              ptu_control.ptu_joints_commands
 
     puts "done"
 
 
     ## START TASKS ##
-
+    vicon.start
+    ares_planner.start
+    waypoint_navigation.start
     platform_driver.start
     read_joint_dispatcher.start
     command_joint_dispatcher.start
