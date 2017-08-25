@@ -1,4 +1,7 @@
 #!/usr/bin/env ruby
+#
+# Invoke as follows to use GPS instead of Vicon position data:
+# ruby ares_test.rb gps
 
 require 'vizkit'
 require 'rock/bundle'
@@ -12,12 +15,20 @@ Bundles.initialize
 Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_slam' do
     ## SETUP ##
 
-    # setup vicon #TODO / use GPS instead
-    puts "Setting up vicon"
-    vicon = Orocos.name_service.get 'vicon'
-    Orocos.conf.apply(vicon, ['default', 'exoter'], :override => true)
-    vicon.configure
-    puts "done"
+    # setup vicon or gps, referred to as pos_component
+    if ARGV[0] == "gps"
+        puts "Setting up GPS"
+        pos_component = Orocos.name_service.get 'gps'
+        Orocos.conf.apply(pos_component, ['exoter', 'Netherlands', 'DECOS'], :override => true) #TODO
+        pos_component.configure
+        puts "done"
+    else
+        puts "Setting up vicon"
+        pos_component = Orocos.name_service.get 'vicon'
+        Orocos.conf.apply(pos_component, ['default', 'exoter'], :override => true)
+        pos_component.configure
+        puts "done"
+    end
 
     # setup waypoint_navigation
     puts "Setting up waypoint_navigation"
@@ -111,8 +122,8 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_slam' do
     puts "Connecting ports"
     #Orocos.log_all_ports
 
-    vicon.pose_samples.connect_to                         ares_planner.pose
-    vicon.pose_samples.connect_to                         waypoint_navigation.pose
+    pos_component.pose_samples.connect_to                 ares_planner.pose
+    pos_component.pose_samples.connect_to                 waypoint_navigation.pose
 
     ares_planner.trajectory.connect_to                    waypoint_navigation.trajectory
     ares_planner.locomotionMode.connect_to                locomotion_switcher.locomotionMode
@@ -146,9 +157,8 @@ Orocos::Process.run 'exoter_control', 'exoter_groundtruth', 'exoter_slam' do
 
     puts "done"
 
-
     ## START TASKS ##
-    vicon.start
+    pos_component.start
     ares_planner.start
     waypoint_navigation.start
     platform_driver.start
