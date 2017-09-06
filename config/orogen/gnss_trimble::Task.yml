@@ -47,8 +47,10 @@ pose_origin:
 # Origin in UTM coordinates, that is used for position readings.
 pose_origin:
   data:
-  - 597472.183
-  - 5785991.8953
+  - 597400.9       # (597467.8-81.9)+14
+  - 5785944.4      # (5785972.5-55.1)+24
+    #- 597197.5       # (597467.8-81.9)
+    #- 5786210.4      # (5785972.5-55.1)
   - 1.95
 
 
