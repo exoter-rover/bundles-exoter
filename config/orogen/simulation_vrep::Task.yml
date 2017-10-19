@@ -1,0 +1,13 @@
+--- name:exoter
+
+joint_vrep_names: [joint_drive_fl, joint_drive_fr, joint_drive_ml, joint_drive_mr,
+joint_drive_rl, joint_drive_rr, joint_steer_fl, joint_steer_fr, joint_steer_rl,
+joint_steer_rr, joint_walk_fl, joint_walk_fr, joint_walk_ml, joint_walk_mr,
+joint_walk_rl, joint_walk_rr, bogie_lateral_l, bogie_lateral_r, bogie_rear1]
+
+joint_readings_names: [left_passive, right_passive, rear_passive, fl_walking,
+fr_walking, ml_walking, mr_walking, rl_walking, rr_walking, fl_steer, fr_steer,
+rl_steer, rr_steer, fl_drive, fr_drive, ml_drive, mr_drive, rl_drive, rr_drive]
+
+ptu_vrep_names: [pan, tilt]
+ptu_readings_names: [pan_joint, tilt_joint]
