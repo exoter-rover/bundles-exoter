@@ -1,0 +1,13 @@
+--- name:default
+#
+locomotion_modes: [DRIVING, WHEEL_WALKING]
+slope_values: [0,5,10,15,20]
+#
+#          Locomotion1        Locomotion2
+#Obstacles slope1-slope2-...  slope1-slope2-... value much higher than for terrains (f.e. 100 times)
+#Terrain1  slope1-slope2-...  slope1-slope2-... 
+#Terrain2  slope1-slope2-...  slope1-slope2-...
+#
+cost_data: [1000,1000,1000,1000,1000, 1000,1000,1000,1000,1000,
+            14.3,16.3,18.3,20.3,22.3, 20.0,20.0,20.0,20.0,20.0,
+            25.0,25.0,25.0,25.0,25.0, 20.0,20.0,20.0,20.0,20.0]
