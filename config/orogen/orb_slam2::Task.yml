@@ -12,15 +12,6 @@ body_frame: body
 # Time in s between delta_pose_samples readings
 delta_pose_samples_period: 0.08
 
-# Minimum (vector[0]) and Maximum (vector[1]) expected GP residual.
-gaussian_process_residual_boundary:
-    data:
-    - 0.00001 #Minimum 1mm/s
-      #- 0.0075 #Maximum as 12.5% * 6cm/s. This is equivalent to 1% of distance traverse
-    - 0.0150 #Maximum as 25% * 6cm/s. This is equivalent to 2% of distance traverse
-      #- 0.0375 #Maximum as 62.5% * 6cm/s. This is equivalent to 5% of distance traverse
-      #- 0.075 #Maximum as 125% * 6cm/s. This is equivalent to 10% of distance traverse
-
 # Minimum (vector[0]) and Maximum (vector[1]) for inliers matches ratio of the adaptive keyframe criteria (normally 0.30 - 0.75).
 inliers_matches_ratio_boundary:
     data:
@@ -172,3 +163,60 @@ map_conditional_removal_config:
         - .inf
         - .inf
         - .inf
+
+--- name:10_6cm_s
+# Minimum (vector[0]) and Maximum (vector[1]) expected GP residual.
+gaussian_process_residual_boundary:
+    data:
+    - 0.000001 #Minimum
+    - 0.0063 #Maximum as 10% * 6.34cm/s.
+
+--- name:25_6cm_s
+# Minimum (vector[0]) and Maximum (vector[1]) expected GP residual.
+gaussian_process_residual_boundary:
+    data:
+    - 0.000001 #Minimum
+    - 0.016 #Maximum as 25% * 6.34cm/s.
+
+--- name:50_6cm_s
+# Minimum (vector[0]) and Maximum (vector[1]) expected GP residual.
+gaussian_process_residual_boundary:
+    data:
+    - 0.000001 #Minimum
+    - 0.032 #Maximum as 50% * 6.34cm/s.
+
+--- name:100_6cm_s
+# Minimum (vector[0]) and Maximum (vector[1]) expected GP residual.
+gaussian_process_residual_boundary:
+    data:
+    - 0.000001 #Minimum
+    - 0.063 #Maximum as 100% * 6.34cm/s.
+
+--- name:10_10cm_s
+# Minimum (vector[0]) and Maximum (vector[1]) expected GP residual.
+gaussian_process_residual_boundary:
+    data:
+    - 0.000001 #Minimum
+    - 0.010 #Maximum as 10% * 10.0cm/s.
+
+--- name:25_10cm_s
+# Minimum (vector[0]) and Maximum (vector[1]) expected GP residual.
+gaussian_process_residual_boundary:
+    data:
+    - 0.000001 #Minimum
+    - 0.025 #Maximum as 25% * 10.0cm/s.
+
+--- name:50_10cm_s
+# Minimum (vector[0]) and Maximum (vector[1]) expected GP residual.
+gaussian_process_residual_boundary:
+    data:
+    - 0.000001 #Minimum
+    - 0.05 #Maximum as 50% * 10.0cm/s.
+
+--- name:100_10cm_s
+# Minimum (vector[0]) and Maximum (vector[1]) expected GP residual.
+gaussian_process_residual_boundary:
+    data:
+    - 0.000001 #Minimum
+    - 0.10 #Maximum as 100% * 10.0cm/s.
+
