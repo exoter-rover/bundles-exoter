@@ -63,7 +63,8 @@ end
 Bundles.run 'exoter_control',
             'exoter_localization',
             'odometry::Skid' => 'skid_odometry',
-            :gdb => false do
+            :gdb => false,
+            :output => nil do
 
     # Get the task names from control
     read_joint_dispatcher = Orocos.name_service.get 'read_joint_dispatcher'

@@ -18,7 +18,8 @@ options[:odometry] = 'none'
 options[:reaction_forces] = false
 options[:gaussian_process] = "none"
 options[:point_cloud] = "none"
-options[:map] = 'none'
+options[:test] = 'none'
+options[:threshold] = 'none'
 
 op = OptionParser.new do |opt|
     opt.banner = <<-EOD
@@ -53,8 +54,12 @@ op = OptionParser.new do |opt|
         options[:point_cloud] = point_cloud
     end
 
-    opt.on "-m", "--map=arl/decos", String, 'set the type of map: arl to build the ARL map, decos to build the Decos terrain' do |map|
-        options[:map] = map
+    opt.on "-t", "--test=arl_20141027-2034/arl_20150515-1752/decos_20140911-1805", String, 'set the type: GP model to load and ARL map or Decos terrain' do |test|
+        options[:test] = test
+    end
+
+    opt.on "-h", "--gp_threshold=10_6cm_s/25_6cm_s/50_6cm_s/100_6cm_s/100_10cm_s/50_10cm_s/25_10cm_s/10_10cm_s", String, 'GP Odometry error threshold' do |threshold|
+        options[:threshold] = threshold
     end
 
     opt.on '--help', 'this help message' do
@@ -138,12 +143,19 @@ else
     puts "[INFO] NO point clouds selected"
 end
 
-if options[:map].casecmp("arl").zero?
-    puts "[INFO] ARL boundaries and resolution selected"
-elsif options[:map].casecmp("decos").zero?
-    puts "[INFO] Decos Terrain boundaries and resolution selected"
+if options[:test].casecmp("arl_20141027-2034").zero?
+    puts "[INFO] ARL 20141027-2034 GP model, terrain boundaries and resolution selected"
+elsif options[:test].casecmp("arl_20150515-1752").zero?
+    puts "[INFO] ARL 20150515-1752 GP model, terrain boundaries and resolution selected"
+elsif options[:test].casecmp("decos_20140911-1805").zero?
+    puts "[INFO] Decos 20140911-1805 GP model, terrain boundaries and resolution selected"
 else
-    puts "[INFO] Please specify map type! EXIT"
+    puts "[INFO] Please specify test! EXIT"
+    exit 1
+end
+
+if options[:threshold].casecmp("none").zero?
+    puts "[INFO] Please specify Odometry error threshold! EXIT"
     exit 1
 end
 
@@ -207,10 +219,12 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
         gp_odometry = Orocos.name_service.get 'gpy_gp_odometry'
         Orocos.conf.apply(gp_odometry, ['gp_gpy'], :override => true)
         #gp_odometry.gaussian_process_file = Bundles.find_file('data/gaussian_processes', 'SparseGP_RBF_xyz_velocities_train_at_500ms_normalized.data')
-        if options[:map].casecmp("arl").zero?
-            gp_odometry.gaussian_process_file = Bundles.find_file('data/gaussian_processes', 'SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized_exoter_odometry_arl_residuals.data')
-        elsif options[:map].casecmp("decos").zero?
-            gp_odometry.gaussian_process_file = Bundles.find_file('data/gaussian_processes', 'SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized_exoter_odometry_decos_residuals.data')
+        if options[:test].casecmp("arl_20141027-2034").zero?
+            gp_odometry.gaussian_process_file = Bundles.find_file('data/gaussian_processes', 'SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized_exoter_odometry_arl_residuals_20141027-2034.data')
+        elsif options[:test].casecmp("arl_20150515-1752").zero?
+            gp_odometry.gaussian_process_file = Bundles.find_file('data/gaussian_processes', 'SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized_exoter_odometry_arl_residuals_20150515-1752.data')
+        elsif options[:test].casecmp("decos_20140911-1805").zero?
+            gp_odometry.gaussian_process_file = Bundles.find_file('data/gaussian_processes', 'SparseGP_RBF_NL_xyz_velocities_train_at_1s_normalized_exoter_odometry_decos_residuals_20140911-1805_complete.data')
         end
         STDERR.puts "done"
     end
@@ -218,10 +232,26 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     ## Get the task context ##
     STDERR.print "setting up orb_slam2.."
     orb_slam2 = TaskContext.get 'orb_slam2'
-    if options[:map].casecmp("arl").zero?
-        Orocos.conf.apply(orb_slam2, ['default', 'bumblebee', 'arl_map'], :override => true)
-    elsif options[:map].casecmp("decos").zero?
-        Orocos.conf.apply(orb_slam2, ['default', 'bumblebee', 'decos_map'], :override => true)
+    if options[:test].casecmp("arl_20141027-2034").zero? or options[:test].casecmp("arl_20150515-1752").zero?
+        if options[:threshold].casecmp("10_6cm_s").zero?
+            Orocos.conf.apply(orb_slam2, ['default', 'bumblebee', 'arl_map', '10_6cm_s'], :override => true)
+        elsif options[:threshold].casecmp("25_6cm_s").zero?
+            Orocos.conf.apply(orb_slam2, ['default', 'bumblebee', 'arl_map', '25_6cm_s'], :override => true)
+        elsif options[:threshold].casecmp("50_6cm_s").zero?
+            Orocos.conf.apply(orb_slam2, ['default', 'bumblebee', 'arl_map', '50_6cm_s'], :override => true)
+        elsif options[:threshold].casecmp("100_6cm_s").zero?
+            Orocos.conf.apply(orb_slam2, ['default', 'bumblebee', 'arl_map', '100_6cm_s'], :override => true)
+        end
+    elsif options[:test].casecmp("decos_20140911-1805").zero?
+        if options[:threshold].casecmp("10_10cm_s").zero?
+            Orocos.conf.apply(orb_slam2, ['default', 'bumblebee', 'decos_map', '10_10cm_s'], :override => true)
+        elsif options[:threshold].casecmp("25_10cm_s").zero?
+            Orocos.conf.apply(orb_slam2, ['default', 'bumblebee', 'decos_map', '25_10cm_s'], :override => true)
+        elsif options[:threshold].casecmp("50_10cm_s").zero?
+            Orocos.conf.apply(orb_slam2, ['default', 'bumblebee', 'decos_map', '50_10cm_s'], :override => true)
+        elsif options[:threshold].casecmp("100_10cm_s").zero?
+            Orocos.conf.apply(orb_slam2, ['default', 'bumblebee', 'decos_map', '100_10cm_s'], :override => true)
+        end
     end
 
     if options[:point_cloud].casecmp("stereo").zero?
@@ -307,9 +337,9 @@ Bundles::run 'joint_dispatcher::Task' => 'read_joint_dispatcher',
     end
 
     if options[:point_cloud].casecmp("stereo").zero?
-        log_replay.stereo_filtered.point_cloud_samples_out.connect_to orb_slam2.point_cloud_samples
+        log_replay.stereo_filtered.point_cloud_samples_out.connect_to orb_slam2.point_cloud_samples, :type => :buffer, :size => 5
     elsif  options[:point_cloud].casecmp("tof").zero?
-        log_replay.colorize_pointcloud.colored_points.connect_to orb_slam2.point_cloud_samples
+        log_replay.colorize_pointcloud.colored_points.connect_to orb_slam2.point_cloud_samples, :type => :buffer, :size => 5
     end
 
     if options[:camera_bb2].casecmp("task").zero?
