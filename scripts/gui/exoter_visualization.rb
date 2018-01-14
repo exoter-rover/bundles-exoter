@@ -322,12 +322,12 @@ read_joint_dispatcher.on_reachable do
 end
 
 # Odometry tasks in Asynchronous mode
-exoter_odometry = Orocos::Async.proxy 'exoter_odometry'
+robot_odometry = Orocos::Async.proxy 'robot_odometry'
 
-exoter_odometry.on_reachable do
+robot_odometry.on_reachable do
 
     #Access to the chains sub_ports
-    vector_rbs = exoter_odometry.port('fkchains_rbs_out')
+    vector_rbs = robot_odometry.port('fkchains_rbs_out')
     vector_rbs.wait
 
     Vizkit.display vector_rbs.sub_port([:rbsChain, 0]), :widget => c0FL
@@ -338,10 +338,10 @@ exoter_odometry.on_reachable do
     Vizkit.display vector_rbs.sub_port([:rbsChain, 5]), :widget => c0RR
 
     # Odometry Robot pose
-    Vizkit.display exoter_odometry.port('pose_samples_out'), :widget =>odometryRBS
+    Vizkit.display robot_odometry.port('pose_samples_out'), :widget =>odometryRBS
 
     # Trajectory
-    exoter_odometry.port('pose_samples_out').on_data do |pose_rbs,_|
+    robot_odometry.port('pose_samples_out').on_data do |pose_rbs,_|
         odometryRobotTrajectory.updateTrajectory(pose_rbs.position)
     end
 end
