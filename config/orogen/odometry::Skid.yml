@@ -5,7 +5,7 @@ actuator_samples_period: 0.08
 orientation_samples_period: 0.08
 
 # the frame name for the body frame
-body_frame: body
+body_frame_output_name: body
 # the global name that should be used for the internal imu_world frame
 #imu_world_frame: imu
 
@@ -43,7 +43,7 @@ odometry_config:
   useZeroVelocity: true
 
 # the frame name for the odometry frame
-odometry_frame: navigation
+odometry_frame_output_name: navigation
 
 # list of static transformations
 static_transformations: []

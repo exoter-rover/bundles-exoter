@@ -5,7 +5,7 @@ contact_samples_period: 0.08
 orientation_samples_period: 0.08
 
 # the frame name for the body frame
-body_frame: body
+body_frame_output_name: body
 
 # configuration struct for the asguard odometry class
 odometry_config:
@@ -41,11 +41,11 @@ odometry_config:
   useZeroVelocity: true
 
 # the frame name for the odometry frame
-odometry_frame: navigation
+odometry_frame_output_name: navigation
 
 # Maximum time in seconds the transformer will wait until it starts dropping samples
-aggregator_max_latency: 0.1
+transformer_max_latency: 0.1
 # Minimum system time in seconds between two updates of the status ports
-stream_aligner_status_period: 0.08
+transformer_status_period: 0.08
 
 
