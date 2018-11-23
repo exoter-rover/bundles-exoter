@@ -240,27 +240,33 @@ if options[:mode].casecmp("vsd_slam").zero?
 end
 
 if options[:mode].casecmp("orb_slam2").zero?
+    #RigidBody of the BodyCenter from localization
+    Vizkit.vizkit3d_widget.setPluginDataFrame("world", localizationRBS)
+
+    # Odometry robot trajectory
+    Vizkit.vizkit3d_widget.setPluginDataFrame("world", localizationRobotTrajectory)
+
     #RigidBody of the BodyCenter from last Key
     last_keyframe_rbs = Vizkit.default_loader.RigidBodyStateVisualization
     last_keyframe_rbs.displayCovariance(true)
     last_keyframe_rbs.setPluginName("Last KeyFrame Pose")
     last_keyframe_rbs.setColor(Eigen::Vector3.new(255, 250, 0))#Yellow
     last_keyframe_rbs.resetModel(0.2)
-    Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", last_keyframe_rbs)
+    Vizkit.vizkit3d_widget.setPluginDataFrame("world", last_keyframe_rbs)
 
     #Trajectory of the slam keyframes
     keyframes_waypoints = Vizkit.default_loader.WaypointVisualization
     keyframes_waypoints.setPluginName("KFs Trajectory")
-    Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", keyframes_waypoints)
+    Vizkit.vizkit3d_widget.setPluginDataFrame("world", keyframes_waypoints)
 
     allframes_waypoints = Vizkit.default_loader.WaypointVisualization
     allframes_waypoints.setPluginName("Camera frames Trajectory")
-    Vizkit.vizkit3d_widget.setPluginDataFrame("navigation", allframes_waypoints)
+    Vizkit.vizkit3d_widget.setPluginDataFrame("world", allframes_waypoints)
 
     #Point cloud visualization
     orb_point_cloud = Vizkit.default_loader.PCLPointCloudVisualization
     orb_point_cloud.setPluginName("ORB Dense Point Cloud")
-    Vizkit.vizkit3d_widget.setPluginDataFrame("last_kf", orb_point_cloud)
+    Vizkit.vizkit3d_widget.setPluginDataFrame("world", orb_point_cloud)
 
 end
 
