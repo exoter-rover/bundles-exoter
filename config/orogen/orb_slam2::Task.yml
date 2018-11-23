@@ -1,7 +1,7 @@
 --- name:default
 # the global name that should be used for the internal world frame
-#world_frame: world
-world_frame: navigation
+world_frame: world
+#world_frame: navigation
 
 # the global name that should be used for the internal navigation frame
 navigation_frame: navigation
@@ -115,9 +115,9 @@ calib_parameters:
 # Point cloud resolution of the combined point clouds.'
 map_point_cloud_resolution:
     data:
-    - 0.01
-    - 0.01
-    - 0.01
+    - 0.02
+    - 0.02
+    - 0.02
 
 # resulting ply file
 output_ply: 'arl_map_point_cloud.ply'
@@ -125,7 +125,7 @@ output_ply: 'arl_map_point_cloud.ply'
 # Configuration parameters for the conditional removal filter applied to map
 map_conditional_removal_config:
     filter_on: true
-    keep_organized: false
+    keep_organized: true
     gt_boundary:
         data:
         - 0.00
